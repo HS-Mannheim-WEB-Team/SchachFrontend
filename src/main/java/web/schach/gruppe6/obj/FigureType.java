@@ -1,6 +1,6 @@
 package web.schach.gruppe6.obj;
 
-public enum Figure {
+public enum FigureType {
 	
 	PAWN("GUI/iconsAndImages/iconset1/pawn_white.png", "GUI/iconsAndImages/iconset1/pawn_black.png"),
 	KING("GUI/iconsAndImages/iconset1/king_white.png", "GUI/iconsAndImages/iconset1/king_black.png"),
@@ -12,7 +12,7 @@ public enum Figure {
 	public final String iconPathWhite;
 	public final String iconPathBlack;
 	
-	Figure(String iconPathWhite, String iconPathBlack) {
+	FigureType(String iconPathWhite, String iconPathBlack) {
 		this.iconPathWhite = iconPathWhite;
 		this.iconPathBlack = iconPathBlack;
 	}

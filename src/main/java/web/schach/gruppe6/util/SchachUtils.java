@@ -9,4 +9,8 @@ public class SchachUtils {
 	public static final Position MIN = fromSchachPosition("a1");
 	public static final Position MAX = fromSchachPosition("h8");
 	public static final Position DELTA = MAX.sub(MIN);
+	
+	public <T> Grid<T> createSchachGrid() {
+		return new Grid<>(SchachUtils.MIN, SchachUtils.DELTA);
+	}
 }
