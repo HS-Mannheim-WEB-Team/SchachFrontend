@@ -18,10 +18,6 @@ import web.schach.gruppe6.obj.PlayerColor;
 import web.schach.gruppe6.obj.Position;
 
 
-/*
- Should be used to add Listeners to to the WEBChess components
- or to add methods and reference to it in the scene Editor
- */
 public class Controller {
     private final int TILEWIDTH = 30;
     private final int TILEHEIGHT = 30;
@@ -30,15 +26,7 @@ public class Controller {
     private boolean listVisible = true;
 
 
-    /*
-        actual components of the web.schach.gruppe6.gui. Automatically assigned
-    */
-    @FXML
-    private FlowPane menuSocket;
-
-
-    @FXML
-    private ListView listView;
+    //HIDE&SHOW BUTTONS
 
     @FXML
     private Button logButton;
@@ -49,19 +37,17 @@ public class Controller {
     @FXML
     private ImageView optionImage;
 
-    @FXML
-    private ChessTileField chessField;
+
+    //MENU
 
     @FXML
-    //place icons in here
-    private Pane chessFieldPane;
+    private FlowPane menuSocket;
 
     @FXML
     private Button saveButton;
 
     @FXML
     private Button newGameButton;
-
 
     @FXML
     private Button joinButton;
@@ -70,11 +56,31 @@ public class Controller {
     @FXML
     private TextField iDTextField;
 
+
+    //LIST VIEW
+
+    @FXML
+    private ListView listView;
+
+
+    //TILE FIELDS
+
     @FXML
     private BeatenTileField beatenFiguresTop;
 
     @FXML
+    private ChessTileField chessField;
+
+    @FXML
     private BeatenTileField beatenFiguresBot;
+
+    @FXML
+    //place icons in here
+    private Pane chessFieldPane;
+
+
+
+
 
 
     // This method is called by the FXMLLoader when initialization is complete
@@ -82,7 +88,6 @@ public class Controller {
     void initialize() {
 
     }
-
 
     public void switchMenuVisibility() {
         if (menuIsVisible) {
