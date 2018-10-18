@@ -1,10 +1,10 @@
 package web.schach.gruppe6.gui.customComponents;
 
 import javafx.geometry.Bounds;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import web.schach.gruppe6.gui.util.ColorEnum;
 
-public class Tile extends Pane {
+public class Tile extends StackPane {
     public Tile() {
         this(ColorEnum.BROWN);
     }

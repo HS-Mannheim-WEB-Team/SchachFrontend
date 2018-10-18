@@ -2,14 +2,16 @@ package web.schach.gruppe6.gui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import web.schach.gruppe6.gui.customComponents.BeatenTileField;
+import web.schach.gruppe6.gui.customComponents.ChessTileField;
+import web.schach.gruppe6.gui.customComponents.Tile;
+import web.schach.gruppe6.gui.customComponents.TileField;
 import web.schach.gruppe6.gui.util.ColorEnum;
 import web.schach.gruppe6.gui.util.FigureIcons;
 import web.schach.gruppe6.obj.Position;
@@ -20,8 +22,11 @@ import web.schach.gruppe6.obj.Position;
  or to add methods and reference to it in the scene Editor
  */
 public class Controller {
+    private final int TILEWIDTH = 30;
+    private final int TILEHEIGHT = 30;
+
     private boolean menuIsVisible = true;
-    private boolean logIsVisible = true;
+    private boolean listVisible = true;
 
 
     /*
@@ -32,7 +37,7 @@ public class Controller {
 
 
     @FXML
-    private TextArea logArea;
+    private ListView listView;
 
     @FXML
     private Button logButton;
@@ -44,6 +49,13 @@ public class Controller {
     private ImageView optionImage;
 
     @FXML
+    private ChessTileField chessField;
+
+    @FXML
+    //place icons in here
+    private ChessTileField chessFieldPane;
+
+    @FXML
     private Button saveButton;
 
     @FXML
@@ -53,23 +65,23 @@ public class Controller {
     @FXML
     private Button joinButton;
 
-    @FXML
-    private Pane chessFieldPane;
 
     @FXML
     private TextField iDTextField;
 
     @FXML
-    private GridPane beatenFiguresTop;
+    private BeatenTileField beatenFiguresTop;
 
     @FXML
-    private GridPane beatenFiguresBot;
+    private BeatenTileField beatenFiguresBot;
 
 
     // This method is called by the FXMLLoader when initialization is complete
     @FXML
     void initialize() {
+
     }
+
 
     public void switchMenuVisibility() {
         if (menuIsVisible) {
@@ -85,17 +97,16 @@ public class Controller {
         }
     }
 
-    public void switchLogVisibility() {
-        if (logIsVisible) {
-            logArea.clear();
-            logArea.setVisible(false);
-            logIsVisible = false;
+    public void switchListVisibility() {
+        if (listVisible) {
+            listView.setVisible(false);
+            listVisible = false;
             setBackgroundColor(logButton, ColorEnum.GREEN);
 
 
         } else {
-            logArea.setVisible(true);
-            logIsVisible = true;
+            listView.setVisible(true);
+            listVisible = true;
             setBackgroundColor(logButton, ColorEnum.RED);
         }
     }
@@ -112,21 +123,13 @@ public class Controller {
 
     public void setBackgroundColor(Region component, ColorEnum color) {
         component.setStyle("-fx-background-color: " + color.toString());
-    }
 
-    public void addBeatenFigure(GridPane pane, FigureIcons icon) {
-        ImageView figureIcon = Controller.getFigureIcon(icon, false);
-        figureIcon.setFitHeight(30);
-        figureIcon.setFitWidth(30);
-        int i = pane.getChildren().size() - 10;
-        if (i < 9)
-            pane.add(figureIcon, pane.getChildren().size() - 16, 0);
-        else pane.add(figureIcon, pane.getChildren().size() - 16, 1);
     }
 
 
-    public void getBondsOfBeatenFigures(GridPane pane, Position pos) {
-
+    public void getBondsOfBeatenFigures(TileField pane, Position pos) {
+        Tile[][] tiles = pane.getFieldComponents();
+        tiles[pos.x][pos.y].getBounds();
     }
 
 

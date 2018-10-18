@@ -4,10 +4,10 @@ import javafx.scene.layout.GridPane;
 import web.schach.gruppe6.gui.util.ColorEnum;
 
 
-public class ChessField extends GridPane {
+public class ChessTileField extends GridPane implements TileField {
     Tile[][] chessFieldComponents = new Tile[8][8];
 
-    public ChessField() {
+    public ChessTileField() {
         setupFillers();
         setupLineCounters();
         setupChessFields();
@@ -40,21 +40,33 @@ public class ChessField extends GridPane {
     }
 
     private void setupChessFields() {
+        boolean secondRow = false;
+        boolean giveColor = false;
         for (int x = 1; x < 9; x++) {
+            if (secondRow) {
+                giveColor = true;
+                secondRow = false;
+            } else {
+                giveColor = false;
+                secondRow = true;
+            }
             for (int y = 1; y < 9; y++) {
                 Tile tile;
-                if (x % 2 == 0 || y % 2 != 0) {
-                    tile = new Tile(ColorEnum.WHITE);
+                if (giveColor) {
+                    tile = new Tile(ColorEnum.BROWN);
+                    giveColor = false;
                 } else {
                     tile = new Tile(ColorEnum.WHITE);
+                    giveColor = true;
                 }
+                tile.setStyle("-fx-border-color: white ;" + tile.getStyle());
                 chessFieldComponents[x - 1][y - 1] = tile;
                 add(tile, x, y);
             }
         }
     }
 
-    public Tile[][] getChessFieldComponents() {
+    public Tile[][] getFieldComponents() {
         return chessFieldComponents;
     }
 
