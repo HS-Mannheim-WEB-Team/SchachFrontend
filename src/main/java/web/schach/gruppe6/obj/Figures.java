@@ -46,4 +46,8 @@ public enum Figures {
 		this.type = type;
 		this.color = color;
 	}
+	
+	public String getIconPath() {
+		return color == WHITE ? type.iconPathWhite : type.iconPathBlack;
+	}
 }
