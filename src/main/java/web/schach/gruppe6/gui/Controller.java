@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import web.schach.gruppe6.gui.customComponents.BeatenTileField;
 import web.schach.gruppe6.gui.customComponents.ChessTileField;
@@ -53,7 +54,7 @@ public class Controller {
 
     @FXML
     //place icons in here
-    private ChessTileField chessFieldPane;
+    private Pane chessFieldPane;
 
     @FXML
     private Button saveButton;
