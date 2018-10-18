@@ -1,8 +1,9 @@
 package web.schach.gruppe6.gui;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -11,6 +12,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import web.schach.gruppe6.gui.customComponents.BeatenTileField;
 import web.schach.gruppe6.gui.customComponents.ChessTileField;
+import web.schach.gruppe6.gui.customComponents.OccupancyListView;
 import web.schach.gruppe6.gui.customComponents.TileField;
 import web.schach.gruppe6.gui.util.ColorEnum;
 import web.schach.gruppe6.obj.FigureType;
@@ -52,15 +54,16 @@ public class Controller {
     @FXML
     private Button joinButton;
 
-
     @FXML
     private TextField iDTextField;
+
 
 
     //LIST VIEW
 
     @FXML
-    private ListView listView;
+    private OccupancyListView listView;
+
 
 
     //TILE FIELDS
@@ -86,7 +89,16 @@ public class Controller {
     // This method is called by the FXMLLoader when initialization is complete
     @FXML
     void initialize() {
-
+        listView.addItem("test", new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+            }
+        });
+        listView.addItem("test2", new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+            }
+        });
     }
 
     public void switchMenuVisibility() {
@@ -125,6 +137,9 @@ public class Controller {
         return newImage;
     }
 
+    /**
+     * removes all other styles. Use only if the Region has no style sheet and the border isn t changed
+     */
     public void setBackgroundColor(Region component, ColorEnum color) {
         component.setStyle("-fx-background-color: " + color.toString());
 
