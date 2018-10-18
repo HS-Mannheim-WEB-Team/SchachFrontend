@@ -11,10 +11,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import web.schach.gruppe6.gui.customComponents.BeatenTileField;
 import web.schach.gruppe6.gui.customComponents.ChessTileField;
-import web.schach.gruppe6.gui.customComponents.Tile;
 import web.schach.gruppe6.gui.customComponents.TileField;
 import web.schach.gruppe6.gui.util.ColorEnum;
-import web.schach.gruppe6.gui.util.FigureIcons;
+import web.schach.gruppe6.obj.FigureType;
+import web.schach.gruppe6.obj.PlayerColor;
 import web.schach.gruppe6.obj.Position;
 
 
@@ -112,14 +112,12 @@ public class Controller {
         }
     }
 
-    public static ImageView getFigureIcon(FigureIcons icon, boolean isWhite) {
+    public static ImageView getFigureIcon(FigureType icon, PlayerColor color) {
         ImageView newImage = new ImageView();
-        newImage.setImage(new Image(icon.getPath(isWhite)));
+        if (color == PlayerColor.BLACK)
+            newImage.setImage(new Image(icon.iconPathBlack));
+        else newImage.setImage(new Image(icon.iconPathWhite));
         return newImage;
-    }
-
-    public void removeFigureIcon(ImageView tile) {
-        tile.setImage(null);
     }
 
     public void setBackgroundColor(Region component, ColorEnum color) {
@@ -129,8 +127,7 @@ public class Controller {
 
 
     public void getBondsOfBeatenFigures(TileField pane, Position pos) {
-        Tile[][] tiles = pane.getFieldComponents();
-        tiles[pos.x][pos.y].getBounds();
+        pane.getFieldComponents()[pos.x][pos.y].getBounds();
     }
 
 
