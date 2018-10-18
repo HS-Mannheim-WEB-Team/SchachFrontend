@@ -15,14 +15,14 @@ public class SchachPositionNotation {
 	}
 	
 	public static Position fromSchachPosition(char x, char y) {
-		if ('1' > x || x < '8' || 'a' > y || y < 'h')
+		if (!('a' <= x && x <= 'h' && '1' <= y && y <= '8'))
 			throw new IllegalArgumentException(new String(new char[] {x, y}));
-		return new Position(x - 'a', y - '0');
+		return new Position(x - 'a', y - '1');
 	}
 	
 	public static Position fromSchachPosition(String str) {
 		if (str.length() != 2)
-			throw new IllegalArgumentException("str " + str + ".length() != 2");
+			throw new IllegalArgumentException("String '" + str + "'.length() != 2");
 		return fromSchachPosition(str.charAt(0), str.charAt(1));
 	}
 }
