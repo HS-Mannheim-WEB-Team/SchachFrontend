@@ -5,11 +5,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import web.schach.gruppe6.network.exceptions.ParseException;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -21,14 +16,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.util.Iterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class ConnectionUtils {
+public class ParserUtils {
 	
 	public static final Transformer DEFAULT_TRANSFORMER;
 	
@@ -40,26 +32,6 @@ public class ConnectionUtils {
 			DEFAULT_TRANSFORMER.setOutputProperty(OutputKeys.INDENT, "yes");
 			DEFAULT_TRANSFORMER.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 		} catch (TransformerConfigurationException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	public static Client createClientIgnoreSsl() {
-		try {
-			SSLContext sslcontext = SSLContext.getInstance("TLS");
-			sslcontext.init(null, new TrustManager[] {new X509TrustManager() {
-				public void checkClientTrusted(X509Certificate[] arg0, String arg1) {
-				}
-				
-				public void checkServerTrusted(X509Certificate[] arg0, String arg1) {
-				}
-				
-				public X509Certificate[] getAcceptedIssuers() {
-					return new X509Certificate[0];
-				}
-			}}, new java.security.SecureRandom());
-			return ClientBuilder.newBuilder().sslContext(sslcontext).hostnameVerifier((s1, s2) -> true).build();
-		} catch (NoSuchAlgorithmException | KeyManagementException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -78,7 +50,7 @@ public class ConnectionUtils {
 	}
 	
 	public static Node getEntryKeyFirstNode(Element root, String message) throws ParseException {
-		return getEntryKeyNodes(root, message).findFirst().orElseThrow(ParseException::new);
+		return getEntryKeyNodes(root, message).findFirst().orElseThrow(() -> new ParseException("No Entry " + message));
 	}
 	
 	//NodeList

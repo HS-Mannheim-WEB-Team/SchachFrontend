@@ -1,6 +1,8 @@
 package web.schach.gruppe6.network.exceptions;
 
-public class ServerErrorException extends Exception {
+import java.io.IOException;
+
+public class ServerErrorException extends IOException {
 	
 	public ServerErrorException() {
 	}
