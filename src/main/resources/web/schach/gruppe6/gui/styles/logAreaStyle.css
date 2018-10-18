@@ -1,0 +1,11 @@
+.text-area {
+    text-area-background: black;
+    text-area-opacity: 0.8;
+    text-area-border: blue;
+}
+
+.text-area .content {
+    -fx-background-color: text-area-background;
+    -fx-border-color: text-area-border;
+
+}
