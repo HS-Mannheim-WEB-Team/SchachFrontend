@@ -18,5 +18,17 @@ public class OccupancyListView extends ListView<String> {
         getSelectionModel().selectedItemProperty().addListener(e);
     }
 
+    public boolean removeItem(String key) {
+        boolean success = data.remove(key);
+        if (success)
+            setItems(data);
+        return success;
+    }
+
+    public void clear() {
+        data.clear();
+        setItems(data);
+    }
+
 
 }

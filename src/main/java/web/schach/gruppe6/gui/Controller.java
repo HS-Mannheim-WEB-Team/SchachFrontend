@@ -128,8 +128,8 @@ public class Controller {
                 }.start();
                 new Thread() {
                     public void run() {
-                        moveIcon(beatenFiguresBot, new Position(1, 1), beatenFiguresBot, new Position(6, 1));
-                        moveIcon(beatenFiguresBot, new Position(6, 1), beatenFiguresBot, new Position(2, 0));
+                        moveIcon(beatenFiguresBot, new Position(1, 1), beatenFiguresBot, new Position(4, 0));
+                        moveIcon(beatenFiguresBot, new Position(4, 0), beatenFiguresBot, new Position(2, 0));
                         moveIcon(beatenFiguresBot, new Position(2, 0), beatenFiguresBot, new Position(1, 1));
                     }
                 }.start();
@@ -219,8 +219,6 @@ public class Controller {
                 icon.setLayoutY(startY);
             }
         }
-
-        srcTile.setIcon(null);
         desTile.setIcon(icon);
     }
 
