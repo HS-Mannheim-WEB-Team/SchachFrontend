@@ -2,11 +2,14 @@ package web.schach.gruppe6.gui;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -99,6 +102,24 @@ public class Controller {
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
             }
         });
+        joinButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                showMessage(Alert.AlertType.INFORMATION, "Test Connection", "Results:", "Connect successfully!");
+            }
+        });
+        newGameButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                showMessage(Alert.AlertType.WARNING, "Test Connection", "Results:", "WARNING");
+            }
+        });
+        saveButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                showMessage(Alert.AlertType.ERROR, "saving", "Results:", "ERROR");
+            }
+        });
     }
 
     public void switchMenuVisibility() {
@@ -148,6 +169,17 @@ public class Controller {
 
     public void getBondsOfBeatenFigures(TileField pane, Position pos) {
         pane.getFieldComponents()[pos.x][pos.y].getBounds();
+    }
+
+    /**
+     * @param type should only use ERROR,WARNING or INFORMATION
+     */
+    private void showMessage(Alert.AlertType type, String title, String header, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
 
