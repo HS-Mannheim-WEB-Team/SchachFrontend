@@ -6,9 +6,10 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 import web.schach.gruppe6.gui.util.ColorEnum;
 
-public class LineCountField extends Tile {
+public class LineCountField extends StackPane {
 
     IntegerProperty pos = new SimpleIntegerProperty(this, "pos", 0);
     BooleanProperty inLetters = new SimpleBooleanProperty(this, "inLetters");
@@ -22,8 +23,7 @@ public class LineCountField extends Tile {
     }
 
     public LineCountField() {
-        super(ColorEnum.BROWN);
-
+        setStyle("-fx-background-color: " + ColorEnum.BROWN);
         this.pos.addListener(observable -> this.update());
         this.inLetters.addListener(observable -> this.update());
 

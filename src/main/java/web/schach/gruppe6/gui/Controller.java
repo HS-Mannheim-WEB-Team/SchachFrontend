@@ -13,10 +13,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import web.schach.gruppe6.gui.customComponents.BeatenTileField;
-import web.schach.gruppe6.gui.customComponents.ChessTileField;
-import web.schach.gruppe6.gui.customComponents.OccupancyListView;
-import web.schach.gruppe6.gui.customComponents.TileField;
+import web.schach.gruppe6.gui.customComponents.*;
 import web.schach.gruppe6.gui.util.ColorEnum;
 import web.schach.gruppe6.obj.FigureType;
 import web.schach.gruppe6.obj.PlayerColor;
@@ -24,9 +21,7 @@ import web.schach.gruppe6.obj.Position;
 
 
 public class Controller {
-    private final int TILEWIDTH = 30;
-    private final int TILEHEIGHT = 30;
-
+    private final int MOVINGPARTS = 20;
     private boolean menuIsVisible = true;
     private boolean listVisible = true;
 
@@ -61,12 +56,10 @@ public class Controller {
     private TextField iDTextField;
 
 
-
     //LIST VIEW
 
     @FXML
     private OccupancyListView listView;
-
 
 
     //TILE FIELDS
@@ -77,6 +70,7 @@ public class Controller {
     @FXML
     private ChessTileField chessField;
 
+
     @FXML
     private BeatenTileField beatenFiguresBot;
 
@@ -84,14 +78,21 @@ public class Controller {
     //place icons in here
     private Pane chessFieldPane;
 
+    public BeatenTileField getBeatenFiguresTop() {
+        return beatenFiguresTop;
+    }
 
+    public ChessTileField getChessField() {
+        return chessField;
+    }
 
+    public BeatenTileField getBeatenFiguresBot() {
+        return beatenFiguresBot;
+    }
 
-
-
-    // This method is called by the FXMLLoader when initialization is complete
     @FXML
     void initialize() {
+        //testing
         listView.addItem("test", new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
@@ -114,12 +115,21 @@ public class Controller {
                 showMessage(Alert.AlertType.WARNING, "Test Connection", "Results:", "WARNING");
             }
         });
+
         saveButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                showMessage(Alert.AlertType.ERROR, "saving", "Results:", "ERROR");
+                new Thread() {
+                    public void run() {
+                        moveIcon(beatenFiguresBot, new Position(1, 1), beatenFiguresBot, new Position(6, 1));
+                        moveIcon(beatenFiguresBot, new Position(6, 1), beatenFiguresBot, new Position(2, 0));
+                        moveIcon(beatenFiguresBot, new Position(2, 0), beatenFiguresBot, new Position(0, 0));
+                    }
+                }.start();
             }
+
         });
+
     }
 
     public void switchMenuVisibility() {
@@ -155,31 +165,65 @@ public class Controller {
         if (color == PlayerColor.BLACK)
             newImage.setImage(new Image(icon.iconPathBlack));
         else newImage.setImage(new Image(icon.iconPathWhite));
+        newImage.setFitWidth(30);
+        newImage.setFitHeight(30);
         return newImage;
     }
 
     /**
      * removes all other styles. Use only if the Region has no style sheet and the border isn t changed
      */
-    public void setBackgroundColor(Region component, ColorEnum color) {
+    private void setBackgroundColor(Region component, ColorEnum color) {
         component.setStyle("-fx-background-color: " + color.toString());
 
     }
 
 
-    public void getBondsOfBeatenFigures(TileField pane, Position pos) {
-        pane.getFieldComponents()[pos.x][pos.y].getBounds();
-    }
-
     /**
      * @param type should only use ERROR,WARNING or INFORMATION
      */
-    private void showMessage(Alert.AlertType type, String title, String header, String content) {
+    public void showMessage(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    public void moveIcon(TileField srcField, Position srcPos, TileField desField, Position desPos) {
+        Tile srcTile = srcField.getFieldComponents()[srcPos.x][srcPos.y];
+        Tile desTile = desField.getFieldComponents()[desPos.x][desPos.y];
+        ImageView icon = srcTile.getIcon();
+        double distanceX = (icon.getLayoutX() - 47.5) - desTile.getLayoutX();
+        double distanceY = icon.getLayoutY() - desTile.getLayoutY();
+        double stepX = distanceX / MOVINGPARTS;
+        double stepY = distanceY / MOVINGPARTS;
+        double startX = icon.getLayoutX();
+        double startY = icon.getLayoutY();
+        for (int stepCount = 0; stepCount < MOVINGPARTS; stepCount++) {
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+            }
+            startX = startX - stepX;
+            startY = startY - stepY;
+            icon.setLayoutX(startX);
+            icon.setLayoutY(startY);
+        }
+
+        srcTile.setIcon(null);
+        desTile.setIcon(icon);
+    }
+
+    public void placeIcon(TileField desField, Position desPos, FigureType iconType, PlayerColor color) {
+        ImageView icon = getFigureIcon(iconType, color);
+        Tile desTile = desField.getFieldComponents()[desPos.x][desPos.y];
+        desTile.setIcon(icon);
+        chessFieldPane.getChildren().add(icon);
+        icon.setLayoutX(47.5 + desTile.getLayoutX());
+        icon.setLayoutY(desTile.getLayoutY());
+
+
     }
 
 
