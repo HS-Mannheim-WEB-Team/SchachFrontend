@@ -14,14 +14,15 @@ public class Launcher {
 		//noinspection InfiniteLoopStatement
 		while (true) {
 			for (; moveId < game.layouts.size(); moveId++)
-				printLayout(game.layouts.get(moveId));
+				printLayout(moveId, game.layouts.get(moveId));
 			game.update();
 			
 			Thread.sleep(1000);
 		}
 	}
 	
-	private static void printLayout(Layout layout) {
+	private static void printLayout(int moveId, Layout layout) {
+		System.out.println(moveId + ": ");
 		System.out.println(layout.toStringColored());
 		System.out.println();
 	}
