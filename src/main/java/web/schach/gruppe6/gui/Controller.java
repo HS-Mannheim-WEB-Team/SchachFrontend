@@ -4,6 +4,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -120,15 +121,31 @@ public class Controller {
             public void handle(MouseEvent event) {
                 new Thread() {
                     public void run() {
-                        moveIcon(beatenFiguresBot, new Position(4, 0), beatenFiguresBot, new Position(3, 1));
-                        moveIcon(beatenFiguresBot, new Position(3, 1), beatenFiguresBot, new Position(1, 0));
+                        moveIcon(beatenFiguresBot, new Position(4, 0), chessField, new Position(3, 1));
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException ignored) {
+                        }
+                        moveIcon(chessField, new Position(3, 1), beatenFiguresBot, new Position(1, 0));
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException ignored) {
+                        }
                         moveIcon(beatenFiguresBot, new Position(1, 0), beatenFiguresBot, new Position(4, 0));
                     }
                 }.start();
                 new Thread() {
                     public void run() {
                         moveIcon(beatenFiguresBot, new Position(0, 0), beatenFiguresBot, new Position(4, 0));
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException ignored) {
+                        }
                         moveIcon(beatenFiguresBot, new Position(4, 0), beatenFiguresBot, new Position(2, 1));
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException ignored) {
+                        }
                         moveIcon(beatenFiguresBot, new Position(2, 1), beatenFiguresBot, new Position(0, 0));
                     }
                 }.start();
@@ -200,8 +217,10 @@ public class Controller {
         Tile srcTile = srcField.getFieldComponents()[srcPos.x][srcPos.y];
         Tile desTile = desField.getFieldComponents()[desPos.x][desPos.y];
         ImageView icon = srcTile.getIcon();
-        double distanceX = icon.getLayoutX() - XOFFSET - desTile.getLayoutX();
-        double distanceY = icon.getLayoutY() - desTile.getLayoutY();
+        Bounds srcBoundsInScene = srcTile.localToScene(srcTile.getBoundsInLocal());
+        Bounds desBoundsInScene = desTile.localToScene(desTile.getBoundsInLocal());
+        double distanceX = desBoundsInScene.getMinX() - srcBoundsInScene.getMinX();
+        double distanceY = desBoundsInScene.getMinY() - srcBoundsInScene.getMinY();
         double stepX = distanceX / MOVINGPARTS;
         double stepY = distanceY / MOVINGPARTS;
         double startX = icon.getLayoutX();
@@ -212,8 +231,8 @@ public class Controller {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            startX = startX - stepX;
-            startY = startY - stepY;
+            startX = startX + stepX;
+            startY = startY + stepY;
             synchronized (this) {
                 icon.setLayoutX(startX);
                 icon.setLayoutY(startY);
@@ -227,9 +246,11 @@ public class Controller {
         Tile desTile = desField.getFieldComponents()[desPos.x][desPos.y];
         desTile.setIcon(icon);
         chessFieldPane.getChildren().add(icon);
-        icon.setLayoutX(47.5 + desTile.getLayoutX());
-        icon.setLayoutY(desTile.getLayoutY());
+        Bounds paneBoundsInScene = chessFieldPane.localToScene(chessFieldPane.getBoundsInLocal());
+        Bounds tileBoundsInScene = desTile.localToScene(desTile.getBoundsInLocal());
 
+        icon.setLayoutX(tileBoundsInScene.getMinX() - paneBoundsInScene.getMinX());
+        icon.setLayoutY(tileBoundsInScene.getMinY() - paneBoundsInScene.getMinY());
 
     }
 
