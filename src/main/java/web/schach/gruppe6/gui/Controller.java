@@ -121,9 +121,16 @@ public class Controller {
             public void handle(MouseEvent event) {
                 new Thread() {
                     public void run() {
+                        moveIcon(beatenFiguresBot, new Position(4, 0), beatenFiguresBot, new Position(3, 1));
+                        moveIcon(beatenFiguresBot, new Position(3, 1), beatenFiguresBot, new Position(1, 0));
+                        moveIcon(beatenFiguresBot, new Position(1, 0), beatenFiguresBot, new Position(4, 0));
+                    }
+                }.start();
+                new Thread() {
+                    public void run() {
                         moveIcon(beatenFiguresBot, new Position(1, 1), beatenFiguresBot, new Position(6, 1));
                         moveIcon(beatenFiguresBot, new Position(6, 1), beatenFiguresBot, new Position(2, 0));
-                        moveIcon(beatenFiguresBot, new Position(2, 0), beatenFiguresBot, new Position(0, 0));
+                        moveIcon(beatenFiguresBot, new Position(2, 0), beatenFiguresBot, new Position(1, 1));
                     }
                 }.start();
             }
@@ -207,8 +214,10 @@ public class Controller {
             }
             startX = startX - stepX;
             startY = startY - stepY;
-            icon.setLayoutX(startX);
-            icon.setLayoutY(startY);
+            synchronized (this) {
+                icon.setLayoutX(startX);
+                icon.setLayoutY(startY);
+            }
         }
 
         srcTile.setIcon(null);

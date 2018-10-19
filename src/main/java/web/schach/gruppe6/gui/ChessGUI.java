@@ -27,6 +27,8 @@ public class ChessGUI extends Application {
 
         //testing
         controller.placeIcon(controller.getBeatenFiguresBot(), new Position(1, 1), FigureType.PAWN, PlayerColor.BLACK);
+        controller.placeIcon(controller.getBeatenFiguresBot(), new Position(4, 0), FigureType.PAWN, PlayerColor.BLACK);
+
     }
 
     public static void main(String[] args) {
