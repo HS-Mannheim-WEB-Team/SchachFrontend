@@ -5,13 +5,14 @@ import web.schach.gruppe6.gui.util.ColorEnum;
 
 
 public class ChessTileField extends GridPane implements TileField {
-    Tile[][] chessFieldComponents = new Tile[8][8];
+    private Tile[][] chessFieldComponents = new Tile[8][8];
 
     public ChessTileField() {
         setupFillers();
         setupLineCounters();
         setupChessFields();
         setMinSize(300, 300);
+
 
     }
 

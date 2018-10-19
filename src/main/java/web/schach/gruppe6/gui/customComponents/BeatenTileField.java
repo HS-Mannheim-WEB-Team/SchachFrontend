@@ -4,7 +4,8 @@ import javafx.scene.layout.GridPane;
 import web.schach.gruppe6.gui.util.ColorEnum;
 
 public class BeatenTileField extends GridPane implements TileField {
-    Tile[][] beatenFieldComponents = new Tile[8][2];
+    private Tile[][] beatenFieldComponents = new Tile[8][2];
+
 
     public BeatenTileField() {
         for (int x = 0; x < 8; x++) {
@@ -15,6 +16,7 @@ public class BeatenTileField extends GridPane implements TileField {
                 add(tile, x, y);
             }
         }
+
     }
 
     public Tile[][] getFieldComponents() {

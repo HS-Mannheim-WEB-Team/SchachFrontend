@@ -10,7 +10,7 @@ import web.schach.gruppe6.obj.PlayerColor;
 import web.schach.gruppe6.obj.Position;
 
 public class ChessGUI extends Application {
-    public static Controller controller;
+    public Controller controller;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -26,7 +26,7 @@ public class ChessGUI extends Application {
         controller = loader.getController();
 
         //testing
-        controller.placeIcon(controller.getBeatenFiguresBot(), new Position(1, 1), FigureType.PAWN, PlayerColor.BLACK);
+        controller.placeIcon(controller.getBeatenFiguresBot(), new Position(0, 0), FigureType.PAWN, PlayerColor.BLACK);
         controller.placeIcon(controller.getBeatenFiguresBot(), new Position(4, 0), FigureType.PAWN, PlayerColor.BLACK);
 
     }

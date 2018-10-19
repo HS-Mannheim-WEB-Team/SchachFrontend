@@ -22,6 +22,7 @@ import web.schach.gruppe6.obj.Position;
 
 public class Controller {
     private final int MOVINGPARTS = 20;
+    private final double XOFFSET = 47.5;
     private boolean menuIsVisible = true;
     private boolean listVisible = true;
 
@@ -70,13 +71,13 @@ public class Controller {
     @FXML
     private ChessTileField chessField;
 
+    @FXML
+    private Pane chessFieldPane;
+
 
     @FXML
     private BeatenTileField beatenFiguresBot;
 
-    @FXML
-    //place icons in here
-    private Pane chessFieldPane;
 
     public BeatenTileField getBeatenFiguresTop() {
         return beatenFiguresTop;
@@ -128,9 +129,9 @@ public class Controller {
                 }.start();
                 new Thread() {
                     public void run() {
-                        moveIcon(beatenFiguresBot, new Position(1, 1), beatenFiguresBot, new Position(4, 0));
-                        moveIcon(beatenFiguresBot, new Position(4, 0), beatenFiguresBot, new Position(2, 0));
-                        moveIcon(beatenFiguresBot, new Position(2, 0), beatenFiguresBot, new Position(1, 1));
+                        moveIcon(beatenFiguresBot, new Position(0, 0), beatenFiguresBot, new Position(4, 0));
+                        moveIcon(beatenFiguresBot, new Position(4, 0), chessField, new Position(2, 1));
+                        moveIcon(chessField, new Position(2, 1), beatenFiguresBot, new Position(0, 0));
                     }
                 }.start();
             }
@@ -201,8 +202,12 @@ public class Controller {
         Tile srcTile = srcField.getFieldComponents()[srcPos.x][srcPos.y];
         Tile desTile = desField.getFieldComponents()[desPos.x][desPos.y];
         ImageView icon = srcTile.getIcon();
-        double distanceX = (icon.getLayoutX() - 47.5) - desTile.getLayoutX();
-        double distanceY = icon.getLayoutY() - desTile.getLayoutY();
+        double distanceX = icon.getLayoutX() - XOFFSET - desTile.getLayoutX();
+        double offsetY;
+        if (srcField != desField)
+            offsetY = 30;
+        else offsetY = 0;
+        double distanceY = icon.getLayoutY() - offsetY - desTile.getLayoutY();
         double stepX = distanceX / MOVINGPARTS;
         double stepY = distanceY / MOVINGPARTS;
         double startX = icon.getLayoutX();
