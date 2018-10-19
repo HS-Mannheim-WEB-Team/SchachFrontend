@@ -72,12 +72,10 @@ public class Controller {
     private ChessTileField chessField;
 
     @FXML
-    private Pane chessFieldPane;
-
-
-    @FXML
     private BeatenTileField beatenFiguresBot;
 
+    @FXML
+    private Pane chessFieldPane;
 
     public BeatenTileField getBeatenFiguresTop() {
         return beatenFiguresTop;
@@ -130,8 +128,8 @@ public class Controller {
                 new Thread() {
                     public void run() {
                         moveIcon(beatenFiguresBot, new Position(0, 0), beatenFiguresBot, new Position(4, 0));
-                        moveIcon(beatenFiguresBot, new Position(4, 0), chessField, new Position(2, 1));
-                        moveIcon(chessField, new Position(2, 1), beatenFiguresBot, new Position(0, 0));
+                        moveIcon(beatenFiguresBot, new Position(4, 0), beatenFiguresBot, new Position(2, 1));
+                        moveIcon(beatenFiguresBot, new Position(2, 1), beatenFiguresBot, new Position(0, 0));
                     }
                 }.start();
             }
@@ -203,11 +201,7 @@ public class Controller {
         Tile desTile = desField.getFieldComponents()[desPos.x][desPos.y];
         ImageView icon = srcTile.getIcon();
         double distanceX = icon.getLayoutX() - XOFFSET - desTile.getLayoutX();
-        double offsetY;
-        if (srcField != desField)
-            offsetY = 30;
-        else offsetY = 0;
-        double distanceY = icon.getLayoutY() - offsetY - desTile.getLayoutY();
+        double distanceY = icon.getLayoutY() - desTile.getLayoutY();
         double stepX = distanceX / MOVINGPARTS;
         double stepY = distanceY / MOVINGPARTS;
         double startX = icon.getLayoutX();
@@ -216,6 +210,7 @@ public class Controller {
             try {
                 Thread.sleep(20);
             } catch (InterruptedException e) {
+                e.printStackTrace();
             }
             startX = startX - stepX;
             startY = startY - stepY;
