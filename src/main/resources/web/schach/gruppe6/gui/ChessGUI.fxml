@@ -79,7 +79,7 @@
     <center>
         <FlowPane alignment="CENTER" hgap="10.0" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <children>
-                <Pane prefHeight="422.0" prefWidth="210.0"/>
+                <Pane fx:id="shuffleControlPane" prefHeight="422.0" prefWidth="210.0"/>
                 <Pane fx:id="chessFieldPane">
                     <children>
                         <BorderPane prefHeight="420.0" prefWidth="330.0" style="-fx-border-color: white;">

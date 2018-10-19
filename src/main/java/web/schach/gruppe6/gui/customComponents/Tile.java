@@ -18,6 +18,8 @@ public class Tile extends StackPane {
     }
 
     public ImageView getIcon() {
+        if (icon == null)
+            throw new NullPointerException("Tile contains no icon");
         return icon;
     }
 
