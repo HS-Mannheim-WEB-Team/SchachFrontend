@@ -22,9 +22,7 @@ public class Launcher {
 	}
 	
 	private static void printLayout(Layout layout) {
-		System.out.println("--------");
 		System.out.println(layout.toStringColored());
-		System.out.println("--------");
 		System.out.println();
 	}
 }
