@@ -216,10 +216,6 @@ public class Controller {
 		return alert;
 	}
 	
-	private Bounds getBoundsRelativeToScene(Node node) {
-		return node.localToScene(node.getBoundsInLocal());
-	}
-	
 	public void shake() {
 		new Thread(() -> {
 			//FIXME: needs updating
@@ -237,6 +233,15 @@ public class Controller {
 				shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() - 10, shuffleControlPane.getPrefHeight());
 			}
 		}, "Shaker").start();
+	}
+	
+	private static Bounds getRelativeBounds(Node child, Node parent) {
+		Bounds ret = child.getBoundsInLocal();
+		while (!child.equals(parent)) {
+			ret = child.localToParent(ret);
+			child = child.getParent();
+		}
+		return ret;
 	}
 	
 	//layout handling
@@ -257,10 +262,9 @@ public class Controller {
 						figureViewMap.put(figure, icon);
 						
 						Tile desTile = ((TileField) chessField).getFieldComponents()[position.x][position.y];
-						Bounds paneBoundsInScene = getBoundsRelativeToScene(chessFieldPane);
-						Bounds tileBoundsInScene = getBoundsRelativeToScene(desTile);
-						icon.setLayoutX(tileBoundsInScene.getMinX() - paneBoundsInScene.getMinX());
-						icon.setLayoutY(tileBoundsInScene.getMinY() - paneBoundsInScene.getMinY());
+						Bounds rel = getRelativeBounds(desTile, chessFieldPane);
+						icon.setLayoutX(rel.getMinX());
+						icon.setLayoutY(rel.getMinY());
 					}
 				});
 				Platform.runLater(setInitialLayout);
@@ -294,14 +298,13 @@ public class Controller {
 								Tile nodeSrc = pofSrc.field.getFieldComponents()[pofSrc.position.x][pofSrc.position.y];
 								Tile nodeDest = pofDest.field.getFieldComponents()[pofDest.position.x][pofDest.position.y];
 								
-								Bounds boundsSrc = getBoundsRelativeToScene(nodeSrc);
-								Bounds boundsDest = getBoundsRelativeToScene(nodeDest);
-								Bounds boundsChessFieldPane = getBoundsRelativeToScene(chessFieldPane);
+								Bounds boundsSrc = getRelativeBounds(nodeSrc, chessFieldPane);
+								Bounds boundsDest = getRelativeBounds(nodeDest, chessFieldPane);
 								
 								movements.put(figure, new Movement(
-										new Vector(boundsSrc.getMinX() - boundsChessFieldPane.getMinX(), boundsSrc.getMinY() - boundsChessFieldPane.getMinY()),
+										new Vector(boundsSrc.getMinX(), boundsSrc.getMinY()),
 										timeStart,
-										new Vector(boundsDest.getMinX() - boundsChessFieldPane.getMinX(), boundsDest.getMinY() - boundsChessFieldPane.getMinY()),
+										new Vector(boundsDest.getMinX(), boundsDest.getMinY()),
 										timeEnd));
 							}
 						}
