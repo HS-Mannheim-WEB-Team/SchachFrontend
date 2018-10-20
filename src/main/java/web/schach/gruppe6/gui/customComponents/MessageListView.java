@@ -20,6 +20,8 @@ public class MessageListView extends ListView<Alert> {
 			@Override
 			public void updateItem(Alert alert, boolean empty) {
 				super.updateItem(alert, empty);
+				imageView.setFitHeight(30);
+				imageView.setFitWidth(30);
 				if (empty) {
 					setText(null);
 					setGraphic(null);
@@ -29,8 +31,9 @@ public class MessageListView extends ListView<Alert> {
                     else if (alert.getAlertType() == Alert.AlertType.ERROR) {
 							imageView.setImage(new Image("web/schach/gruppe6/gui/iconsAndImages/icon-error.png"));
 					} else if (alert.getAlertType() == Alert.AlertType.INFORMATION) {
-                        imageView.setImage(new Image("web/schach/gruppe6/gui/iconsAndImages/icon-information.png"));
+						imageView.setImage(new Image("web/schach/gruppe6/gui/iconsAndImages/icon-info.png"));
                     }
+
 					setText(alert.getTitle() + "  " + alert.getHeaderText() + "   " + alert.getContentText());
 					setGraphic(imageView);
 				}
