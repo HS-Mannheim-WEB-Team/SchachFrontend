@@ -1,8 +1,8 @@
 package web.schach.gruppe6.obj;
 
 public enum FigureType {
-
-	PAWN('P', "web/schach/gruppe6/gui/iconsAndImages/iconset1/pawn_black.png", "web/schach/gruppe6/gui/iconsAndImages/iconset1/pawn_white.png"),
+	
+	PAWN('P', "web/schach/gruppe6/gui/iconsAndImages/iconset1/pawn_white.png", "web/schach/gruppe6/gui/iconsAndImages/iconset1/pawn_black.png"),
 	KING('*', "web/schach/gruppe6/gui/iconsAndImages/iconset1/king_white.png", "web/schach/gruppe6/gui/iconsAndImages/iconset1/king_black.png"),
 	QUEEN('Q', "web/schach/gruppe6/gui/iconsAndImages/iconset1/queen_white.png", "web/schach/gruppe6/gui/iconsAndImages/iconset1/queen_black.png"),
 	KNIGHT('K', "web/schach/gruppe6/gui/iconsAndImages/iconset1/knight_white.png", "web/schach/gruppe6/gui/iconsAndImages/iconset1/knight_black.png"),

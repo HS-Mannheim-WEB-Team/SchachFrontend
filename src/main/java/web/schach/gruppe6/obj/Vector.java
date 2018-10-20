@@ -8,49 +8,53 @@ import java.util.Objects;
  * 0|0 is the lower left corner
  */
 @SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
-public final class Position {
+public final class Vector {
 	
-	public static final Position NULL_VECTOR = new Position(0, 0);
+	public static final Vector NULL_VECTOR = new Vector(0, 0);
 	
-	public final int x;
-	public final int y;
+	public final float x;
+	public final float y;
 	
-	public Position(int x, int y) {
+	public Vector(float x, float y) {
 		this.x = x;
 		this.y = y;
 	}
 	
-	public Position(String schachPosition) {
+	public Vector(String schachPosition) {
 		this(schachPosition.charAt(0) - 'a', schachPosition.charAt(1));
 	}
 	
-	public Position add(Position pos) {
-		return new Position(x + pos.x, y + pos.y);
+	public Vector add(Vector pos) {
+		return new Vector(x + pos.x, y + pos.y);
 	}
 	
-	public Position sub(Position pos) {
-		return new Position(x + pos.x, y + pos.y);
+	public Vector sub(Vector pos) {
+		return new Vector(x + pos.x, y + pos.y);
 	}
 	
-	public Position negate() {
-		return new Position(-x, -y);
+	public Vector negate() {
+		return new Vector(-x, -y);
 	}
 	
-	public boolean boundsCheck(Position min, Position max) {
+	public Vector multiply(float multi) {
+		return new Vector(x * multi, y * multi);
+	}
+	
+	public boolean boundsCheck(Vector min, Vector max) {
 		return min.x <= x && x < max.x && min.y <= y && y < max.y;
 	}
 	
-	public Vector toVector() {
-		return new Vector(x, y);
+	public Position toPosition() {
+		return new Position((int) x, (int) y);
 	}
 	
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
-		if (!(o instanceof Position))
+		if (!(o instanceof Vector))
 			return false;
-		Position position = (Position) o;
+		Vector position = (Vector) o;
 		return x == position.x && y == position.y;
 	}
 	

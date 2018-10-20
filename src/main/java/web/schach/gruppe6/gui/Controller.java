@@ -1,5 +1,6 @@
 package web.schach.gruppe6.gui;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -21,9 +22,17 @@ import web.schach.gruppe6.gui.customComponents.OccupancyListView;
 import web.schach.gruppe6.gui.customComponents.Tile;
 import web.schach.gruppe6.gui.customComponents.TileField;
 import web.schach.gruppe6.gui.util.ColorEnum;
-import web.schach.gruppe6.obj.FigureType;
-import web.schach.gruppe6.obj.PlayerColor;
+import web.schach.gruppe6.obj.Figures;
+import web.schach.gruppe6.obj.Layout;
 import web.schach.gruppe6.obj.Position;
+import web.schach.gruppe6.obj.Vector;
+import web.schach.gruppe6.util.Task;
+
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Controller {
 	
@@ -33,6 +42,9 @@ public class Controller {
 	private boolean menuIsVisible = true;
 	private boolean listVisible = true;
 	
+	private Layout layoutCurrent = Layout.INITIAL_LAYOUT;
+	private Map<Figures, ImageView> figureViewMap = new EnumMap<>(Figures.class);
+	private BlockingQueue<Layout> layoutQueue = new LinkedBlockingQueue<>();
 	
 	//HIDE&SHOW BUTTONS
 	
@@ -112,7 +124,7 @@ public class Controller {
 	@FXML
 	void initialize() {
 		setupListeners();
-		
+		launchLayoutHandler();
 		
 		//testing
 		occupancyListView.addItem("test");
@@ -222,12 +234,9 @@ public class Controller {
 		}
 	}
 	
-	public static ImageView getFigureIcon(FigureType icon, PlayerColor color) {
+	public static ImageView getFigureIcon(Figures figures) {
 		ImageView newImage = new ImageView();
-		if (color == PlayerColor.BLACK)
-			newImage.setImage(new Image(icon.iconPathBlack));
-		else
-			newImage.setImage(new Image(icon.iconPathWhite));
+		newImage.setImage(new Image(figures.getIconPath()));
 		newImage.setFitWidth(30);
 		newImage.setFitHeight(30);
 		return newImage;
@@ -255,8 +264,99 @@ public class Controller {
 		return node.localToScene(node.getBoundsInLocal());
 	}
 	
-	private Step getStep(Bounds src, Bounds des) {
-		return new Step((des.getMinX() - src.getMinX()) / MOVINGPARTS, (des.getMinY() - src.getMinY()) / MOVINGPARTS);
+	public void shuffle() {
+		new Thread() {
+			public void run() {
+				for (int i = 0; i < SHUFFLECOUNT; i++) {
+					shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() - 10, shuffleControlPane.getPrefHeight());
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException ignored) {
+					}
+					shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() + 20, shuffleControlPane.getPrefHeight());
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException ignored) {
+					}
+					shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() - 10, shuffleControlPane.getPrefHeight());
+				}
+			}
+		}.start();
+	}
+	
+	//layout handling
+	public void addLayout(Layout layout) {
+		layoutQueue.add(layout);
+	}
+	
+	private void launchLayoutHandler() {
+		Thread th = new Thread(() -> {
+			try {
+				Task setInitialLayout = new Task(() -> {
+					for (Entry<Figures, Position> entry : layoutCurrent.layout.entrySet()) {
+						Figures figure = entry.getKey();
+						Position position = entry.getValue();
+						
+						ImageView icon = getFigureIcon(figure);
+						chessFieldPane.getChildren().add(icon);
+						figureViewMap.put(figure, icon);
+						
+						Tile desTile = ((TileField) chessField).getFieldComponents()[position.x][position.y];
+						Bounds paneBoundsInScene = getBoundsRelativeToScene(chessFieldPane);
+						Bounds tileBoundsInScene = getBoundsRelativeToScene(desTile);
+						icon.setLayoutX(tileBoundsInScene.getMinX() - paneBoundsInScene.getMinX());
+						icon.setLayoutY(tileBoundsInScene.getMinY() - paneBoundsInScene.getMinY());
+					}
+				});
+				Platform.runLater(setInitialLayout);
+				setInitialLayout.await();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				System.exit(1);
+				return;
+			}
+			
+			while (true) {
+				try {
+					Layout layout = layoutQueue.take();
+					Layout old = layoutCurrent;
+					layoutCurrent = layout;
+				} catch (InterruptedException ignore) {
+				
+				}
+			}
+		}, "LayoutHandler");
+		th.setDaemon(true);
+		th.start();
+	}
+	
+	private static class Movement {
+		
+		final Vector from;
+		final long fromTime;
+		final Vector to;
+		final long toTime;
+		final Vector delta;
+		final long deltaTime;
+		
+		public Movement(Vector from, long fromTime, Vector to, long toTime) {
+			this.from = from;
+			this.fromTime = fromTime;
+			this.to = to;
+			this.toTime = toTime;
+			this.delta = to.sub(from);
+			this.deltaTime = toTime - fromTime;
+		}
+		
+		public Vector getPosition(long currTime) {
+			if (currTime <= fromTime)
+				return from;
+			if (currTime >= toTime)
+				return to;
+			
+			long currDelta = currTime - fromTime;
+			return from.add(delta.multiply(currDelta));
+		}
 	}
 	
 	private void doMove(ImageView icon, Step step) {
@@ -277,46 +377,17 @@ public class Controller {
 		}
 	}
 	
+	private Step getStep(Bounds src, Bounds des) {
+		return new Step((des.getMinX() - src.getMinX()) / MOVINGPARTS, (des.getMinY() - src.getMinY()) / MOVINGPARTS);
+	}
+	
 	public void moveIcon(TileField srcField, Position srcPos, TileField desField, Position desPos) {
 		Tile srcTile = srcField.getFieldComponents()[srcPos.x][srcPos.y];
 		Tile desTile = desField.getFieldComponents()[desPos.x][desPos.y];
-		ImageView icon = srcTile.getIcon();
 		Bounds srcBounds = getBoundsRelativeToScene(srcTile);
 		Bounds desBounds = getBoundsRelativeToScene(desTile);
 		Step step = getStep(srcBounds, desBounds);
 		doMove(icon, step);
-		desTile.setIcon(icon);
-	}
-	
-	public void placeIcon(TileField desField, Position desPos, FigureType iconType, PlayerColor color) {
-		ImageView icon = getFigureIcon(iconType, color);
-		Tile desTile = desField.getFieldComponents()[desPos.x][desPos.y];
-		desTile.setIcon(icon);
-		chessFieldPane.getChildren().add(icon);
-		Bounds paneBoundsInScene = getBoundsRelativeToScene(chessFieldPane);
-		Bounds tileBoundsInScene = getBoundsRelativeToScene(desTile);
-		icon.setLayoutX(tileBoundsInScene.getMinX() - paneBoundsInScene.getMinX());
-		icon.setLayoutY(tileBoundsInScene.getMinY() - paneBoundsInScene.getMinY());
-	}
-	
-	public void shuffle() {
-		new Thread() {
-			public void run() {
-				for (int i = 0; i < SHUFFLECOUNT; i++) {
-					shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() - 10, shuffleControlPane.getPrefHeight());
-					try {
-						Thread.sleep(50);
-					} catch (InterruptedException ignored) {
-					}
-					shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() + 20, shuffleControlPane.getPrefHeight());
-					try {
-						Thread.sleep(50);
-					} catch (InterruptedException ignored) {
-					}
-					shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() - 10, shuffleControlPane.getPrefHeight());
-				}
-			}
-		}.start();
 	}
 	
 	private class Step {

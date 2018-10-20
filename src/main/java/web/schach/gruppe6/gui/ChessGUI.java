@@ -5,9 +5,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import web.schach.gruppe6.obj.FigureType;
-import web.schach.gruppe6.obj.PlayerColor;
-import web.schach.gruppe6.obj.Position;
 
 public class ChessGUI extends Application {
 	
@@ -25,10 +22,6 @@ public class ChessGUI extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		controller = loader.getController();
-		
-		//testing
-		controller.placeIcon(controller.getBeatenFiguresBot(), new Position(4, 0), FigureType.PAWN, PlayerColor.BLACK);
-		controller.placeIcon(controller.getBeatenFiguresBot(), new Position(0, 0), FigureType.PAWN, PlayerColor.BLACK);
 	}
 	
 	public static void main(String[] args) {
