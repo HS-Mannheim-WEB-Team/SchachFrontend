@@ -5,31 +5,29 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import web.schach.gruppe6.gui.util.ColorEnum;
 
-
 public class Tile extends StackPane {
-    private ImageView icon;
-
-    public Tile() {
-        this(ColorEnum.BROWN);
-    }
-
-    public Tile(ColorEnum color) {
-        setStyle("-fx-background-color: " + color.toString());
-    }
-
-    public ImageView getIcon() {
-        if (icon == null)
-            throw new NullPointerException("Tile contains no icon");
-        return icon;
-    }
-
-    public void setIcon(ImageView icon) {
-        this.icon = icon;
-    }
-
-
-    public Bounds getBounds() {
-        return this.localToScene(this.getBoundsInLocal());
-    }
-
+	
+	private ImageView icon;
+	
+	public Tile() {
+		this(ColorEnum.BROWN);
+	}
+	
+	public Tile(ColorEnum color) {
+		setStyle("-fx-background-color: " + color.toString());
+	}
+	
+	public ImageView getIcon() {
+		if (icon == null)
+			throw new NullPointerException("Tile contains no icon");
+		return icon;
+	}
+	
+	public void setIcon(ImageView icon) {
+		this.icon = icon;
+	}
+	
+	public Bounds getBounds() {
+		return this.localToScene(this.getBoundsInLocal());
+	}
 }
