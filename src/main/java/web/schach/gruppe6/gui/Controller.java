@@ -130,7 +130,8 @@ public class Controller {
 	@FXML
 	void initialize() {
 		globalCenterFlowPlane.setScaleX(ChessGUI.SCALE_FACTOR);
-		globalCenterFlowPlane.setScaleY(ChessGUI.SCALE_FACTOR);
+		chessFieldPane.setScaleY(ChessGUI.SCALE_FACTOR);
+		occupancyListView.setScaleY(ChessGUI.SCALE_FACTOR);
 		
 		setupListeners();
 		launchLayoutHandler();
