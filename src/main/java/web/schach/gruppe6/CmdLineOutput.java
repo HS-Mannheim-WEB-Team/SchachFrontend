@@ -5,7 +5,7 @@ import web.schach.gruppe6.obj.Layout;
 
 import java.io.IOException;
 
-public class Launcher {
+public class CmdLineOutput {
 	
 	public static void main(String[] args) throws IOException, InterruptedException {
 		Game game = new Game(1);

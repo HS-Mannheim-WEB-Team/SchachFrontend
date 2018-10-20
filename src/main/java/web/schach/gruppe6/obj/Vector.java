@@ -12,10 +12,10 @@ public final class Vector {
 	
 	public static final Vector NULL_VECTOR = new Vector(0, 0);
 	
-	public final float x;
-	public final float y;
+	public final double x;
+	public final double y;
 	
-	public Vector(float x, float y) {
+	public Vector(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}
@@ -29,7 +29,7 @@ public final class Vector {
 	}
 	
 	public Vector sub(Vector pos) {
-		return new Vector(x + pos.x, y + pos.y);
+		return new Vector(x - pos.x, y - pos.y);
 	}
 	
 	public Vector negate() {

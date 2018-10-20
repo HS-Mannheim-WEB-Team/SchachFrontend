@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 
 public class Layout {
 	
@@ -12,11 +13,11 @@ public class Layout {
 	static {
 		INITIAL_LAYOUT = new Layout(new EnumMap<>(Figures.class));
 		for (Figures figure : Figures.values()) {
-			INITIAL_LAYOUT.layout.put(figure, figure.initial);
+			INITIAL_LAYOUT.layout.put(figure, figure.positionInitial);
 		}
 	}
 	
-	public EnumMap<Figures, Position> layout;
+	private EnumMap<Figures, Position> layout;
 	
 	private Layout(EnumMap<Figures, Position> layout) {
 		this.layout = layout;
@@ -48,6 +49,10 @@ public class Layout {
 				return entry.getKey();
 		}
 		return null;
+	}
+	
+	public Set<Entry<Figures, Position>> entrySet() {
+		return layout.entrySet();
 	}
 	
 	@SuppressWarnings("MethodDoesntCallSuperMethod")

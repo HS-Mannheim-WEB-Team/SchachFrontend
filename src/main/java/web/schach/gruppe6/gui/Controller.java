@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -24,6 +25,7 @@ import web.schach.gruppe6.gui.customComponents.TileField;
 import web.schach.gruppe6.gui.util.ColorEnum;
 import web.schach.gruppe6.obj.Figures;
 import web.schach.gruppe6.obj.Layout;
+import web.schach.gruppe6.obj.PlayerColor;
 import web.schach.gruppe6.obj.Position;
 import web.schach.gruppe6.obj.Vector;
 import web.schach.gruppe6.util.Task;
@@ -31,12 +33,16 @@ import web.schach.gruppe6.util.Task;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Controller {
 	
 	private static final int SHUFFLECOUNT = 2;
+	private static final long timeMovementTotalNano = 1000 * 1000000;
+	private static final long timeMovementStepNano = 20 * 1000000;
+	
 	private final int MOVINGPARTS = 20;
 	private boolean messageListIsVisible = true;
 	private boolean menuIsVisible = true;
@@ -134,7 +140,7 @@ public class Controller {
 			public void handle(MouseEvent event) {
 				Alert message = getMessage(Alert.AlertType.INFORMATION, "Test Connection", "Results:", "Connect successfully!");
 				messageListView.addItem(message);
-				shuffle();
+				shake();
 			}
 		});
 		newGameButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -142,43 +148,15 @@ public class Controller {
 			public void handle(MouseEvent event) {
 				Alert message = getMessage(Alert.AlertType.WARNING, "Test Connection", "Results:", "WARNING");
 				messageListView.addItem(message);
-				shuffle();
+				shake();
 			}
 		});
-		
+
 		saveButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				new Thread() {
-					public void run() {
-						moveIcon(beatenFiguresBot, new Position(4, 0), chessField, new Position(3, 1));
-						try {
-							Thread.sleep(100);
-						} catch (InterruptedException ignored) {
-						}
-						moveIcon(chessField, new Position(3, 1), beatenFiguresBot, new Position(1, 0));
-						try {
-							Thread.sleep(100);
-						} catch (InterruptedException ignored) {
-						}
-						moveIcon(beatenFiguresBot, new Position(1, 0), beatenFiguresBot, new Position(4, 0));
-					}
-				}.start();
-				new Thread() {
-					public void run() {
-						moveIcon(beatenFiguresBot, new Position(0, 0), beatenFiguresBot, new Position(4, 0));
-						try {
-							Thread.sleep(100);
-						} catch (InterruptedException ignored) {
-						}
-						moveIcon(beatenFiguresBot, new Position(4, 0), beatenFiguresBot, new Position(2, 1));
-						try {
-							Thread.sleep(100);
-						} catch (InterruptedException ignored) {
-						}
-						moveIcon(beatenFiguresBot, new Position(2, 1), beatenFiguresBot, new Position(0, 0));
-					}
-				}.start();
+				Alert message = getMessage(AlertType.INFORMATION, "Test Connection", "Results:", "Game NOT saved!");
+				messageListView.addItem(message);
 			}
 		});
 	}
@@ -264,7 +242,7 @@ public class Controller {
 		return node.localToScene(node.getBoundsInLocal());
 	}
 	
-	public void shuffle() {
+	public void shake() {
 		new Thread() {
 			public void run() {
 				for (int i = 0; i < SHUFFLECOUNT; i++) {
@@ -293,7 +271,7 @@ public class Controller {
 		Thread th = new Thread(() -> {
 			try {
 				Task setInitialLayout = new Task(() -> {
-					for (Entry<Figures, Position> entry : layoutCurrent.layout.entrySet()) {
+					for (Entry<Figures, Position> entry : layoutCurrent.entrySet()) {
 						Figures figure = entry.getKey();
 						Position position = entry.getValue();
 						
@@ -316,11 +294,63 @@ public class Controller {
 				return;
 			}
 			
+			//noinspection InfiniteLoopStatement
 			while (true) {
 				try {
-					Layout layout = layoutQueue.take();
-					Layout old = layoutCurrent;
-					layoutCurrent = layout;
+					Layout layoutDest = layoutQueue.take();
+					Layout layoutSrc = layoutCurrent;
+					layoutCurrent = layoutDest;
+					
+					long timeStart = System.nanoTime();
+					long timeEnd = timeStart + timeMovementTotalNano;
+					EnumMap<Figures, Movement> movements = new EnumMap<>(Figures.class);
+					
+					Task taskCalcMovement = new Task(() -> {
+						for (Figures figure : Figures.values()) {
+							Position positionSrc = layoutSrc.get(figure);
+							Position positionDest = layoutDest.get(figure);
+							if (!Objects.equals(positionSrc, positionDest)) {
+								
+								PositionOnField pofSrc = resolvePositionOnField(figure, positionSrc);
+								PositionOnField pofDest = resolvePositionOnField(figure, positionDest);
+								
+								Tile nodeSrc = pofSrc.field.getFieldComponents()[pofSrc.position.x][pofSrc.position.y];
+								Tile nodeDest = pofDest.field.getFieldComponents()[pofDest.position.x][pofDest.position.y];
+								
+								Bounds boundsSrc = getBoundsRelativeToScene(nodeSrc);
+								Bounds boundsDest = getBoundsRelativeToScene(nodeDest);
+								Bounds boundsChessFieldPane = getBoundsRelativeToScene(chessFieldPane);
+								
+								movements.put(figure, new Movement(
+										new Vector(boundsSrc.getMinX() - boundsChessFieldPane.getMinX(), boundsSrc.getMinY() - boundsChessFieldPane.getMinY()),
+										timeStart,
+										new Vector(boundsDest.getMinX() - boundsChessFieldPane.getMinX(), boundsDest.getMinY() - boundsChessFieldPane.getMinY()),
+										timeEnd));
+							}
+						}
+					});
+					Platform.runLater(taskCalcMovement);
+					taskCalcMovement.await();
+					
+					long timeNextUpdate = timeStart;
+					while (true) {
+						//timer
+						long timeCurr;
+						while (true) {
+							timeCurr = System.nanoTime();
+							long timeUntilNextUpdate = timeNextUpdate - timeCurr;
+							if (timeUntilNextUpdate <= 0)
+								break;
+							Thread.sleep(timeUntilNextUpdate / 1000000);
+						}
+						timeNextUpdate += timeMovementStepNano;
+						if (timeNextUpdate >= timeEnd)
+							break;
+						
+						updateMovement(movements, timeCurr);
+					}
+					
+					updateMovement(movements, timeEnd);
 				} catch (InterruptedException ignore) {
 				
 				}
@@ -328,6 +358,42 @@ public class Controller {
 		}, "LayoutHandler");
 		th.setDaemon(true);
 		th.start();
+	}
+	
+	private void updateMovement(EnumMap<Figures, Movement> movements, long timeCurr) throws InterruptedException {
+		Task taskUpdatePosition = new Task(() -> {
+			for (Entry<Figures, Movement> entry : movements.entrySet()) {
+				Movement movement = entry.getValue();
+				if (movement == null)
+					continue;
+				
+				Figures figure = entry.getKey();
+				Vector currPosition = movement.getPosition(timeCurr);
+				
+				ImageView imageView = figureViewMap.get(figure);
+				imageView.setLayoutX(currPosition.x);
+				imageView.setLayoutY(currPosition.y);
+			}
+		});
+		Platform.runLater(taskUpdatePosition);
+		taskUpdatePosition.await();
+	}
+	
+	private PositionOnField resolvePositionOnField(Figures figure, Position position) {
+		if (position != null)
+			return new PositionOnField(chessField, position);
+		return new PositionOnField(figure.color == PlayerColor.WHITE ? beatenFiguresTop : beatenFiguresBot, figure.positionBeaten);
+	}
+	
+	private static class PositionOnField {
+		
+		final TileField field;
+		final Position position;
+		
+		public PositionOnField(TileField field, Position position) {
+			this.field = field;
+			this.position = position;
+		}
 	}
 	
 	private static class Movement {
@@ -354,50 +420,18 @@ public class Controller {
 			if (currTime >= toTime)
 				return to;
 			
-			long currDelta = currTime - fromTime;
+			float currDelta = (float) (currTime - fromTime) / deltaTime;
 			return from.add(delta.multiply(currDelta));
 		}
-	}
-	
-	private void doMove(ImageView icon, Step step) {
-		double x = icon.getLayoutX();
-		double y = icon.getLayoutY();
-		for (int stepCount = 0; stepCount < MOVINGPARTS; stepCount++) {
-			try {
-				Thread.sleep(20);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			x += step.x;
-			y += step.y;
-			synchronized (this) {
-				icon.setLayoutX(x);
-				icon.setLayoutY(y);
-			}
-		}
-	}
-	
-	private Step getStep(Bounds src, Bounds des) {
-		return new Step((des.getMinX() - src.getMinX()) / MOVINGPARTS, (des.getMinY() - src.getMinY()) / MOVINGPARTS);
-	}
-	
-	public void moveIcon(TileField srcField, Position srcPos, TileField desField, Position desPos) {
-		Tile srcTile = srcField.getFieldComponents()[srcPos.x][srcPos.y];
-		Tile desTile = desField.getFieldComponents()[desPos.x][desPos.y];
-		Bounds srcBounds = getBoundsRelativeToScene(srcTile);
-		Bounds desBounds = getBoundsRelativeToScene(desTile);
-		Step step = getStep(srcBounds, desBounds);
-		doMove(icon, step);
-	}
-	
-	private class Step {
 		
-		double x;
-		double y;
-		
-		public Step(double x, double y) {
-			this.x = x;
-			this.y = y;
+		@Override
+		public String toString() {
+			return "Movement{" +
+					"from=" + from +
+					", fromTime=" + fromTime +
+					", to=" + to +
+					", toTime=" + toTime +
+					'}';
 		}
 	}
 }

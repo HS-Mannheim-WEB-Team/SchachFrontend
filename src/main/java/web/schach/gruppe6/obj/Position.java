@@ -29,7 +29,7 @@ public final class Position {
 	}
 	
 	public Position sub(Position pos) {
-		return new Position(x + pos.x, y + pos.y);
+		return new Position(x - pos.x, y - pos.y);
 	}
 	
 	public Position negate() {

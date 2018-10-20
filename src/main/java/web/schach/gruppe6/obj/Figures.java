@@ -42,12 +42,14 @@ public enum Figures {
 	
 	public final FigureType type;
 	public final PlayerColor color;
-	public final Position initial;
+	public final Position positionInitial;
+	public final Position positionBeaten;
 	
-	Figures(FigureType type, PlayerColor color, Position initial) {
+	Figures(FigureType type, PlayerColor color, Position positionInitial) {
 		this.type = type;
 		this.color = color;
-		this.initial = initial;
+		this.positionInitial = positionInitial;
+		this.positionBeaten = new Position(positionInitial.x, positionInitial.y <= 2 ? positionInitial.y : positionInitial.y - 6);
 	}
 	
 	public String getIconPath() {
