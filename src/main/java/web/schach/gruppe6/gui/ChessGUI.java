@@ -11,6 +11,8 @@ import java.io.IOException;
 
 public class ChessGUI extends Application {
 	
+	public static final double SCALE_FACTOR = 2;
+	
 	public Controller controller;
 	
 	@Override
@@ -18,7 +20,7 @@ public class ChessGUI extends Application {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("ChessGUI.fxml"));
 		Parent root = loader.load();
 		root.setId("pane");
-		Scene scene = new Scene(root, 800, 600);
+		Scene scene = new Scene(root, SCALE_FACTOR * 800, SCALE_FACTOR * 600);
 		scene.getStylesheets().addAll(this.getClass().getResource("styles/BackgroundStyle.css").toExternalForm());
 		primaryStage.setResizable(false);
 		primaryStage.setTitle("WEB-Chess");

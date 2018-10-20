@@ -90,6 +90,9 @@ public class Controller {
 	
 	//TILE FIELDS
 	@FXML
+	private FlowPane globalCenterFlowPlane;
+	
+	@FXML
 	private BeatenTileField beatenFiguresTop;
 	
 	@FXML
@@ -126,6 +129,9 @@ public class Controller {
 	
 	@FXML
 	void initialize() {
+		globalCenterFlowPlane.setScaleX(ChessGUI.SCALE_FACTOR);
+		globalCenterFlowPlane.setScaleY(ChessGUI.SCALE_FACTOR);
+		
 		setupListeners();
 		launchLayoutHandler();
 		
