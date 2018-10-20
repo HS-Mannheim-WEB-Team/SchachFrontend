@@ -10,7 +10,7 @@ public class Awaitable {
 	}
 	
 	public synchronized void await() throws InterruptedException {
-		while (isTriggered)
+		while (!isTriggered)
 			this.wait();
 	}
 }
