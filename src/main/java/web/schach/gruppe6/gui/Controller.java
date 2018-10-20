@@ -27,6 +27,7 @@ import web.schach.gruppe6.obj.Position;
 import web.schach.gruppe6.obj.Vector;
 import web.schach.gruppe6.util.Task;
 
+import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -132,7 +133,7 @@ public class Controller {
 		globalCenterFlowPlane.setScaleX(ChessGUI.SCALE_FACTOR);
 		chessFieldPane.setScaleY(ChessGUI.SCALE_FACTOR);
 		occupancyListView.setScaleY(ChessGUI.SCALE_FACTOR);
-		
+
 		setupListeners();
 		launchLayoutHandler();
 		
