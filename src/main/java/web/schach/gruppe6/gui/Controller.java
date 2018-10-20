@@ -22,8 +22,9 @@ import web.schach.gruppe6.obj.Position;
 
 
 public class Controller {
-    private static final int SHUFFLECOUNT = 3;
+    private static final int SHUFFLECOUNT = 2;
     private final int MOVINGPARTS = 20;
+    private boolean messageListIsVisible = true;
     private boolean menuIsVisible = true;
     private boolean listVisible = true;
 
@@ -34,10 +35,11 @@ public class Controller {
     private Button logButton;
 
     @FXML
-    private Button optionButton;
+    private Button messageButton;
 
     @FXML
-    private ImageView optionImage;
+    private Button optionButton;
+
 
 
     //MENU
@@ -61,11 +63,14 @@ public class Controller {
     //LIST VIEW
 
     @FXML
-    private OccupancyListView listView;
+    private OccupancyListView occupancyListView;
+
+
+    @FXML
+    private MessageListView messageListView;
 
 
     //TILE FIELDS
-
     @FXML
     private BeatenTileField beatenFiguresTop;
 
@@ -93,30 +98,35 @@ public class Controller {
         return beatenFiguresBot;
     }
 
+    public OccupancyListView getOccupancyListView() {
+        return occupancyListView;
+    }
+
+    public MessageListView getMessageListView() {
+        return messageListView;
+    }
+
     @FXML
     void initialize() {
+        setupListeners();
+
+
         //testing
-        listView.addItem("test", new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-            }
-        });
-        listView.addItem("test2", new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-            }
-        });
+        occupancyListView.addItem("test");
+        occupancyListView.addItem("test2");
         joinButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                showMessage(Alert.AlertType.INFORMATION, "Test Connection", "Results:", "Connect successfully!");
+                Alert message = getMessage(Alert.AlertType.INFORMATION, "Test Connection", "Results:", "Connect successfully!");
+                messageListView.addItem(message);
                 shuffle();
             }
         });
         newGameButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                showMessage(Alert.AlertType.WARNING, "Test Connection", "Results:", "WARNING");
+                Alert message = getMessage(Alert.AlertType.WARNING, "Test Connection", "Results:", "WARNING");
+                messageListView.addItem(message);
                 shuffle();
             }
         });
@@ -161,6 +171,33 @@ public class Controller {
 
     }
 
+    private void setupListeners() {
+        occupancyListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                System.out.println(newValue);
+            }
+        });
+        messageListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Alert>() {
+            @Override
+            public void changed(ObservableValue<? extends Alert> observable, Alert oldValue, Alert newValue) {
+                newValue.showAndWait();
+            }
+        });
+    }
+
+    public void switchEventLogVisibility() {
+        if (messageListIsVisible) {
+            messageListView.setVisible(false);
+            messageListIsVisible = false;
+            setBackgroundColor(messageButton, ColorEnum.GREEN);
+        } else {
+            messageListView.setVisible(true);
+            messageListIsVisible = true;
+            setBackgroundColor(messageButton, ColorEnum.RED);
+        }
+    }
+
     public void switchMenuVisibility() {
         if (menuIsVisible) {
             menuSocket.setVisible(false);
@@ -175,13 +212,13 @@ public class Controller {
 
     public void switchListVisibility() {
         if (listVisible) {
-            listView.setVisible(false);
+            occupancyListView.setVisible(false);
             listVisible = false;
             setBackgroundColor(logButton, ColorEnum.GREEN);
 
 
         } else {
-            listView.setVisible(true);
+            occupancyListView.setVisible(true);
             listVisible = true;
             setBackgroundColor(logButton, ColorEnum.RED);
         }
@@ -209,12 +246,12 @@ public class Controller {
     /**
      * @param type should only use ERROR,WARNING or INFORMATION
      */
-    public void showMessage(Alert.AlertType type, String title, String header, String content) {
+    public Alert getMessage(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
-        alert.showAndWait();
+        return alert;
     }
 
     private Bounds getBoundsRelativeToScene(Node node) {

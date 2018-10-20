@@ -18,7 +18,7 @@ public class ChessGUI extends Application {
         Parent root = loader.load();
         root.setId("pane");
         Scene scene = new Scene(root, 800, 600);
-        scene.getStylesheets().addAll(this.getClass().getResource("styles/backgroundStyle.css").toExternalForm());
+        scene.getStylesheets().addAll(this.getClass().getResource("styles/BackgroundStyle.css").toExternalForm());
         primaryStage.setResizable(false);
         primaryStage.setTitle("WEB-Chess");
         primaryStage.setScene(scene);

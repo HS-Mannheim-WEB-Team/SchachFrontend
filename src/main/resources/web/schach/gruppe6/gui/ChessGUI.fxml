@@ -3,12 +3,9 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import web.schach.gruppe6.gui.customComponents.BeatenTileField?>
-<?import web.schach.gruppe6.gui.customComponents.ChessTileField?>
-<?import web.schach.gruppe6.gui.customComponents.OccupancyListView?>
+<?import web.schach.gruppe6.gui.customComponents.*?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
             prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.161-ea" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="web.schach.gruppe6.gui.Controller">
@@ -49,6 +46,17 @@
                 </FlowPane>
                 <FlowPane alignment="TOP_RIGHT" hgap="2.0" prefHeight="43.0" prefWidth="50.0" GridPane.columnIndex="1">
                     <children>
+                        <Button fx:id="messageButton" mnemonicParsing="false" onAction="#switchEventLogVisibility"
+                                prefHeight="6.0" prefWidth="50.0" style="-fx-background-color: red;">
+                            <graphic>
+                                <ImageView fx:id="optionImage" fitHeight="20.0" fitWidth="28.0" pickOnBounds="true"
+                                           preserveRatio="true">
+                                    <image>
+                                        <Image url="@iconsAndImages/icon-eventLog-button.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                         <Button fx:id="logButton" mnemonicParsing="false" onAction="#switchListVisibility"
                                 prefHeight="6.0" prefWidth="50.0" style="-fx-background-color: red;" textOverrun="CLIP">
                             <graphic>
@@ -82,7 +90,7 @@
                 <Pane fx:id="shuffleControlPane" prefHeight="422.0" prefWidth="210.0"/>
                 <Pane fx:id="chessFieldPane">
                     <children>
-                        <BorderPane prefHeight="420.0" prefWidth="330.0" style="-fx-border-color: white;">
+                        <BorderPane prefHeight="420.0" prefWidth="332.0" style="-fx-border-color: white;">
                             <center>
                                 <ChessTileField fx:id="chessField" prefHeight="300.0" prefWidth="300.0"
                                                 style="-fx-border-color: white;" BorderPane.alignment="CENTER">
@@ -178,9 +186,15 @@
                         </BorderPane>
                     </children>
                 </Pane>
-                <OccupancyListView fx:id="listView" editable="true" opacity="0.8" prefHeight="422.0" prefWidth="200.0"
-                                   style="-fx-border-color: white;" stylesheets="@styles/listViewStyle.css"/>
+                <OccupancyListView fx:id="occupancyListView" editable="true" opacity="0.8" prefHeight="422.0"
+                                   prefWidth="200.0" style="-fx-border-color: white;"
+                                   stylesheets="@styles/OccupancyListViewStyle.css"/>
             </children>
         </FlowPane>
     </center>
+    <bottom>
+        <MessageListView fx:id="messageListView" editable="true" opacity="0.8" prefHeight="100.0" prefWidth="800.0"
+                         style="-fx-border-color: white;" stylesheets="@styles/MessageListViewStyle.css"
+                         BorderPane.alignment="CENTER"/>
+    </bottom>
 </BorderPane>

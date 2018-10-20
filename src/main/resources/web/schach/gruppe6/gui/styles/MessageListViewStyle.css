@@ -1,0 +1,21 @@
+.list-view {
+    -fx-background-color: black;
+    -fx-text-fill: black;
+    -fx-opacity: 0.8;
+}
+
+.list-view .list-cell:even {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+}
+
+.list-view .list-cell:odd {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+}
+
+.list-view .list-cell:selected {
+    -fx-background-color: aliceblue;
+    -fx-text-fill: blue;
+    -fx-border-color: white;
+}
