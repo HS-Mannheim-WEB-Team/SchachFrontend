@@ -13,21 +13,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
-import web.schach.gruppe6.gui.customComponents.BeatenTileField;
-import web.schach.gruppe6.gui.customComponents.ChessTileField;
-import web.schach.gruppe6.gui.customComponents.MessageListView;
-import web.schach.gruppe6.gui.customComponents.OccupancyListView;
-import web.schach.gruppe6.gui.customComponents.Tile;
-import web.schach.gruppe6.gui.customComponents.TileField;
+import web.schach.gruppe6.gui.customComponents.*;
 import web.schach.gruppe6.gui.util.ColorEnum;
-import web.schach.gruppe6.obj.Figures;
-import web.schach.gruppe6.obj.Layout;
-import web.schach.gruppe6.obj.PlayerColor;
-import web.schach.gruppe6.obj.Position;
-import web.schach.gruppe6.obj.Vector;
+import web.schach.gruppe6.obj.*;
 import web.schach.gruppe6.util.Task;
 
-import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -133,7 +123,6 @@ public class Controller {
 		globalCenterFlowPlane.setScaleX(ChessGUI.SCALE_FACTOR);
 		chessFieldPane.setScaleY(ChessGUI.SCALE_FACTOR);
 		occupancyListView.setScaleY(ChessGUI.SCALE_FACTOR);
-
 		setupListeners();
 		launchLayoutHandler();
 		
@@ -141,7 +130,7 @@ public class Controller {
 		occupancyListView.addItem("test");
 		occupancyListView.addItem("test2");
 		joinButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-			Alert message = getMessage(AlertType.INFORMATION, "Test Connection", "Results:", "Connect successfully!");
+			Alert message = getMessage(AlertType.ERROR, "Test Connection", "Results:", "Connect successfully!");
 			messageListView.addItem(message);
 			shake();
 		});

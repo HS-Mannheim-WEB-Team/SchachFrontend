@@ -16,14 +16,14 @@ import java.io.IOException;
 
 public class ChessGUI extends Application {
 
-	public static final double SCALE_FACTOR = 2;
+    public static final double SCALE_FACTOR = 1;
 
 	public Controller controller;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
         try {
-            resize("/home/phoenix/IdeaProjects/SchachFrontend/src/main/resources/web/schach/gruppe6/gui/iconsAndImages/backgroundPicture.jpg", "/home/phoenix/IdeaProjects/SchachFrontend/src/main/resources/web/schach/gruppe6/gui/iconsAndImages/backgroundPicture.jpg", (int) SCALE_FACTOR * 800, (int) SCALE_FACTOR * 600);
+            resize("out/production/resources/web/schach/gruppe6/gui/iconsAndImages/backgroundPicture.jpg", "out/production/resources/web/schach/gruppe6/gui/iconsAndImages/backgroundPicture.jpg", (int) SCALE_FACTOR * 800, (int) SCALE_FACTOR * 600);
         }catch(IOException e) {
             e.printStackTrace();
         }
@@ -88,6 +88,7 @@ public class ChessGUI extends Application {
 
 		// writes to output file
 		ImageIO.write(outputImage, formatName, new File(outputImagePath));
+        outputImage.flush();
 	}
 
 	public static void main(String[] args) {
