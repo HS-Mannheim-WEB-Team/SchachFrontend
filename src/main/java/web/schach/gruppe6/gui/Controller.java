@@ -1,9 +1,6 @@
 package web.schach.gruppe6.gui;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -39,11 +36,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class Controller {
 	
-	private static final int SHUFFLECOUNT = 2;
-	private static final long timeMovementTotalNano = 1000 * 1000000;
-	private static final long timeMovementStepNano = 20 * 1000000;
+	private static final int SHUFFLE_COUNT = 2;
+	private static final long TIME_MOVEMENT_TOTAL_NANO = 1000 * 1000000;
+	private static final long TIME_MOVEMENT_STEP_NANO = 20 * 1000000;
 	
-	private final int MOVINGPARTS = 20;
 	private boolean messageListIsVisible = true;
 	private boolean menuIsVisible = true;
 	private boolean listVisible = true;
@@ -80,6 +76,7 @@ public class Controller {
 	private Button joinButton;
 	
 	@FXML
+	@SuppressWarnings("unused")
 	private TextField iDTextField;
 	
 	
@@ -135,45 +132,26 @@ public class Controller {
 		//testing
 		occupancyListView.addItem("test");
 		occupancyListView.addItem("test2");
-		joinButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				Alert message = getMessage(Alert.AlertType.INFORMATION, "Test Connection", "Results:", "Connect successfully!");
-				messageListView.addItem(message);
-				shake();
-			}
+		joinButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+			Alert message = getMessage(AlertType.INFORMATION, "Test Connection", "Results:", "Connect successfully!");
+			messageListView.addItem(message);
+			shake();
 		});
-		newGameButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				Alert message = getMessage(Alert.AlertType.WARNING, "Test Connection", "Results:", "WARNING");
-				messageListView.addItem(message);
-				shake();
-			}
+		newGameButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+			Alert message = getMessage(AlertType.WARNING, "Test Connection", "Results:", "WARNING");
+			messageListView.addItem(message);
+			shake();
 		});
-
-		saveButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				Alert message = getMessage(AlertType.INFORMATION, "Test Connection", "Results:", "Game NOT saved!");
-				messageListView.addItem(message);
-			}
+		
+		saveButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+			Alert message = getMessage(AlertType.INFORMATION, "Test Connection", "Results:", "Game NOT saved!");
+			messageListView.addItem(message);
 		});
 	}
 	
 	private void setupListeners() {
-		occupancyListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				System.out.println(newValue);
-			}
-		});
-		messageListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Alert>() {
-			@Override
-			public void changed(ObservableValue<? extends Alert> observable, Alert oldValue, Alert newValue) {
-				newValue.showAndWait();
-			}
-		});
+		occupancyListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> System.out.println(newValue));
+		messageListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> newValue.showAndWait());
 	}
 	
 	public void switchEventLogVisibility() {
@@ -243,23 +221,22 @@ public class Controller {
 	}
 	
 	public void shake() {
-		new Thread() {
-			public void run() {
-				for (int i = 0; i < SHUFFLECOUNT; i++) {
-					shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() - 10, shuffleControlPane.getPrefHeight());
-					try {
-						Thread.sleep(50);
-					} catch (InterruptedException ignored) {
-					}
-					shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() + 20, shuffleControlPane.getPrefHeight());
-					try {
-						Thread.sleep(50);
-					} catch (InterruptedException ignored) {
-					}
-					shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() - 10, shuffleControlPane.getPrefHeight());
+		new Thread(() -> {
+			//FIXME: needs updating
+			for (int i = 0; i < SHUFFLE_COUNT; i++) {
+				shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() - 10, shuffleControlPane.getPrefHeight());
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException ignored) {
 				}
+				shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() + 20, shuffleControlPane.getPrefHeight());
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException ignored) {
+				}
+				shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() - 10, shuffleControlPane.getPrefHeight());
 			}
-		}.start();
+		}, "Shaker").start();
 	}
 	
 	//layout handling
@@ -302,7 +279,7 @@ public class Controller {
 					layoutCurrent = layoutDest;
 					
 					long timeStart = System.nanoTime();
-					long timeEnd = timeStart + timeMovementTotalNano;
+					long timeEnd = timeStart + TIME_MOVEMENT_TOTAL_NANO;
 					EnumMap<Figures, Movement> movements = new EnumMap<>(Figures.class);
 					
 					Task taskCalcMovement = new Task(() -> {
@@ -343,7 +320,7 @@ public class Controller {
 								break;
 							Thread.sleep(timeUntilNextUpdate / 1000000);
 						}
-						timeNextUpdate += timeMovementStepNano;
+						timeNextUpdate += TIME_MOVEMENT_STEP_NANO;
 						if (timeNextUpdate >= timeEnd)
 							break;
 						
