@@ -397,8 +397,9 @@ public class Controller {
 			if (currTime >= toTime)
 				return to;
 			
-			float currDelta = (float) (currTime - fromTime) / deltaTime;
-			return from.add(delta.multiply(currDelta));
+			float d = (float) (currTime - fromTime) / deltaTime;
+			d = d * d * (3 - 2 * d);
+			return from.add(delta.multiply(d));
 		}
 		
 		@Override
