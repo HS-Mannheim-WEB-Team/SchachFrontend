@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -19,173 +19,194 @@
 <?import web.schach.gruppe6.gui.customComponents.ChessTileField?>
 <?import web.schach.gruppe6.gui.customComponents.MessageListView?>
 <?import web.schach.gruppe6.gui.customComponents.OccupancyListView?>
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.161-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="web.schach.gruppe6.gui.Controller">
-    <top>
-        <GridPane fx:id="topSocket" BorderPane.alignment="CENTER">
-            <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            </rowConstraints>
-            <children>
-                <FlowPane fx:id="menuSocket" hgap="2.0" prefHeight="40.0" prefWidth="543.0">
-                    <children>
-                        <Label alignment="CENTER" prefHeight="30.0" prefWidth="40.0" style="-fx-background-color: transparent;" text="ID:" textFill="#70b3ff">
-                            <opaqueInsets>
-                                <Insets />
-                            </opaqueInsets>
-                        </Label>
-                        <TextField fx:id="iDTextField" prefHeight="30.0" prefWidth="60.0">
-                            <cursor>
-                                <Cursor fx:constant="TEXT" />
-                            </cursor>
-                            <opaqueInsets>
-                                <Insets />
-                            </opaqueInsets>
-                        </TextField>
-                        <Separator prefHeight="9.0" prefWidth="10.0" visible="false" />
-                        <Button fx:id="joinButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0" text="join" />
-                        <Button fx:id="newGameButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0" text="new Game" />
-                        <Button fx:id="saveButton" layoutX="140.0" layoutY="10.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0" text="save" />
-                    </children>
-                </FlowPane>
-                <FlowPane alignment="TOP_RIGHT" hgap="2.0" prefHeight="43.0" prefWidth="50.0" GridPane.columnIndex="1">
-                    <children>
-                        <Button fx:id="messageButton" mnemonicParsing="false" onAction="#switchEventLogVisibility" prefHeight="6.0" prefWidth="50.0" style="-fx-background-color: red;">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@iconsAndImages/icon-eventLog-button.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Button fx:id="logButton" mnemonicParsing="false" onAction="#switchListVisibility" prefHeight="6.0" prefWidth="50.0" style="-fx-background-color: red;" textOverrun="CLIP">
-                            <graphic>
-                                <ImageView fx:id="logImage" fitHeight="20.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@iconsAndImages/log_icon.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Button fx:id="optionButton" mnemonicParsing="false" onAction="#switchMenuVisibility" prefHeight="6.0" prefWidth="50.0" style="-fx-background-color: red;">
-                            <graphic>
-                                <ImageView fx:id="optionImage" fitHeight="20.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@iconsAndImages/gearIcon.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                    </children>
-                </FlowPane>
-            </children>
-        </GridPane>
-    </top>
-    <center>
-        <FlowPane fx:id="globalCenterFlowPlane" alignment="CENTER" hgap="10.0" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-            <children>
-                <Pane fx:id="shuffleControlPane" prefHeight="422.0" prefWidth="210.0" />
-                <Pane fx:id="chessFieldPane">
-                    <children>
-                        <BorderPane prefHeight="420.0" prefWidth="332.0" style="-fx-border-color: white;">
-                            <center>
-                                <ChessTileField fx:id="chessField" prefHeight="300.0" prefWidth="300.0" style="-fx-border-color: white;" BorderPane.alignment="CENTER">
-                                    <opaqueInsets>
-                                        <Insets />
-                                    </opaqueInsets>
-                                    <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    </columnConstraints>
-                                    <rowConstraints>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    </rowConstraints>
-                                </ChessTileField>
-                            </center>
-                            <left>
-                                <Pane prefHeight="300.0" prefWidth="15.0" style="-fx-background-color: burlywood;" BorderPane.alignment="CENTER" />
-                            </left>
-                            <right>
-                                <Pane prefHeight="300.0" prefWidth="15.0" style="-fx-background-color: burlywood;" BorderPane.alignment="CENTER" />
-                            </right>
-                            <bottom>
-                                <HBox prefHeight="60.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                                    <children>
-                                        <Pane prefHeight="60.0" prefWidth="51.0" style="-fx-background-color: burlywood;" />
-                                        <BeatenTileField fx:id="beatenFiguresBot" prefHeight="60.0" prefWidth="240.0">
-                                            <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                            </columnConstraints>
-                                            <rowConstraints>
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            </rowConstraints>
-                                        </BeatenTileField>
-                                        <Pane prefHeight="60.0" prefWidth="51.0" style="-fx-background-color: burlywood;" />
-                                    </children>
-                                </HBox>
-                            </bottom>
-                            <top>
-                                <HBox prefHeight="60.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                                    <children>
-                                        <Pane prefHeight="60.0" prefWidth="51.0" style="-fx-background-color: burlywood;" />
-                                        <BeatenTileField fx:id="beatenFiguresTop" prefHeight="60.0" prefWidth="240.0">
-                                            <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                            </columnConstraints>
-                                            <rowConstraints>
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            </rowConstraints>
-                                        </BeatenTileField>
-                                        <Pane prefHeight="60.0" prefWidth="51.0" style="-fx-background-color: burlywood;" />
-                                    </children>
-                                </HBox>
-                            </top>
-                        </BorderPane>
-                    </children>
-                </Pane>
-                <OccupancyListView fx:id="occupancyListView" editable="true" opacity="0.8" prefHeight="422.0" prefWidth="200.0" style="-fx-border-color: white;" stylesheets="@styles/OccupancyListViewStyle.css" />
-            </children>
-        </FlowPane>
-    </center>
-    <bottom>
-        <MessageListView fx:id="messageListView" editable="true" opacity="0.8" prefHeight="100.0" prefWidth="800.0" style="-fx-border-color: white;" stylesheets="@styles/MessageListViewStyle.css" BorderPane.alignment="CENTER" />
-    </bottom>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
+			prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.161-ea" xmlns:fx="http://javafx.com/fxml/1"
+			fx:controller="web.schach.gruppe6.gui.Controller">
+	<top>
+		<GridPane fx:id="topSocket" BorderPane.alignment="CENTER">
+			<columnConstraints>
+				<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+				<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+			</columnConstraints>
+			<rowConstraints>
+				<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+			</rowConstraints>
+			<children>
+				<FlowPane fx:id="menuSocket" hgap="2.0" prefHeight="40.0" prefWidth="543.0">
+					<children>
+						<Label alignment="CENTER" prefHeight="30.0" prefWidth="40.0"
+							   style="-fx-background-color: transparent;" text="ID:" textFill="#70b3ff">
+							<opaqueInsets>
+								<Insets/>
+							</opaqueInsets>
+						</Label>
+						<TextField fx:id="iDTextField" prefHeight="30.0" prefWidth="60.0">
+							<cursor>
+								<Cursor fx:constant="TEXT"/>
+							</cursor>
+							<opaqueInsets>
+								<Insets/>
+							</opaqueInsets>
+						</TextField>
+						<Separator prefHeight="9.0" prefWidth="10.0" visible="false"/>
+						<Button fx:id="joinButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0"
+								text="join"/>
+						<Button fx:id="newGameButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0"
+								text="new Game"/>
+						<Button fx:id="saveButton" layoutX="140.0" layoutY="10.0" mnemonicParsing="false"
+								prefHeight="30.0" prefWidth="90.0" text="save"/>
+					</children>
+				</FlowPane>
+				<FlowPane alignment="TOP_RIGHT" hgap="2.0" prefHeight="43.0" prefWidth="50.0" GridPane.columnIndex="1">
+					<children>
+						<Button fx:id="messageButton" mnemonicParsing="false" onAction="#switchEventLogVisibility"
+								prefHeight="6.0" prefWidth="50.0" style="-fx-background-color: red;">
+							<graphic>
+								<ImageView fitHeight="20.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+									<image>
+										<Image url="@iconsAndImages/icon-eventLog-button.png"/>
+									</image>
+								</ImageView>
+							</graphic>
+						</Button>
+						<Button fx:id="logButton" mnemonicParsing="false" onAction="#switchListVisibility"
+								prefHeight="6.0" prefWidth="50.0" style="-fx-background-color: red;" textOverrun="CLIP">
+							<graphic>
+								<ImageView fx:id="logImage" fitHeight="20.0" fitWidth="28.0" pickOnBounds="true"
+										   preserveRatio="true">
+									<image>
+										<Image url="@iconsAndImages/log_icon.png"/>
+									</image>
+								</ImageView>
+							</graphic>
+						</Button>
+						<Button fx:id="optionButton" mnemonicParsing="false" onAction="#switchMenuVisibility"
+								prefHeight="6.0" prefWidth="50.0" style="-fx-background-color: red;">
+							<graphic>
+								<ImageView fx:id="optionImage" fitHeight="20.0" fitWidth="28.0" pickOnBounds="true"
+										   preserveRatio="true">
+									<image>
+										<Image url="@iconsAndImages/gearIcon.png"/>
+									</image>
+								</ImageView>
+							</graphic>
+						</Button>
+					</children>
+				</FlowPane>
+			</children>
+		</GridPane>
+	</top>
+	<center>
+		<FlowPane fx:id="globalCenterFlowPlane" alignment="CENTER" hgap="10.0" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+			<children>
+				<Pane fx:id="shuffleControlPane" prefHeight="422.0" prefWidth="210.0"/>
+				<Pane fx:id="chessFieldPane">
+					<children>
+						<BorderPane prefHeight="420.0" prefWidth="332.0" style="-fx-border-color: white;">
+							<center>
+								<ChessTileField fx:id="chessField" prefHeight="300.0" prefWidth="300.0"
+												style="-fx-border-color: white;" BorderPane.alignment="CENTER">
+									<opaqueInsets>
+										<Insets/>
+									</opaqueInsets>
+									<columnConstraints>
+										<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+										<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+										<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+										<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+										<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+										<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+										<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+										<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+										<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+										<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+									</columnConstraints>
+									<rowConstraints>
+										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+									</rowConstraints>
+								</ChessTileField>
+							</center>
+							<left>
+								<Pane prefHeight="300.0" prefWidth="15.0" style="-fx-background-color: burlywood;"
+									  BorderPane.alignment="CENTER"/>
+							</left>
+							<right>
+								<Pane prefHeight="300.0" prefWidth="15.0" style="-fx-background-color: burlywood;"
+									  BorderPane.alignment="CENTER"/>
+							</right>
+							<bottom>
+								<HBox prefHeight="60.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+									<children>
+										<Pane prefHeight="60.0" prefWidth="51.0"
+											  style="-fx-background-color: burlywood;"/>
+										<BeatenTileField fx:id="beatenFiguresBot" prefHeight="60.0" prefWidth="240.0">
+											<columnConstraints>
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+											</columnConstraints>
+											<rowConstraints>
+												<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+												<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+											</rowConstraints>
+										</BeatenTileField>
+										<Pane prefHeight="60.0" prefWidth="51.0"
+											  style="-fx-background-color: burlywood;"/>
+									</children>
+								</HBox>
+							</bottom>
+							<top>
+								<HBox prefHeight="60.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+									<children>
+										<Pane prefHeight="60.0" prefWidth="51.0"
+											  style="-fx-background-color: burlywood;"/>
+										<BeatenTileField fx:id="beatenFiguresTop" prefHeight="60.0" prefWidth="240.0">
+											<columnConstraints>
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+											</columnConstraints>
+											<rowConstraints>
+												<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+												<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+											</rowConstraints>
+										</BeatenTileField>
+										<Pane prefHeight="60.0" prefWidth="51.0"
+											  style="-fx-background-color: burlywood;"/>
+									</children>
+								</HBox>
+							</top>
+						</BorderPane>
+					</children>
+				</Pane>
+				<OccupancyListView fx:id="occupancyListView" editable="true" opacity="0.8" prefHeight="422.0"
+								   prefWidth="200.0" style="-fx-border-color: white;"
+								   stylesheets="@styles/OccupancyListViewStyle.css"/>
+			</children>
+		</FlowPane>
+	</center>
+	<bottom>
+		<MessageListView fx:id="messageListView" editable="true" opacity="0.8" prefHeight="100.0" prefWidth="800.0"
+						 style="-fx-border-color: white;" stylesheets="@styles/MessageListViewStyle.css"
+						 BorderPane.alignment="CENTER"/>
+	</bottom>
 </BorderPane>

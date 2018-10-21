@@ -28,12 +28,12 @@ public class MessageListView extends ListView<Alert> {
 				} else {
 					if (alert.getAlertType() == Alert.AlertType.WARNING)
 						imageView.setImage(new Image("web/schach/gruppe6/gui/iconsAndImages/icon-warning.png"));
-                    else if (alert.getAlertType() == Alert.AlertType.ERROR) {
-							imageView.setImage(new Image("web/schach/gruppe6/gui/iconsAndImages/icon-error.png"));
+					else if (alert.getAlertType() == Alert.AlertType.ERROR) {
+						imageView.setImage(new Image("web/schach/gruppe6/gui/iconsAndImages/icon-error.png"));
 					} else if (alert.getAlertType() == Alert.AlertType.INFORMATION) {
 						imageView.setImage(new Image("web/schach/gruppe6/gui/iconsAndImages/icon-info.png"));
-                    }
-
+					}
+					
 					setText(alert.getTitle() + "  " + alert.getHeaderText() + "   " + alert.getContentText());
 					setGraphic(imageView);
 				}
