@@ -2,6 +2,7 @@ package web.schach.gruppe6.gui.customComponents;
 
 import javafx.scene.layout.GridPane;
 import web.schach.gruppe6.gui.util.ColorEnum;
+import web.schach.gruppe6.obj.Position;
 
 public class ChessTileField extends GridPane implements TileField {
 	
@@ -65,5 +66,15 @@ public class ChessTileField extends GridPane implements TileField {
 	
 	public Tile[][] getFieldComponents() {
 		return chessFieldComponents;
+	}
+	
+	public void mark(Position pos) {
+		Tile tile = chessFieldComponents[pos.x][pos.y];
+		tile.setStyle("-fx-border-color: red; \r\n" + "-fx-border-width: 3; \r\n" + "-fx-background-color: " + tile.getColor() + ";\r\n");
+	}
+	
+	public void unmark(Position pos) {
+		Tile tile = chessFieldComponents[pos.x][pos.y];
+		tile.setStyle("-fx-border-color: red " + "-fx-border-color: " + tile.getColor().toString());
 	}
 }
