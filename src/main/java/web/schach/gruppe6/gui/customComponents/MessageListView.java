@@ -12,7 +12,6 @@ import javafx.scene.input.MouseEvent;
 import static javafx.collections.FXCollections.observableArrayList;
 
 public class MessageListView extends ListView<Alert> {
-	
 	public ObservableList<Alert> data = observableArrayList();
 	
 	public MessageListView() {
@@ -44,7 +43,9 @@ public class MessageListView extends ListView<Alert> {
 		setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
 			@Override
 			public void handle(MouseEvent click) {
-				getSelectionModel().getSelectedItem().showAndWait();
+				Alert alert = getSelectionModel().getSelectedItem();
+				if (alert != null)
+					alert.showAndWait();
 			}
 		});
 		setItems(data);

@@ -91,7 +91,10 @@ public class Controller {
 	
 	//MENU
 	@FXML
-	private FlowPane menuSocket;
+	private FlowPane menuSocketLeft;
+	
+	@FXML
+	private FlowPane menuSocketMid;
 
 //	@FXML
 //	private Button saveButton;
@@ -199,7 +202,8 @@ public class Controller {
 	}
 	
 	public void switchMenuVisibility() {
-		switchVisibility(menuSocket, optionButton, menuIsVisible);
+		switchVisibility(menuSocketLeft, optionButton, menuIsVisible);
+		switchVisibility(menuSocketMid, optionButton, menuIsVisible);
 		menuIsVisible = !menuIsVisible;
 	}
 	

@@ -33,7 +33,7 @@
 				<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
 			</rowConstraints>
 			<children>
-				<FlowPane fx:id="menuSocket" hgap="2.0" prefHeight="40.0" prefWidth="800.0">
+				<FlowPane fx:id="menuSocketLeft" hgap="2.0" prefHeight="40.0" prefWidth="800.0">
 					<children>
 						<Label alignment="CENTER" prefHeight="30.0" prefWidth="40.0" style="-fx-background-color: transparent;" text="ID:" textFill="#70b3ff">
 							<opaqueInsets>
@@ -86,7 +86,7 @@
 						</Button>
 					</children>
 				</FlowPane>
-				<FlowPane alignment="CENTER" columnHalignment="CENTER" hgap="2.0" prefHeight="40.0" prefWidth="543.0" GridPane.columnIndex="1">
+				<FlowPane fx:id="menuSocketMid" alignment="CENTER" columnHalignment="CENTER" hgap="2.0" prefHeight="40.0" prefWidth="543.0" GridPane.columnIndex="1">
 					<children>
 						<Button fx:id="joinButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="85.0" text="join"/>
 						<Button fx:id="newGameButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0" text="new Game"/>
