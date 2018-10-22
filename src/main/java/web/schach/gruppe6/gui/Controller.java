@@ -132,6 +132,18 @@ public class Controller {
 	@FXML
 	private Pane shuffleControlPane;
 	
+	public Pane getShuffleControlPane() {
+		return shuffleControlPane;
+	}
+	
+	public Pane getChessFieldPane() {
+		return chessFieldPane;
+	}
+	
+	public FlowPane getGlobalCenterFlowPlane() {
+		return globalCenterFlowPlane;
+	}
+	
 	public BeatenTileField getBeatenFiguresTop() {
 		return beatenFiguresTop;
 	}
@@ -154,9 +166,6 @@ public class Controller {
 	
 	@FXML
 	void initialize() {
-		globalCenterFlowPlane.setScaleX(ChessGUI.SCALE_FACTOR);
-		chessFieldPane.setScaleY(ChessGUI.SCALE_FACTOR);
-		occupancyListView.setScaleY(ChessGUI.SCALE_FACTOR);
 		
 		setupNetwork();
 		setupLayoutHandler();
