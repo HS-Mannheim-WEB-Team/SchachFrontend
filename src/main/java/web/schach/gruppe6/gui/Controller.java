@@ -21,6 +21,7 @@ import web.schach.gruppe6.gui.customComponents.Tile;
 import web.schach.gruppe6.gui.customComponents.TileField;
 import web.schach.gruppe6.gui.util.ColorEnum;
 import web.schach.gruppe6.obj.Figures;
+import web.schach.gruppe6.obj.Game;
 import web.schach.gruppe6.obj.Layout;
 import web.schach.gruppe6.obj.PlayerColor;
 import web.schach.gruppe6.obj.Position;
@@ -44,9 +45,13 @@ public class Controller {
 	private boolean menuIsVisible = true;
 	private boolean listVisible = true;
 	
+	private Game game;
+	
 	private Layout layoutCurrent = Layout.INITIAL_LAYOUT;
 	private Map<Figures, ImageView> figureViewMap = new EnumMap<>(Figures.class);
 	private BlockingQueue<Layout> layoutQueue = new LinkedBlockingQueue<>();
+	
+	private BlockingQueue<Boolean> shakeQueue = new LinkedBlockingQueue<>();
 	
 	//HIDE&SHOW BUTTONS
 	
@@ -58,7 +63,6 @@ public class Controller {
 	
 	@FXML
 	private Button optionButton;
-	
 	
 	//MENU
 	
@@ -77,7 +81,6 @@ public class Controller {
 	@FXML
 	@SuppressWarnings("unused")
 	private TextField iDTextField;
-	
 	
 	//LIST VIEW
 	
@@ -131,8 +134,9 @@ public class Controller {
 		globalCenterFlowPlane.setScaleX(ChessGUI.SCALE_FACTOR);
 		chessFieldPane.setScaleY(ChessGUI.SCALE_FACTOR);
 		occupancyListView.setScaleY(ChessGUI.SCALE_FACTOR);
-		setupListeners();
-		launchLayoutHandler();
+		
+		launchLayoutHandlerThread();
+		launchShakerThread();
 		
 		//testing
 		occupancyListView.addItem("test");
@@ -147,11 +151,12 @@ public class Controller {
 			messageListView.addItem(message);
 			shake();
 		});
-		
 		saveButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
 			Alert message = getMessage(AlertType.INFORMATION, "Test Connection", "Results:", "Game NOT saved!");
 			messageListView.addItem(message);
 		});
+		
+		setupListeners();
 	}
 	
 	private void setupListeners() {
@@ -211,22 +216,42 @@ public class Controller {
 	}
 	
 	public void shake() {
-		new Thread(() -> {
-			//FIXME: needs updating
-			for (int i = 0; i < SHUFFLE_COUNT; i++) {
-				shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() - 10, shuffleControlPane.getPrefHeight());
+		shakeQueue.add(Boolean.TRUE);
+	}
+	
+	public void launchShakerThread() {
+		Thread th = new Thread(() -> {
+			//noinspection InfiniteLoopStatement
+			while (true) {
 				try {
-					Thread.sleep(50);
+					shakeQueue.take();
+					for (int i = 0; i < SHUFFLE_COUNT; i++) {
+						Platform.runLater(() -> shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() - 10, shuffleControlPane.getPrefHeight()));
+						try {
+							Thread.sleep(30);
+						} catch (InterruptedException ignored) {
+						
+						}
+						Platform.runLater(() -> shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() + 20, shuffleControlPane.getPrefHeight()));
+						try {
+							Thread.sleep(30);
+						} catch (InterruptedException ignored) {
+						
+						}
+						Platform.runLater(() -> shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() - 10, shuffleControlPane.getPrefHeight()));
+						try {
+							Thread.sleep(30);
+						} catch (InterruptedException ignored) {
+						
+						}
+					}
 				} catch (InterruptedException ignored) {
+				
 				}
-				shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() + 20, shuffleControlPane.getPrefHeight());
-				try {
-					Thread.sleep(50);
-				} catch (InterruptedException ignored) {
-				}
-				shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() - 10, shuffleControlPane.getPrefHeight());
 			}
-		}, "Shaker").start();
+		}, "ShakerThread");
+		th.setDaemon(true);
+		th.start();
 	}
 	
 	private static Bounds getRelativeBounds(Node child, Node parent) {
@@ -243,7 +268,7 @@ public class Controller {
 		layoutQueue.add(layout);
 	}
 	
-	private void launchLayoutHandler() {
+	private void launchLayoutHandlerThread() {
 		Thread th = new Thread(() -> {
 			try {
 				Task setInitialLayout = new Task(() -> {
