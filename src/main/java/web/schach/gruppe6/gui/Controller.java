@@ -89,9 +89,9 @@ public class Controller {
 	//MENU
 	@FXML
 	private FlowPane menuSocket;
-	
-	@FXML
-	private Button saveButton;
+
+//	@FXML
+//	private Button saveButton;
 	
 	@FXML
 	private Button newGameButton;
@@ -320,10 +320,6 @@ public class Controller {
 			Alert message = getMessage(AlertType.WARNING, "Test Connection", "Results:", "WARNING");
 			messageListView.addItem(message);
 			shake();
-		});
-		saveButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-			Alert message = getMessage(AlertType.INFORMATION, "Test Connection", "Results:", "Game NOT saved!");
-			messageListView.addItem(message);
 		});
 	}
 	

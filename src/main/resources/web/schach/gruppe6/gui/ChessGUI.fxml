@@ -90,7 +90,7 @@
 					<children>
 						<Button fx:id="joinButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="85.0" text="join"/>
 						<Button fx:id="newGameButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0" text="new Game"/>
-						<Button fx:id="saveButton" layoutX="140.0" layoutY="10.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="85.0" text="save" visible="false"/>
+						<!--<Button fx:id="saveButton" layoutX="140.0" layoutY="10.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="85.0" text="save" />-->
 					</children>
 				</FlowPane>
 			</children>

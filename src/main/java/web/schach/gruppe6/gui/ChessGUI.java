@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 
 public class ChessGUI extends Application {
 	
-	public static final double SCALE_FACTOR = 1;
+	public static final double SCALE_FACTOR = 1.5;
 	public static boolean SWAP_START_TO_END_NOT_NORMAL = false;
 	
 	public Controller controller;
