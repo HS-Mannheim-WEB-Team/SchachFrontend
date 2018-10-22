@@ -13,7 +13,7 @@ public class OccupancyListView extends ListView<Layout> {
 			protected void updateItem(Layout item, boolean empty) {
 				super.updateItem(item, empty);
 				
-				setText(empty || item == null ? null : "Layout-x");
+				setText(empty || item == null ? null : item.name);
 			}
 		});
 	}

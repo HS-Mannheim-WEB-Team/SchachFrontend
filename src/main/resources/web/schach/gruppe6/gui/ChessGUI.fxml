@@ -49,7 +49,7 @@
 							</opaqueInsets>
 						</TextField>
 						<Separator prefHeight="9.0" prefWidth="10.0" visible="false"/>
-						<ColorListView fx:id="colorSelectorListVew" prefHeight="30.0" prefWidth="64.0" stylesheets="@styles/ColorListViewStyle.css"/>
+						<ColorListView fx:id="colorSelectorListView" prefHeight="30.0" prefWidth="64.0" stylesheets="@styles/ColorListViewStyle.css"/>
 					</children>
 				</FlowPane>
 				<FlowPane alignment="TOP_RIGHT" hgap="2.0" prefHeight="43.0" prefWidth="50.0" GridPane.columnIndex="2">

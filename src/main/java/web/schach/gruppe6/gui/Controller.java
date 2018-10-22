@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,7 +23,7 @@ import web.schach.gruppe6.gui.customComponents.OccupancyListView;
 import web.schach.gruppe6.gui.customComponents.Tile;
 import web.schach.gruppe6.gui.customComponents.TileField;
 import web.schach.gruppe6.gui.util.ColorEnum;
-import web.schach.gruppe6.network.SchachConnection;
+import web.schach.gruppe6.network.ChessConnection;
 import web.schach.gruppe6.obj.Figures;
 import web.schach.gruppe6.obj.Layout;
 import web.schach.gruppe6.obj.PlayerColor;
@@ -51,7 +52,7 @@ public class Controller {
 	private static final long TIME_MOVEMENT_STEP_NANO = 20 * 1000000;
 	public static final int TIME_NETWORK_QUERIES_IN_BETWEEN_MS = 250;
 	
-	public static final SchachConnection CONNECTION = new SchachConnection();
+	public static final ChessConnection CONNECTION = new ChessConnection();
 	
 	private static Bounds getRelativeBounds(Node child, Node parent) {
 		Bounds ret = child.getBoundsInLocal();
@@ -104,7 +105,7 @@ public class Controller {
 	private TextField iDTextField;
 	
 	@FXML
-	private ColorListView colorSelectorListVew;
+	private ColorListView colorSelectorListView;
 	
 	//LIST VIEW
 	@FXML
@@ -216,8 +217,15 @@ public class Controller {
 	/**
 	 * @param type should only use ERROR,WARNING or INFORMATION
 	 */
-	public Alert getMessageWithJumpToLayout(Alert.AlertType type, String title, String header, String content, int layoutIndex) {
-		Alert alert = getMessage(type, title, header, content);
+	public void logMessageWithJumpToLayout(Alert.AlertType type, String title, String content, int layoutIndex) {
+		Platform.runLater(() -> messageListView.addItem(getMessageWithJumpToLayout(type, title, content, layoutIndex)));
+	}
+	
+	/**
+	 * @param type should only use ERROR,WARNING or INFORMATION
+	 */
+	public Alert getMessageWithJumpToLayout(Alert.AlertType type, String title, String content, int layoutIndex) {
+		Alert alert = getMessage(type, title, content);
 		alert.setOnCloseRequest(value -> {
 			occupancyListView.scrollTo(layoutIndex);
 			occupancyListView.getSelectionModel().clearAndSelect(layoutIndex);
@@ -228,10 +236,18 @@ public class Controller {
 	/**
 	 * @param type should only use ERROR,WARNING or INFORMATION
 	 */
-	public Alert getMessage(Alert.AlertType type, String title, String header, String content) {
+	public void logMessage(Alert.AlertType type, String title, String content) {
+		Platform.runLater(() -> messageListView.addItem(getMessage(type, title, content)));
+	}
+	
+	/**
+	 * @param type should only use ERROR,WARNING or INFORMATION
+	 */
+	private Alert getMessage(Alert.AlertType type, String title, String content) {
 		Alert alert = new Alert(type);
 		alert.setTitle(title);
-		alert.setHeaderText(header);
+		String name = type.name();
+		alert.setHeaderText(Character.toUpperCase(name.charAt(0)) + name.substring(1).toLowerCase());
 		alert.setContentText(content);
 		return alert;
 	}
@@ -240,16 +256,25 @@ public class Controller {
 	public class Game {
 		
 		public final int id;
-		public final ColorEnum color;
+		public final PlayerColor color;
 		public final ObservableList<Layout> layouts = observableArrayList();
 		
 		private Thread th;
 		private volatile boolean isRunning = true;
 		
-		public Game(int id, ColorEnum color) {
+		public Game(int id, PlayerColor color, boolean newGame) {
 			this.id = id;
 			this.color = color;
 			this.th = new Thread(() -> {
+				if (newGame) {
+					try {
+						CONNECTION.newGame(id);
+					} catch (IOException e) {
+						logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
+						e.printStackTrace();
+					}
+				}
+				
 				while (isRunning) {
 					try {
 						Thread.sleep(TIME_NETWORK_QUERIES_IN_BETWEEN_MS);
@@ -272,25 +297,34 @@ public class Controller {
 							
 							//download new layouts
 							for (int moveId = currCount; moveId < remoteCount; moveId++) {
-								Layout layout = newLayout.get(moveId).clone();
+								Layout layout = new Layout("After move " + (moveId + 1), newLayout.get(moveId));
 								layout.apply(CONNECTION.getChange(this.id, moveId + 1, layout));
 								newLayout.add(layout);
 							}
 							
 							//apply new layouts
-							Task task = new Task(() -> layouts.setAll(newLayout));
+							Task task = new Task(() -> {
+								MultipleSelectionModel<Layout> selectionModel = occupancyListView.getSelectionModel();
+								int last = newLayout.size() - 1;
+								boolean selectLast = layouts.isEmpty() || selectionModel.getSelectedItem() == newLayout.get(last);
+								
+								layouts.setAll(newLayout);
+								if (selectLast)
+									selectionModel.clearAndSelect(last);
+							});
 							Platform.runLater(task);
 							task.await();
 						}
 					} catch (InterruptedException ignore) {
 					
 					} catch (IOException e) {
-						//FIXME: jfx thread
-						messageListView.addItem(getMessage(AlertType.ERROR, "Network", "", "Network Error, please reconnect!"));
+						logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
 						e.printStackTrace();
+						break;
 					}
 				}
 			});
+			th.setDaemon(true);
 			th.start();
 		}
 		
@@ -300,12 +334,11 @@ public class Controller {
 		}
 	}
 	
-	public Game setGame(int id, ColorEnum color) {
+	public void setGame(int id, PlayerColor color, boolean newGame) {
 		if (game != null)
 			game.stop();
-		game = new Game(id, color);
+		game = new Game(id, color, newGame);
 		occupancyListView.setData(game.layouts);
-		return game;
 	}
 	
 	//network and occupancyListView
@@ -317,19 +350,26 @@ public class Controller {
 		
 		joinButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
 			try {
-				//FIXME: add color from input
-				setGame(Integer.parseInt(iDTextField.getText()), ColorEnum.WHITE);
-				messageListView.addItem(getMessage(AlertType.INFORMATION, "", "", "Join successful!"));
+				setGame(Integer.parseInt(iDTextField.getText()), colorSelectorListView.getSelectionModel().getSelectedItem(), false);
+				logMessage(AlertType.INFORMATION, "Connection", "Join successful!");
 			} catch (NumberFormatException e) {
-				messageListView.addItem(getMessageWithJumpToLayout(AlertType.INFORMATION, "", "", "Join failed: Number " + iDTextField.getText() + " not a valid number!", 1));
+				logMessage(AlertType.ERROR, "Connection", "Join failed: Number " + iDTextField.getText() + " not a valid number!");
 				shake();
 			}
 		});
 		newGameButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-			Alert message = getMessage(AlertType.WARNING, "Test Connection", "Results:", "WARNING");
-			messageListView.addItem(message);
-			shake();
+			try {
+				setGame(Integer.parseInt(iDTextField.getText()), colorSelectorListView.getSelectionModel().getSelectedItem(), true);
+				logMessage(AlertType.INFORMATION, "Connection", "New Game successful!");
+			} catch (NumberFormatException e) {
+				logMessage(AlertType.ERROR, "Connection", "New Game failed: Number " + iDTextField.getText() + " not a valid number!");
+				shake();
+			}
 		});
+//		saveButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+//			Alert message = getMessage(AlertType.INFORMATION, "Test Connection", "Results:", "Game NOT saved!");
+//			messageListView.addItem(message);
+//		});
 	}
 	
 	//marking
