@@ -1,11 +1,13 @@
 package web.schach.gruppe6.gui.customComponents;
 
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 
 import static javafx.collections.FXCollections.observableArrayList;
 
@@ -16,7 +18,6 @@ public class MessageListView extends ListView<Alert> {
 	public MessageListView() {
 		setCellFactory(param -> new ListCell<Alert>() {
 			private ImageView imageView = new ImageView();
-			
 			@Override
 			public void updateItem(Alert alert, boolean empty) {
 				super.updateItem(alert, empty);
@@ -33,12 +34,18 @@ public class MessageListView extends ListView<Alert> {
 					} else if (alert.getAlertType() == Alert.AlertType.INFORMATION) {
 						imageView.setImage(new Image("web/schach/gruppe6/gui/iconsAndImages/icon-info.png"));
 					}
-					
 					setText(alert.getTitle() + "  " + alert.getHeaderText() + "   " + alert.getContentText());
 					setGraphic(imageView);
 				}
 			}
 		});
+		setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent click) {
+				getSelectionModel().getSelectedItem().showAndWait();
+			}
+		});
+		
 	}
 	
 	public void addItem(Alert item) {
