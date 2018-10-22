@@ -1,7 +1,7 @@
 package web.schach.gruppe6.gui;
 
 import javafx.application.Platform;
-import javafx.event.EventHandler;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -22,27 +22,47 @@ import web.schach.gruppe6.gui.customComponents.OccupancyListView;
 import web.schach.gruppe6.gui.customComponents.Tile;
 import web.schach.gruppe6.gui.customComponents.TileField;
 import web.schach.gruppe6.gui.util.ColorEnum;
+import web.schach.gruppe6.network.SchachConnection;
 import web.schach.gruppe6.obj.Figures;
-import web.schach.gruppe6.obj.Game;
 import web.schach.gruppe6.obj.Layout;
 import web.schach.gruppe6.obj.PlayerColor;
 import web.schach.gruppe6.obj.Position;
 import web.schach.gruppe6.obj.Vector;
 import web.schach.gruppe6.util.Task;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static javafx.collections.FXCollections.observableArrayList;
+
 public class Controller {
 	
+	//static
 	private static final int SHUFFLE_COUNT = 2;
 	private static final long TIME_MOVEMENT_TOTAL_NANO = 1000 * 1000000;
 	private static final long TIME_MOVEMENT_STEP_NANO = 20 * 1000000;
+	public static final int TIME_NETWORK_QUERIES_IN_BETWEEN_MS = 250;
 	
+	public static final SchachConnection CONNECTION = new SchachConnection();
+	
+	private static Bounds getRelativeBounds(Node child, Node parent) {
+		Bounds ret = child.getBoundsInLocal();
+		while (!child.equals(parent)) {
+			ret = child.localToParent(ret);
+			child = child.getParent();
+		}
+		return ret;
+	}
+	
+	//object
 	private boolean messageListIsVisible = true;
 	private boolean menuIsVisible = true;
 	private boolean listVisible = true;
@@ -50,14 +70,13 @@ public class Controller {
 	private Game game;
 	
 	private Layout layoutCurrent = Layout.INITIAL_LAYOUT;
-	private Map<Figures, EventHandler<MouseEvent>> figureEventHandlermap = new EnumMap<>(Figures.class);
 	private Map<Figures, ImageView> figureViewMap = new EnumMap<>(Figures.class);
 	private BlockingQueue<Layout> layoutQueue = new LinkedBlockingQueue<>();
 	
+	@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 	private BlockingQueue<Boolean> shakeQueue = new LinkedBlockingQueue<>();
 	
 	//HIDE&SHOW BUTTONS
-	
 	@FXML
 	private Button logButton;
 	
@@ -68,7 +87,6 @@ public class Controller {
 	private Button optionButton;
 	
 	//MENU
-	
 	@FXML
 	private FlowPane menuSocket;
 	
@@ -89,7 +107,6 @@ public class Controller {
 	private ColorListView colorSelectorListVew;
 	
 	//LIST VIEW
-	
 	@FXML
 	private OccupancyListView occupancyListView;
 	
@@ -141,38 +158,18 @@ public class Controller {
 		chessFieldPane.setScaleY(ChessGUI.SCALE_FACTOR);
 		occupancyListView.setScaleY(ChessGUI.SCALE_FACTOR);
 		
-		launchLayoutHandlerThread();
-		launchShakerThread();
-		
-		//testing
-		occupancyListView.addItem("test");
-		occupancyListView.addItem("test2");
-		joinButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-			Alert message = getMessageWithJumpToLayout(AlertType.ERROR, "Test Connection", "Results:", "Connect successfully!", 1);
-			messageListView.addItem(message);
-			shake();
-		});
-		newGameButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-			Alert message = getMessage(AlertType.WARNING, "Test Connection", "Results:", "WARNING");
-			messageListView.addItem(message);
-			shake();
-		});
-		saveButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-			Alert message = getMessage(AlertType.INFORMATION, "Test Connection", "Results:", "Game NOT saved!");
-			messageListView.addItem(message);
-		});
+		setupNetwork();
+		setupLayoutHandler();
+		setupShaker();
 		
 		setupListeners();
-		mark(new Position(2, 1));
-//		unmark(new Position(2, 1));
-	
 	}
 	
 	private void setupListeners() {
-		occupancyListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> System.out.println(newValue));
 		messageListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> newValue.showAndWait());
 	}
 	
+	//element visibility
 	private void switchVisibility(Node node, Button button, boolean curVisible) {
 		if (curVisible) {
 			node.setVisible(false);
@@ -198,29 +195,14 @@ public class Controller {
 		listVisible = !listVisible;
 	}
 	
-	public ImageView getFigureIcon(Figures figure) {
-		ImageView newImage = new ImageView();
-		newImage.setImage(new Image(figure.getIconPath()));
-		newImage.setFitWidth(30);
-		newImage.setFitHeight(30);
-		EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				Position initialPosition = figure.positionInitial;
-				chessField.doClick(initialPosition);
-			}
-		};
-		figureEventHandlermap.put(figure, eventHandler);
-		newImage.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
-		return newImage;
-	}
-	
 	/**
 	 * removes all other styles. Use only if the Node has no style sheet and the border isn t changed
 	 */
 	private void setBackgroundColor(Node component, ColorEnum color) {
 		component.setStyle("-fx-background-color: " + color.toString());
 	}
+	
+	//log
 	
 	/**
 	 * @param type should only use ERROR,WARNING or INFORMATION
@@ -234,14 +216,6 @@ public class Controller {
 		return alert;
 	}
 	
-	public void mark(Position pos) {
-		chessField.mark(pos);
-	}
-	
-	public void unmark(Position pos) {
-		chessField.unmark(pos);
-	}
-	
 	/**
 	 * @param type should only use ERROR,WARNING or INFORMATION
 	 */
@@ -253,16 +227,127 @@ public class Controller {
 		return alert;
 	}
 	
+	//game
+	public class Game {
+		
+		public final int id;
+		public final ColorEnum color;
+		public final ObservableList<Layout> layouts = observableArrayList();
+		
+		private Thread th;
+		private volatile boolean isRunning = true;
+		
+		public Game(int id, ColorEnum color) {
+			this.id = id;
+			this.color = color;
+			this.th = new Thread(() -> {
+				while (isRunning) {
+					try {
+						Thread.sleep(TIME_NETWORK_QUERIES_IN_BETWEEN_MS);
+						
+						//get layout count
+						int remoteCount = CONNECTION.moveCount(this.id);
+						int currCount = layouts.size() - 1;
+						
+						//has changed
+						if (currCount != remoteCount) {
+							
+							//check for resets
+							List<Layout> newLayout;
+							if (currCount == -1 || currCount > remoteCount) {
+								newLayout = new ArrayList<>(Collections.singleton(Layout.INITIAL_LAYOUT));
+								currCount = 0;
+							} else {
+								newLayout = new ArrayList<>(layouts);
+							}
+							
+							//download new layouts
+							for (int moveId = currCount; moveId < remoteCount; moveId++) {
+								Layout layout = newLayout.get(moveId).clone();
+								layout.apply(CONNECTION.getChange(this.id, moveId + 1, layout));
+								newLayout.add(layout);
+							}
+							
+							//apply new layouts
+							Task task = new Task(() -> layouts.setAll(newLayout));
+							Platform.runLater(task);
+							task.await();
+						}
+					} catch (InterruptedException ignore) {
+					
+					} catch (IOException e) {
+						//FIXME: jfx thread
+						messageListView.addItem(getMessage(AlertType.ERROR, "Network", "", "Network Error, please reconnect!"));
+						e.printStackTrace();
+					}
+				}
+			});
+			th.start();
+		}
+		
+		public void stop() {
+			isRunning = false;
+			th.interrupt();
+		}
+	}
+	
+	public Game setGame(int id, ColorEnum color) {
+		if (game != null)
+			game.stop();
+		game = new Game(id, color);
+		occupancyListView.setData(game.layouts);
+		return game;
+	}
+	
+	//network and occupancyListView
+	public void setupNetwork() {
+		occupancyListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue != null)
+				addLayout(newValue);
+		});
+		
+		joinButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+			try {
+				//FIXME: add color from input
+				setGame(Integer.parseInt(iDTextField.getText()), ColorEnum.WHITE);
+				messageListView.addItem(getMessage(AlertType.INFORMATION, "", "", "Join successful!"));
+			} catch (NumberFormatException e) {
+				messageListView.addItem(getMessageWithJumpToLayout(AlertType.INFORMATION, "", "", "Join failed: Number " + iDTextField.getText() + " not a valid number!", 1));
+				shake();
+			}
+		});
+		newGameButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+			Alert message = getMessage(AlertType.WARNING, "Test Connection", "Results:", "WARNING");
+			messageListView.addItem(message);
+			shake();
+		});
+		saveButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+			Alert message = getMessage(AlertType.INFORMATION, "Test Connection", "Results:", "Game NOT saved!");
+			messageListView.addItem(message);
+		});
+	}
+	
+	//marking
+	public void mark(Position pos) {
+		chessField.mark(pos);
+	}
+	
+	public void unmark(Position pos) {
+		chessField.unmark(pos);
+	}
+	
+	//shake
 	public void shake() {
 		shakeQueue.add(Boolean.TRUE);
 	}
 	
-	public void launchShakerThread() {
+	public void setupShaker() {
 		Thread th = new Thread(() -> {
 			//noinspection InfiniteLoopStatement
 			while (true) {
 				try {
 					shakeQueue.take();
+					
 					for (int i = 0; i < SHUFFLE_COUNT; i++) {
 						Platform.runLater(() -> shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() - 10, shuffleControlPane.getPrefHeight()));
 						try {
@@ -292,21 +377,12 @@ public class Controller {
 		th.start();
 	}
 	
-	private static Bounds getRelativeBounds(Node child, Node parent) {
-		Bounds ret = child.getBoundsInLocal();
-		while (!child.equals(parent)) {
-			ret = child.localToParent(ret);
-			child = child.getParent();
-		}
-		return ret;
-	}
-	
 	//layout handling
 	public void addLayout(Layout layout) {
 		layoutQueue.add(layout);
 	}
 	
-	private void launchLayoutHandlerThread() {
+	private void setupLayoutHandler() {
 		Thread th = new Thread(() -> {
 			try {
 				Task setInitialLayout = new Task(() -> {
@@ -314,7 +390,12 @@ public class Controller {
 						Figures figure = entry.getKey();
 						Position position = entry.getValue();
 						
-						ImageView icon = getFigureIcon(figure);
+						ImageView icon = new ImageView();
+						icon.setImage(new Image(figure.getIconPath()));
+						icon.setFitWidth(30);
+						icon.setFitHeight(30);
+						icon.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> chessField.doClick(layoutCurrent.get(figure)));
+						
 						chessFieldPane.getChildren().add(icon);
 						figureViewMap.put(figure, icon);
 						
@@ -362,16 +443,6 @@ public class Controller {
 										timeStart,
 										new Vector(boundsDest.getMinX(), boundsDest.getMinY()),
 										timeEnd));
-								if (pofDest.field instanceof BeatenTileField)
-									removeImageEvent(figure);
-								else {
-									updateImageEventHandler(figure, positionDest, new EventHandler<MouseEvent>() {
-										@Override
-										public void handle(MouseEvent event) {
-											chessField.doClick(positionDest);
-										}
-									});
-								}
 							}
 						}
 					});
@@ -404,23 +475,6 @@ public class Controller {
 		}, "LayoutHandler");
 		th.setDaemon(true);
 		th.start();
-	}
-	
-	private void removeImageEvent(Figures figure) {
-		ImageView image = figureViewMap.get(figure);
-		image.removeEventFilter(MouseEvent.MOUSE_CLICKED, figureEventHandlermap.get(figure));
-	}
-	
-	private void updateImageEventHandler(Figures figure, Position pos, EventHandler<MouseEvent> mouseEventEventHandler) {
-		removeImageEvent(figure);
-		EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				chessField.doClick(pos);
-			}
-		};
-		figureViewMap.get(figure).addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
-		figureEventHandlermap.replace(figure, eventHandler);
 	}
 	
 	private void updateMovement(EnumMap<Figures, Movement> movements, long timeCurr) throws InterruptedException {

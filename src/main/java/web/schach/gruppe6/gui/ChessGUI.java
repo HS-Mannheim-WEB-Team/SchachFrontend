@@ -5,9 +5,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import web.schach.gruppe6.obj.Game;
-
-import java.io.IOException;
 
 public class ChessGUI extends Application {
 	
@@ -28,49 +25,51 @@ public class ChessGUI extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		controller = loader.getController();
-		
-		//networking
-		Thread networkThread = new Thread(() -> {
-			Game game = new Game(1);
-			
-			if (!SWAP_START_TO_END_NOT_NORMAL) {
-				int moveId = 0;
-				//noinspection InfiniteLoopStatement
-				while (true) {
-					for (; moveId < game.layouts.size(); moveId++)
-						controller.addLayout(game.layouts.get(moveId));
-					
-					try {
-						game.update();
-						Thread.sleep(1000);
-					} catch (InterruptedException | IOException ignore) {
-					
-					}
-				}
-			} else {
-				try {
-					game.update();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				
-				int count = game.layouts.size() - 1;
-				System.out.println(count);
-				//noinspection InfiniteLoopStatement
-				while (true) {
-					controller.addLayout(game.layouts.get(count));
-					controller.addLayout(game.layouts.get(0));
-					
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException ignore) {
-					
-					}
-				}
-			}
-		}, "NetworkThread");
-		networkThread.setDaemon(true);
-		networkThread.start();
+
+//		//networking
+//		Thread networkThread = new Thread(() -> {
+//			Game game = new Game(1);
+//
+//			if (!SWAP_START_TO_END_NOT_NORMAL) {
+//				int moveId = 0;
+//				//noinspection InfiniteLoopStatement
+//				while (true) {
+//					List<Layout> layouts = game.getList();
+//					for (; moveId < layouts.size(); moveId++)
+//						controller.addLayout(layouts.get(moveId));
+//
+////					try {
+////						game.update();
+////						Thread.sleep(1000);
+////					} catch (InterruptedException | IOException ignore) {
+////
+////					}
+//				}
+//			} else {
+////				try {
+////					game.update();
+////				} catch (IOException e) {
+////					e.printStackTrace();
+////				}
+//
+//				List<Layout> layouts = game.getList();
+//				int count = layouts.size() - 1;
+//				System.out.println(count);
+//				//noinspection InfiniteLoopStatement
+//				while (true) {
+//					controller.addLayout(layouts.get(count));
+//					controller.addLayout(layouts.get(0));
+//
+//					try {
+//						Thread.sleep(2000);
+//					} catch (InterruptedException ignore) {
+//
+//					}
+//				}
+//			}
+//		}, "NetworkThread");
+//		networkThread.setDaemon(true);
+//		networkThread.start();
 	}
 	
 	public static void main(String[] args) {

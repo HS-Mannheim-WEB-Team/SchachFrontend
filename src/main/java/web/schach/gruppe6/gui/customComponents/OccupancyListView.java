@@ -1,33 +1,24 @@
 package web.schach.gruppe6.gui.customComponents;
 
 import javafx.collections.ObservableList;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import web.schach.gruppe6.obj.Layout;
 
-import static javafx.collections.FXCollections.observableArrayList;
-
-public class OccupancyListView extends ListView<String> {
-	
-	public ObservableList data = observableArrayList();
+public class OccupancyListView extends ListView<Layout> {
 	
 	public OccupancyListView() {
-	
+		setCellFactory(param -> new ListCell<Layout>() {
+			@Override
+			protected void updateItem(Layout item, boolean empty) {
+				super.updateItem(item, empty);
+				
+				setText(empty || item == null ? null : "Layout-x");
+			}
+		});
 	}
 	
-	public void addItem(String item) {
-		data.add(item);
-		setItems(data);
-		scrollTo(item);
-	}
-	
-	public boolean removeItem(String key) {
-		boolean success = data.remove(key);
-		if (success)
-			setItems(data);
-		return success;
-	}
-	
-	public void clear() {
-		data.clear();
+	public void setData(ObservableList<Layout> data) {
 		setItems(data);
 	}
 }
