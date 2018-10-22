@@ -142,7 +142,7 @@ public class Controller {
 		occupancyListView.addItem("test");
 		occupancyListView.addItem("test2");
 		joinButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-			Alert message = getMessage(AlertType.ERROR, "Test Connection", "Results:", "Connect successfully!");
+			Alert message = getMessageWithJumpToLayout(AlertType.ERROR, "Test Connection", "Results:", "Connect successfully!", 1);
 			messageListView.addItem(message);
 			shake();
 		});
@@ -157,6 +157,9 @@ public class Controller {
 		});
 		
 		setupListeners();
+		mark(new Position(2, 1));
+//		unmark(new Position(2, 1));
+	
 	}
 	
 	private void setupListeners() {
@@ -202,6 +205,26 @@ public class Controller {
 	 */
 	private void setBackgroundColor(Node component, ColorEnum color) {
 		component.setStyle("-fx-background-color: " + color.toString());
+	}
+	
+	/**
+	 * @param type should only use ERROR,WARNING or INFORMATION
+	 */
+	public Alert getMessageWithJumpToLayout(Alert.AlertType type, String title, String header, String content, int layoutIndex) {
+		Alert alert = getMessage(type, title, header, content);
+		alert.setOnCloseRequest(value -> {
+			occupancyListView.scrollTo(layoutIndex);
+			occupancyListView.getSelectionModel().clearAndSelect(layoutIndex);
+		});
+		return alert;
+	}
+	
+	public void mark(Position pos) {
+		chessField.mark(pos);
+	}
+	
+	public void unmark(Position pos) {
+		chessField.unmark(pos);
 	}
 	
 	/**
