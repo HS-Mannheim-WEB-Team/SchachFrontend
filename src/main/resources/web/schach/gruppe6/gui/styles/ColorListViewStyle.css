@@ -3,11 +3,11 @@
 }
 
 .list-view .list-cell:even {
-    -fx-background-color: red;
+    -fx-background-color: grey;
 }
 
 .list-view .list-cell:odd {
-    -fx-background-color: red;
+    -fx-background-color: grey;
 }
 
 .list-view .list-cell:selected {
