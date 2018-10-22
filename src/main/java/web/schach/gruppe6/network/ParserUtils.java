@@ -17,8 +17,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
 import java.util.Iterator;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 public class ParserUtils {
 	
@@ -45,12 +43,15 @@ public class ParserUtils {
 	}
 	
 	//entry key resolver
-	public static Stream<Node> getEntryKeyNodes(Element root, String key) {
-		return nodeListStream(root.getElementsByTagName("entry")).filter(node -> key.equals(node.getAttributes().getNamedItem("key").getNodeValue()));
-	}
-	
 	public static Node getEntryKeyFirstNode(Element root, String message) throws ParseException {
-		return getEntryKeyNodes(root, message).findFirst().orElseThrow(() -> new ParseException("No Entry " + message));
+		//the old line using streams; replaced with the code below
+//		return StreamSupport.stream(nodeListIterable(root.getElementsByTagName("entry")).spliterator(), false).filter(node -> message.equals(node.getAttributes().getNamedItem("key").getNodeValue())).findFirst().orElseThrow(() -> new ParseException("No Entry " + message));
+		
+		for (Node node : nodeListIterable(root.getElementsByTagName("entry"))) {
+			if (message.equals(node.getAttributes().getNamedItem("key").getNodeValue()))
+				return node;
+		}
+		throw new ParseException("No Entry " + message);
 	}
 	
 	//NodeList
@@ -68,10 +69,6 @@ public class ParserUtils {
 				return list.item(i++);
 			}
 		};
-	}
-	
-	public static Stream<Node> nodeListStream(NodeList list) {
-		return StreamSupport.stream(nodeListIterable(list).spliterator(), false);
 	}
 	
 	//debug

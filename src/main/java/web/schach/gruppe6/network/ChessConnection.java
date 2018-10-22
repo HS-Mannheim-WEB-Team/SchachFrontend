@@ -58,29 +58,29 @@ public class ChessConnection {
 	}
 	
 	//impl
-	public void newGame(int id) throws IOException {
+	public void newGame(int id) throws IOException, ServerErrorException {
 		rethrowIfServerError(getAndParse("/spiel/admin/neuesSpiel/" + id).getDocumentElement());
 	}
 	
-	public void loadGame(int id, String path) throws IOException {
+	public void loadGame(int id, String path) throws IOException, ServerErrorException {
 		rethrowIfServerError(getAndParse("/spiel/admin/ladenSpiel/" + id + "/" + URLEncoder.encode(path, "UTF-8")).getDocumentElement());
 	}
 	
-	public void saveGame(int id, String path) throws IOException {
+	public void saveGame(int id, String path) throws IOException, ServerErrorException {
 		rethrowIfServerError(getAndParse("/spiel/admin/speichernSpiel/" + id + "/" + URLEncoder.encode(path, "UTF-8")).getDocumentElement());
 	}
 	
-	public void takeMove(int id, Position from, Position to) throws IOException {
+	public void takeMove(int id, Position from, Position to) throws IOException, ServerErrorException {
 		rethrowIfServerError(getAndParse("/spiel/ziehe/" + id + "/" + toChessNotation(from) + "/" + toChessNotation(to)).getDocumentElement());
 	}
 	
-	public int moveCount(int id) throws IOException {
+	public int moveCount(int id) throws IOException, ServerErrorException {
 		Element root = getAndParse("/spiel/getSpielDaten/" + id).getDocumentElement();
 		rethrowIfServerError(root);
 		return Integer.parseInt(ParserUtils.getEntryKeyFirstNode(root, "anzahlZuege").getTextContent());
 	}
 	
-	public Move getChange(int id, int moveId, Layout currentLayout) throws IOException {
+	public Move getChange(int id, int moveId, Layout currentLayout) throws IOException, ServerErrorException {
 		Element root = getAndParse("/spiel/getBelegung/" + id + "/" + moveId).getDocumentElement();
 		rethrowIfServerError(root);
 		

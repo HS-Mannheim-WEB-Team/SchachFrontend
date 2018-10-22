@@ -24,6 +24,7 @@ import web.schach.gruppe6.gui.customComponents.Tile;
 import web.schach.gruppe6.gui.customComponents.TileField;
 import web.schach.gruppe6.gui.util.ColorEnum;
 import web.schach.gruppe6.network.ChessConnection;
+import web.schach.gruppe6.network.exceptions.ServerErrorException;
 import web.schach.gruppe6.obj.Figures;
 import web.schach.gruppe6.obj.Layout;
 import web.schach.gruppe6.obj.PlayerColor;
@@ -281,6 +282,9 @@ public class Controller {
 					} catch (IOException e) {
 						logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
 						e.printStackTrace();
+						return;
+					} catch (ServerErrorException e) {
+						logMessage(AlertType.ERROR, "Server", "Server error: " + e.getMessage());
 					}
 				}
 				
@@ -327,7 +331,9 @@ public class Controller {
 					} catch (IOException e) {
 						logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
 						e.printStackTrace();
-						break;
+						return;
+					} catch (ServerErrorException e) {
+						logMessage(AlertType.ERROR, "Server", "Server error: " + e.getMessage());
 					}
 				}
 			});
@@ -403,6 +409,9 @@ public class Controller {
 			} catch (IOException e) {
 				logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
 				e.printStackTrace();
+				return;
+			} catch (ServerErrorException e) {
+				logMessage(AlertType.ERROR, "Server", "Server error: " + e.getMessage());
 			}
 			chessField.unmark(lastClicked);
 			lastClicked = null;
