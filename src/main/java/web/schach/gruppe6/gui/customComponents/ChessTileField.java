@@ -5,9 +5,12 @@ import javafx.scene.layout.GridPane;
 import web.schach.gruppe6.gui.util.ColorEnum;
 import web.schach.gruppe6.obj.Position;
 
+import java.util.function.Consumer;
+
 public class ChessTileField extends GridPane implements TileField {
 	
 	private ClickAbleTile[][] chessFieldComponents = new ClickAbleTile[8][8];
+	private Consumer<Position> onClickCallback;
 	
 	public ChessTileField() {
 		setupFillers();
@@ -69,6 +72,10 @@ public class ChessTileField extends GridPane implements TileField {
 		}
 	}
 	
+	public void setOnClickCallback(Consumer<Position> onClickCallback) {
+		this.onClickCallback = onClickCallback;
+	}
+	
 	public Tile[][] getFieldComponents() {
 		return chessFieldComponents;
 	}
@@ -87,7 +94,7 @@ public class ChessTileField extends GridPane implements TileField {
 		chessFieldComponents[pos.x][pos.y].doClick();
 	}
 	
-	public static class ClickAbleTile extends Tile {
+	public class ClickAbleTile extends Tile {
 		
 		Position pos;
 		
@@ -97,7 +104,8 @@ public class ChessTileField extends GridPane implements TileField {
 		}
 		
 		public void doClick() {
-			System.out.println("clicked: " + pos.toString());
+			if (onClickCallback != null)
+				onClickCallback.accept(pos);
 		}
 	}
 }

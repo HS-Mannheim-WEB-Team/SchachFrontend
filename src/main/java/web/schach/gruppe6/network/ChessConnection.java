@@ -6,18 +6,19 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 import web.schach.gruppe6.network.exceptions.ParseException;
 import web.schach.gruppe6.network.exceptions.ServerErrorException;
+import web.schach.gruppe6.obj.ChessPositionNotation;
 import web.schach.gruppe6.obj.Layout;
 import web.schach.gruppe6.obj.Move;
 import web.schach.gruppe6.obj.Position;
-import web.schach.gruppe6.obj.SchachPositionNotation;
 
 import javax.ws.rs.client.Client;
 import javax.xml.parsers.DocumentBuilder;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URLEncoder;
 
 import static web.schach.gruppe6.network.ParserUtils.getEntryKeyFirstNode;
+import static web.schach.gruppe6.obj.ChessPositionNotation.toChessNotation;
 
 public class ChessConnection {
 	
@@ -31,26 +32,26 @@ public class ChessConnection {
 	
 	public final String Url;
 	private final Client CLIENT;
-	private final DocumentBuilder XML_PARSER;
+	private final ThreadLocal<DocumentBuilder> XML_PARSER = ThreadLocal.withInitial(ParserUtils::createXmlDocumentBuilder);
 	
 	public ChessConnection() {
 		this(DEFAULT_URL);
 	}
 	
 	public ChessConnection(String url) {
-		this(url, NetworkUtils.createClientIgnoreSsl(), ParserUtils.createXmlDocumentBuilder());
+		this(url, NetworkUtils.createClientIgnoreSsl());
 	}
 	
-	public ChessConnection(String url, Client CLIENT, DocumentBuilder XML_PARSER) {
+	public ChessConnection(String url, Client CLIENT) {
 		Url = url;
 		this.CLIENT = CLIENT;
-		this.XML_PARSER = XML_PARSER;
 	}
 	
 	//utility
 	protected Document getAndParse(String relativePath) throws IOException {
 		try {
-			return XML_PARSER.parse(CLIENT.target(Url + relativePath).request().accept("application/xml").get(InputStream.class));
+			String content = CLIENT.target(Url + relativePath).request().accept("application/xml").get(String.class);
+			return XML_PARSER.get().parse(new ByteArrayInputStream(content.getBytes()));
 		} catch (SAXException e) {
 			throw new ParseException(e);
 		}
@@ -69,6 +70,10 @@ public class ChessConnection {
 		rethrowIfServerError(getAndParse("/spiel/admin/speichernSpiel/" + id + "/" + URLEncoder.encode(path, "UTF-8")).getDocumentElement());
 	}
 	
+	public void takeMove(int id, Position from, Position to) throws IOException {
+		rethrowIfServerError(getAndParse("/spiel/ziehe/" + id + "/" + toChessNotation(from) + "/" + toChessNotation(to)).getDocumentElement());
+	}
+	
 	public int moveCount(int id) throws IOException {
 		Element root = getAndParse("/spiel/getSpielDaten/" + id).getDocumentElement();
 		rethrowIfServerError(root);
@@ -81,8 +86,8 @@ public class ChessConnection {
 		
 		for (Node figure : ParserUtils.nodeListIterable(root.getElementsByTagName("properties"))) {
 			if ("D_Belegung".equals(ParserUtils.getEntryKeyFirstNode(root, "klasse").getTextContent())) {
-				Position from = SchachPositionNotation.fromSchachPosition(ParserUtils.getEntryKeyFirstNode(root, "von").getTextContent());
-				Position to = SchachPositionNotation.fromSchachPosition(ParserUtils.getEntryKeyFirstNode(root, "nach").getTextContent());
+				Position from = ChessPositionNotation.fromChessNotation(ParserUtils.getEntryKeyFirstNode(root, "von").getTextContent());
+				Position to = ChessPositionNotation.fromChessNotation(ParserUtils.getEntryKeyFirstNode(root, "nach").getTextContent());
 				return new Move(currentLayout.at(from), from, to);
 			}
 		}
