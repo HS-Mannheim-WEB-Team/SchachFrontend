@@ -1,12 +1,13 @@
 package web.schach.gruppe6.gui.customComponents;
 
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import web.schach.gruppe6.gui.util.ColorEnum;
 import web.schach.gruppe6.obj.Position;
 
 public class ChessTileField extends GridPane implements TileField {
 	
-	private Tile[][] chessFieldComponents = new Tile[8][8];
+	private ClickAbleTile[][] chessFieldComponents = new ClickAbleTile[8][8];
 	
 	public ChessTileField() {
 		setupFillers();
@@ -49,16 +50,20 @@ public class ChessTileField extends GridPane implements TileField {
 				secondRow = true;
 			}
 			for (int y = 1; y < 9; y++) {
-				Tile tile;
+				ClickAbleTile tile;
+				Position pos = new Position(x - 1, y - 1);
 				if (giveColor) {
-					tile = new Tile(ColorEnum.BROWN);
+					tile = new ClickAbleTile(ColorEnum.BROWN, pos);
 					giveColor = false;
 				} else {
-					tile = new Tile(ColorEnum.WHITE);
+					tile = new ClickAbleTile(ColorEnum.WHITE, pos);
 					giveColor = true;
 				}
 				tile.setStyle("-fx-border-color: white ;" + tile.getStyle());
-				chessFieldComponents[x - 1][y - 1] = tile;
+				tile.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+					tile.doClick();
+				});
+				chessFieldComponents[pos.x][pos.y] = tile;
 				add(tile, x, y);
 			}
 		}
@@ -76,5 +81,23 @@ public class ChessTileField extends GridPane implements TileField {
 	public void unmark(Position pos) {
 		Tile tile = chessFieldComponents[pos.x][pos.y];
 		tile.setStyle("-fx-border-color: white ;\r\n" + "-fx-background-color: " + tile.getColor().toString());
+	}
+	
+	public void doClick(Position pos) {
+		chessFieldComponents[pos.x][pos.y].doClick();
+	}
+	
+	public static class ClickAbleTile extends Tile {
+		
+		Position pos;
+		
+		public ClickAbleTile(ColorEnum color, Position pos) {
+			super(color);
+			this.pos = pos;
+		}
+		
+		public void doClick() {
+			System.out.println("clicked: " + pos.toString());
+		}
 	}
 }
