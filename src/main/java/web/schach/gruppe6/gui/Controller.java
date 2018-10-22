@@ -152,8 +152,8 @@ public class Controller {
 			Alert message = getMessage(AlertType.INFORMATION, "Test Connection", "Results:", "Game NOT saved!");
 			messageListView.addItem(message);
 		});
-		mark(new Position(1, 1));
-		mark(new Position(0, 1));
+		mark(new Position(2, 1));
+//		unmark(new Position(2, 1));
 		
 	}
 	

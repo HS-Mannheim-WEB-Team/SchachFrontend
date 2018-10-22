@@ -75,6 +75,6 @@ public class ChessTileField extends GridPane implements TileField {
 	
 	public void unmark(Position pos) {
 		Tile tile = chessFieldComponents[pos.x][pos.y];
-		tile.setStyle("-fx-border-color: red " + "-fx-border-color: " + tile.getColor().toString());
+		tile.setStyle("-fx-border-color: white ;\r\n" + "-fx-background-color: " + tile.getColor().toString());
 	}
 }
