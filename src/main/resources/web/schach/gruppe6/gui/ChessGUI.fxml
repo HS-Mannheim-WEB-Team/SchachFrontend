@@ -17,14 +17,15 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import web.schach.gruppe6.gui.customComponents.BeatenTileField?>
 <?import web.schach.gruppe6.gui.customComponents.ChessTileField?>
+<?import web.schach.gruppe6.gui.customComponents.ColorListView?>
 <?import web.schach.gruppe6.gui.customComponents.MessageListView?>
 <?import web.schach.gruppe6.gui.customComponents.OccupancyListView?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
-			prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.161-ea" xmlns:fx="http://javafx.com/fxml/1"
-			fx:controller="web.schach.gruppe6.gui.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0"
+			xmlns="http://javafx.com/javafx/8.0.161-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="web.schach.gruppe6.gui.Controller">
 	<top>
 		<GridPane fx:id="topSocket" BorderPane.alignment="CENTER">
 			<columnConstraints>
+				<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
 				<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
 				<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
 			</columnConstraints>
@@ -34,8 +35,7 @@
 			<children>
 				<FlowPane fx:id="menuSocket" hgap="2.0" prefHeight="40.0" prefWidth="543.0">
 					<children>
-						<Label alignment="CENTER" prefHeight="30.0" prefWidth="40.0"
-							   style="-fx-background-color: transparent;" text="ID:" textFill="#70b3ff">
+						<Label alignment="CENTER" prefHeight="30.0" prefWidth="40.0" style="-fx-background-color: transparent;" text="ID:" textFill="#70b3ff">
 							<opaqueInsets>
 								<Insets/>
 							</opaqueInsets>
@@ -49,18 +49,13 @@
 							</opaqueInsets>
 						</TextField>
 						<Separator prefHeight="9.0" prefWidth="10.0" visible="false"/>
-						<Button fx:id="joinButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0"
-								text="join"/>
-						<Button fx:id="newGameButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0"
-								text="new Game"/>
-						<Button fx:id="saveButton" layoutX="140.0" layoutY="10.0" mnemonicParsing="false"
-								prefHeight="30.0" prefWidth="90.0" text="save"/>
+						<ColorListView fx:id="colorSelectorListVew" prefHeight="30.0" prefWidth="64.0" stylesheets="@styles/ColorListViewStyle.css"/>
 					</children>
 				</FlowPane>
-				<FlowPane alignment="TOP_RIGHT" hgap="2.0" prefHeight="43.0" prefWidth="50.0" GridPane.columnIndex="1">
+				<FlowPane alignment="TOP_RIGHT" hgap="2.0" prefHeight="43.0" prefWidth="50.0" GridPane.columnIndex="2">
 					<children>
-						<Button fx:id="messageButton" mnemonicParsing="false" onAction="#switchEventLogVisibility"
-								prefHeight="6.0" prefWidth="50.0" style="-fx-background-color: red;">
+						<Button fx:id="messageButton" mnemonicParsing="false" onAction="#switchEventLogVisibility" prefHeight="6.0" prefWidth="50.0"
+								style="-fx-background-color: red;">
 							<graphic>
 								<ImageView fitHeight="20.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
 									<image>
@@ -69,28 +64,33 @@
 								</ImageView>
 							</graphic>
 						</Button>
-						<Button fx:id="logButton" mnemonicParsing="false" onAction="#switchListVisibility"
-								prefHeight="6.0" prefWidth="50.0" style="-fx-background-color: red;" textOverrun="CLIP">
+						<Button fx:id="logButton" mnemonicParsing="false" onAction="#switchListVisibility" prefHeight="6.0" prefWidth="50.0"
+								style="-fx-background-color: red;" textOverrun="CLIP">
 							<graphic>
-								<ImageView fx:id="logImage" fitHeight="20.0" fitWidth="28.0" pickOnBounds="true"
-										   preserveRatio="true">
+								<ImageView fx:id="logImage" fitHeight="20.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
 									<image>
 										<Image url="@iconsAndImages/log_icon.png"/>
 									</image>
 								</ImageView>
 							</graphic>
 						</Button>
-						<Button fx:id="optionButton" mnemonicParsing="false" onAction="#switchMenuVisibility"
-								prefHeight="6.0" prefWidth="50.0" style="-fx-background-color: red;">
+						<Button fx:id="optionButton" mnemonicParsing="false" onAction="#switchMenuVisibility" prefHeight="6.0" prefWidth="50.0"
+								style="-fx-background-color: red;">
 							<graphic>
-								<ImageView fx:id="optionImage" fitHeight="20.0" fitWidth="28.0" pickOnBounds="true"
-										   preserveRatio="true">
+								<ImageView fx:id="optionImage" fitHeight="20.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
 									<image>
 										<Image url="@iconsAndImages/gearIcon.png"/>
 									</image>
 								</ImageView>
 							</graphic>
 						</Button>
+					</children>
+				</FlowPane>
+				<FlowPane alignment="CENTER" columnHalignment="CENTER" hgap="2.0" prefHeight="40.0" prefWidth="543.0" GridPane.columnIndex="1">
+					<children>
+						<Button fx:id="joinButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="85.0" text="join"/>
+						<Button fx:id="newGameButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0" text="new Game"/>
+						<Button fx:id="saveButton" layoutX="140.0" layoutY="10.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="85.0" text="save"/>
 					</children>
 				</FlowPane>
 			</children>
@@ -104,8 +104,7 @@
 					<children>
 						<BorderPane prefHeight="420.0" prefWidth="332.0" style="-fx-border-color: white;">
 							<center>
-								<ChessTileField fx:id="chessField" prefHeight="300.0" prefWidth="300.0"
-												style="-fx-border-color: white;" BorderPane.alignment="CENTER">
+								<ChessTileField fx:id="chessField" prefHeight="300.0" prefWidth="300.0" style="-fx-border-color: white;" BorderPane.alignment="CENTER">
 									<opaqueInsets>
 										<Insets/>
 									</opaqueInsets>
@@ -136,18 +135,15 @@
 								</ChessTileField>
 							</center>
 							<left>
-								<Pane prefHeight="300.0" prefWidth="15.0" style="-fx-background-color: burlywood;"
-									  BorderPane.alignment="CENTER"/>
+								<Pane prefHeight="300.0" prefWidth="15.0" style="-fx-background-color: burlywood;" BorderPane.alignment="CENTER"/>
 							</left>
 							<right>
-								<Pane prefHeight="300.0" prefWidth="15.0" style="-fx-background-color: burlywood;"
-									  BorderPane.alignment="CENTER"/>
+								<Pane prefHeight="300.0" prefWidth="15.0" style="-fx-background-color: burlywood;" BorderPane.alignment="CENTER"/>
 							</right>
 							<bottom>
 								<HBox prefHeight="60.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 									<children>
-										<Pane prefHeight="60.0" prefWidth="51.0"
-											  style="-fx-background-color: burlywood;"/>
+										<Pane prefHeight="60.0" prefWidth="51.0" style="-fx-background-color: burlywood;"/>
 										<BeatenTileField fx:id="beatenFiguresBot" prefHeight="60.0" prefWidth="240.0">
 											<columnConstraints>
 												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
@@ -164,16 +160,14 @@
 												<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
 											</rowConstraints>
 										</BeatenTileField>
-										<Pane prefHeight="60.0" prefWidth="51.0"
-											  style="-fx-background-color: burlywood;"/>
+										<Pane prefHeight="60.0" prefWidth="51.0" style="-fx-background-color: burlywood;"/>
 									</children>
 								</HBox>
 							</bottom>
 							<top>
 								<HBox prefHeight="60.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 									<children>
-										<Pane prefHeight="60.0" prefWidth="51.0"
-											  style="-fx-background-color: burlywood;"/>
+										<Pane prefHeight="60.0" prefWidth="51.0" style="-fx-background-color: burlywood;"/>
 										<BeatenTileField fx:id="beatenFiguresTop" prefHeight="60.0" prefWidth="240.0">
 											<columnConstraints>
 												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
@@ -190,23 +184,20 @@
 												<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
 											</rowConstraints>
 										</BeatenTileField>
-										<Pane prefHeight="60.0" prefWidth="51.0"
-											  style="-fx-background-color: burlywood;"/>
+										<Pane prefHeight="60.0" prefWidth="51.0" style="-fx-background-color: burlywood;"/>
 									</children>
 								</HBox>
 							</top>
 						</BorderPane>
 					</children>
 				</Pane>
-				<OccupancyListView fx:id="occupancyListView" editable="true" opacity="0.8" prefHeight="422.0"
-								   prefWidth="200.0" style="-fx-border-color: white;"
+				<OccupancyListView fx:id="occupancyListView" editable="true" opacity="0.8" prefHeight="422.0" prefWidth="200.0" style="-fx-border-color: white;"
 								   stylesheets="@styles/OccupancyListViewStyle.css"/>
 			</children>
 		</FlowPane>
 	</center>
 	<bottom>
-		<MessageListView fx:id="messageListView" editable="true" opacity="0.8" prefHeight="100.0" prefWidth="800.0"
-						 style="-fx-border-color: white;" stylesheets="@styles/MessageListViewStyle.css"
-						 BorderPane.alignment="CENTER"/>
+		<MessageListView fx:id="messageListView" editable="true" opacity="0.8" prefHeight="100.0" prefWidth="800.0" style="-fx-border-color: white;"
+						 stylesheets="@styles/MessageListViewStyle.css" BorderPane.alignment="CENTER"/>
 	</bottom>
 </BorderPane>
