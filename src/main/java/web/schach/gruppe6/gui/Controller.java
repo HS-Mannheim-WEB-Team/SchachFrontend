@@ -1,6 +1,7 @@
 package web.schach.gruppe6.gui;
 
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -48,6 +49,7 @@ public class Controller {
 	private Game game;
 	
 	private Layout layoutCurrent = Layout.INITIAL_LAYOUT;
+	private Map<Figures, EventHandler<MouseEvent>> figureEventHandlermap = new EnumMap<>(Figures.class);
 	private Map<Figures, ImageView> figureViewMap = new EnumMap<>(Figures.class);
 	private BlockingQueue<Layout> layoutQueue = new LinkedBlockingQueue<>();
 	
@@ -192,11 +194,20 @@ public class Controller {
 		listVisible = !listVisible;
 	}
 	
-	public static ImageView getFigureIcon(Figures figures) {
+	public ImageView getFigureIcon(Figures figure) {
 		ImageView newImage = new ImageView();
-		newImage.setImage(new Image(figures.getIconPath()));
+		newImage.setImage(new Image(figure.getIconPath()));
 		newImage.setFitWidth(30);
 		newImage.setFitHeight(30);
+		EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				Position initialPosition = figure.positionInitial;
+				chessField.doClick(initialPosition);
+			}
+		};
+		figureEventHandlermap.put(figure, eventHandler);
+		newImage.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
 		return newImage;
 	}
 	
@@ -348,6 +359,16 @@ public class Controller {
 										timeStart,
 										new Vector(boundsDest.getMinX(), boundsDest.getMinY()),
 										timeEnd));
+								if (pofDest.field instanceof BeatenTileField)
+									removeImageEvent(figure);
+								else {
+									updateImageEventHandler(figure, positionDest, new EventHandler<MouseEvent>() {
+										@Override
+										public void handle(MouseEvent event) {
+											chessField.doClick(positionDest);
+										}
+									});
+								}
 							}
 						}
 					});
@@ -380,6 +401,23 @@ public class Controller {
 		}, "LayoutHandler");
 		th.setDaemon(true);
 		th.start();
+	}
+	
+	private void removeImageEvent(Figures figure) {
+		ImageView image = figureViewMap.get(figure);
+		image.removeEventFilter(MouseEvent.MOUSE_CLICKED, figureEventHandlermap.get(figure));
+	}
+	
+	private void updateImageEventHandler(Figures figure, Position pos, EventHandler<MouseEvent> mouseEventEventHandler) {
+		removeImageEvent(figure);
+		EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				chessField.doClick(pos);
+			}
+		};
+		figureViewMap.get(figure).addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
+		figureEventHandlermap.replace(figure, eventHandler);
 	}
 	
 	private void updateMovement(EnumMap<Figures, Movement> movements, long timeCurr) throws InterruptedException {

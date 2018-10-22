@@ -8,10 +8,6 @@ public class Tile extends StackPane {
 	
 	private ColorEnum color;
 	
-	public ColorEnum getColor() {
-		return color;
-	}
-	
 	public Tile() {
 		this(ColorEnum.BROWN);
 	}
@@ -24,4 +20,9 @@ public class Tile extends StackPane {
 	public Bounds getBounds() {
 		return this.localToScene(this.getBoundsInLocal());
 	}
+	
+	public ColorEnum getColor() {
+		return color;
+	}
+	
 }
