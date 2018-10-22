@@ -16,6 +16,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import web.schach.gruppe6.gui.customComponents.BeatenTileField;
 import web.schach.gruppe6.gui.customComponents.ChessTileField;
+import web.schach.gruppe6.gui.customComponents.ColorListView;
 import web.schach.gruppe6.gui.customComponents.MessageListView;
 import web.schach.gruppe6.gui.customComponents.OccupancyListView;
 import web.schach.gruppe6.gui.customComponents.Tile;
@@ -83,6 +84,9 @@ public class Controller {
 	@FXML
 	@SuppressWarnings("unused")
 	private TextField iDTextField;
+	
+	@FXML
+	private ColorListView colorSelectorListVew;
 	
 	//LIST VIEW
 	
@@ -353,7 +357,6 @@ public class Controller {
 								
 								Bounds boundsSrc = getRelativeBounds(nodeSrc, chessFieldPane);
 								Bounds boundsDest = getRelativeBounds(nodeDest, chessFieldPane);
-								
 								movements.put(figure, new Movement(
 										new Vector(boundsSrc.getMinX(), boundsSrc.getMinY()),
 										timeStart,
