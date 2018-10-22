@@ -398,6 +398,14 @@ public class Controller {
 			return;
 		
 		if (lastClicked == null) {
+			if (game.layouts.get(game.layouts.size() - 1) != layoutCurrent)
+				return;
+			Figures figure = layoutCurrent.at(position);
+			if (figure == null)
+				return;
+			if (game.color != null && figure.color != game.color)
+				return;
+			
 			lastClicked = position;
 			chessField.mark(lastClicked);
 		} else if (lastClicked.equals(position)) {
@@ -413,6 +421,7 @@ public class Controller {
 			} catch (ServerErrorException e) {
 				logMessage(AlertType.ERROR, "Server", "Server error: " + e.getMessage());
 			}
+			
 			chessField.unmark(lastClicked);
 			lastClicked = null;
 		}
