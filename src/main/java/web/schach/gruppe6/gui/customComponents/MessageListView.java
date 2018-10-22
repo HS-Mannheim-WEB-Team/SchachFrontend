@@ -13,11 +13,12 @@ import static javafx.collections.FXCollections.observableArrayList;
 
 public class MessageListView extends ListView<Alert> {
 	
-	public ObservableList data = observableArrayList();
+	public ObservableList<Alert> data = observableArrayList();
 	
 	public MessageListView() {
 		setCellFactory(param -> new ListCell<Alert>() {
 			private ImageView imageView = new ImageView();
+			
 			@Override
 			public void updateItem(Alert alert, boolean empty) {
 				super.updateItem(alert, empty);
@@ -34,35 +35,31 @@ public class MessageListView extends ListView<Alert> {
 					} else if (alert.getAlertType() == Alert.AlertType.INFORMATION) {
 						imageView.setImage(new Image("web/schach/gruppe6/gui/iconsAndImages/icon-info.png"));
 					}
-					setText(alert.getTitle() + "  " + alert.getHeaderText() + "   " + alert.getContentText());
+					
+					setText(alert.getTitle() + "  " + alert.getContentText());
 					setGraphic(imageView);
 				}
 			}
 		});
-		setOnMouseClicked(new EventHandler<MouseEvent>() {
+		setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
 			@Override
 			public void handle(MouseEvent click) {
 				getSelectionModel().getSelectedItem().showAndWait();
 			}
 		});
-		
+		setItems(data);
 	}
 	
 	public void addItem(Alert item) {
 		data.add(item);
-		setItems(data);
 		scrollTo(item);
 	}
 	
-	public boolean removeItem(String key) {
-		boolean success = data.remove(key);
-		if (success)
-			setItems(data);
-		return success;
+	public boolean removeItem(Alert key) {
+		return data.remove(key);
 	}
 	
 	public void clear() {
 		data.clear();
-		setItems(data);
 	}
 }

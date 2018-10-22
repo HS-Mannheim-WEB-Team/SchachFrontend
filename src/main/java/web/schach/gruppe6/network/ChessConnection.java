@@ -19,7 +19,7 @@ import java.net.URLEncoder;
 
 import static web.schach.gruppe6.network.ParserUtils.getEntryKeyFirstNode;
 
-public class SchachConnection {
+public class ChessConnection {
 	
 	public static final String DEFAULT_URL = "http://www.game-engineering.de:8080/rest/schach";
 	
@@ -33,15 +33,15 @@ public class SchachConnection {
 	private final Client CLIENT;
 	private final DocumentBuilder XML_PARSER;
 	
-	public SchachConnection() {
+	public ChessConnection() {
 		this(DEFAULT_URL);
 	}
 	
-	public SchachConnection(String url) {
+	public ChessConnection(String url) {
 		this(url, NetworkUtils.createClientIgnoreSsl(), ParserUtils.createXmlDocumentBuilder());
 	}
 	
-	public SchachConnection(String url, Client CLIENT, DocumentBuilder XML_PARSER) {
+	public ChessConnection(String url, Client CLIENT, DocumentBuilder XML_PARSER) {
 		Url = url;
 		this.CLIENT = CLIENT;
 		this.XML_PARSER = XML_PARSER;

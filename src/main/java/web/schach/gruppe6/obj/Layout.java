@@ -11,16 +11,22 @@ public class Layout {
 	public static final Layout INITIAL_LAYOUT;
 	
 	static {
-		INITIAL_LAYOUT = new Layout(new EnumMap<>(Figures.class));
+		INITIAL_LAYOUT = new Layout("Initial", new EnumMap<>(Figures.class));
 		for (Figures figure : Figures.values()) {
 			INITIAL_LAYOUT.layout.put(figure, figure.positionInitial);
 		}
 	}
 	
+	public final String name;
 	private EnumMap<Figures, Position> layout;
 	
-	private Layout(EnumMap<Figures, Position> layout) {
+	public Layout(String name, EnumMap<Figures, Position> layout) {
+		this.name = name;
 		this.layout = layout;
+	}
+	
+	public Layout(String name, Layout layout) {
+		this(name, layout.layout.clone());
 	}
 	
 	public Position get(Figures key) {
@@ -53,11 +59,6 @@ public class Layout {
 	
 	public Set<Entry<Figures, Position>> entrySet() {
 		return layout.entrySet();
-	}
-	
-	@SuppressWarnings("MethodDoesntCallSuperMethod")
-	public Layout clone() {
-		return new Layout(layout.clone());
 	}
 	
 	@Override
