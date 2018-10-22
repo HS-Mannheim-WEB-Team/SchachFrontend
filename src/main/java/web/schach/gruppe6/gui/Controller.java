@@ -70,6 +70,8 @@ public class Controller {
 	
 	private Game game;
 	
+	private Position lastClicked;
+	
 	private Layout layoutCurrent = Layout.INITIAL_LAYOUT;
 	private Map<Figures, ImageView> figureViewMap = new EnumMap<>(Figures.class);
 	private BlockingQueue<Layout> layoutQueue = new LinkedBlockingQueue<>();
@@ -168,8 +170,9 @@ public class Controller {
 	@FXML
 	void initialize() {
 		
-		setupNetwork();
+		setupGame();
 		setupLayoutHandler();
+		setupMoveExecution();
 		setupShaker();
 		
 		setupListeners();
@@ -265,6 +268,8 @@ public class Controller {
 		public Game(int id, PlayerColor color, boolean newGame) {
 			this.id = id;
 			this.color = color;
+			
+			//update requester
 			this.th = new Thread(() -> {
 				if (newGame) {
 					try {
@@ -305,12 +310,10 @@ public class Controller {
 							//apply new layouts
 							Task task = new Task(() -> {
 								MultipleSelectionModel<Layout> selectionModel = occupancyListView.getSelectionModel();
-								int last = newLayout.size() - 1;
-								boolean selectLast = layouts.isEmpty() || selectionModel.getSelectedItem() == newLayout.get(last);
-								
+								boolean selectLast = layouts.isEmpty() || selectionModel.getSelectedItem() == layouts.get(layouts.size() - 1);
 								layouts.setAll(newLayout);
 								if (selectLast)
-									selectionModel.clearAndSelect(last);
+									occupancyListView.getSelectionModel().selectLast();
 							});
 							Platform.runLater(task);
 							task.await();
@@ -341,8 +344,11 @@ public class Controller {
 		occupancyListView.setData(game.layouts);
 	}
 	
-	//network and occupancyListView
-	public void setupNetwork() {
+	public void setGameFromUI(boolean newGame) {
+		setGame(Integer.parseInt(iDTextField.getText()), ChessGUI.OP_MODE_ALLOW_MOVE_BOTH ? null : colorSelectorListView.getSelectionModel().getSelectedItem(), newGame);
+	}
+	
+	private void setupGame() {
 		occupancyListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue != null)
 				addLayout(newValue);
@@ -350,7 +356,7 @@ public class Controller {
 		
 		joinButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
 			try {
-				setGame(Integer.parseInt(iDTextField.getText()), colorSelectorListView.getSelectionModel().getSelectedItem(), false);
+				setGameFromUI(false);
 				logMessage(AlertType.INFORMATION, "Connection", "Join successful!");
 			} catch (NumberFormatException e) {
 				logMessage(AlertType.ERROR, "Connection", "Join failed: Number " + iDTextField.getText() + " not a valid number!");
@@ -359,7 +365,7 @@ public class Controller {
 		});
 		newGameButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
 			try {
-				setGame(Integer.parseInt(iDTextField.getText()), colorSelectorListView.getSelectionModel().getSelectedItem(), true);
+				setGameFromUI(true);
 				logMessage(AlertType.INFORMATION, "Connection", "New Game successful!");
 			} catch (NumberFormatException e) {
 				logMessage(AlertType.ERROR, "Connection", "New Game failed: Number " + iDTextField.getText() + " not a valid number!");
@@ -372,13 +378,31 @@ public class Controller {
 //		});
 	}
 	
-	//marking
-	public void mark(Position pos) {
-		chessField.mark(pos);
+	//move execution
+	private void setupMoveExecution() {
+		chessField.setOnClickCallback(this::onTileClick);
 	}
 	
-	public void unmark(Position pos) {
-		chessField.unmark(pos);
+	public void onTileClick(Position position) {
+		if (game == null)
+			return;
+		
+		if (lastClicked == null) {
+			lastClicked = position;
+			chessField.mark(lastClicked);
+		} else if (lastClicked.equals(position)) {
+			chessField.unmark(lastClicked);
+			lastClicked = null;
+		} else {
+			try {
+				CONNECTION.takeMove(game.id, lastClicked, position);
+			} catch (IOException e) {
+				logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
+				e.printStackTrace();
+			}
+			chessField.unmark(lastClicked);
+			lastClicked = null;
+		}
 	}
 	
 	//shake
