@@ -9,11 +9,15 @@ import javafx.stage.Stage;
 
 public class ChessGUI extends Application {
 	
-	private static int MIN_WIDTH = 800;
-	private static int MIN_HEIGHT = 600;
+	private static final int MIN_WIDTH = 800;
+	private static final int MIN_HIGHT = 600;
+	private static final float GENEREL_GROW_FACTOR_WIDTH = 1 / 800f;
+	private static final float GENEREL_GROW_FACTOR_HIGHT = 1 / 600f;
 	
-	public static final double SCALE_FACTOR = 1.5;
+	public static final double SCALE_FACTOR = 1;
 	public static final boolean OP_MODE_ALLOW_MOVE_BOTH = false;
+	public static final int DISTANCE_TO_WINDOW_BORDER = 15;
+	public static final float MESSAGE_GROW_FACTOR = 0.125f;
 	
 	public Controller controller;
 	
@@ -22,42 +26,47 @@ public class ChessGUI extends Application {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("ChessGUI.fxml"));
 		Parent root = loader.load();
 		root.setId("pane");
-		Scene scene = new Scene(root, SCALE_FACTOR * MIN_WIDTH, SCALE_FACTOR * MIN_HEIGHT);
+		Scene scene = new Scene(root, SCALE_FACTOR * MIN_WIDTH, SCALE_FACTOR * MIN_HIGHT);
 		scene.getStylesheets().addAll(this.getClass().getResource("styles/BackgroundStyle.css").toExternalForm());
 		primaryStage.getIcons().add(new Image("/web/schach/gruppe6/gui/iconsAndImages/iconset1/queen_white.png"));
 		primaryStage.setMinWidth(MIN_WIDTH);
-		primaryStage.setMinHeight(MIN_HEIGHT);
+		primaryStage.setMinHeight(MIN_HIGHT);
 		primaryStage.setTitle("WEB-Schach");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		controller = loader.getController();
+		controller.getMessageListView().setPrefSize(primaryStage.getWidth() - DISTANCE_TO_WINDOW_BORDER, MIN_HIGHT * MESSAGE_GROW_FACTOR);
+		
 		
 		primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
 			if (newVal.doubleValue() < primaryStage.getHeight()) {
-				controller.getGlobalCenterFlowPlane().setScaleX(newVal.doubleValue() / MIN_WIDTH);
-				controller.getChessFieldPane().setScaleY(newVal.doubleValue() / MIN_WIDTH);
-				controller.getOccupancyListView().setScaleY(newVal.doubleValue() / MIN_WIDTH);
-				controller.getShuffleControlPane().setScaleY(newVal.doubleValue() / MIN_WIDTH);
+				controller.getGlobalCenterFlowPlane().setScaleX(newVal.doubleValue() * GENEREL_GROW_FACTOR_WIDTH);
+				controller.getChessFieldPane().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR_WIDTH);
+				controller.getOccupancyListView().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR_WIDTH);
+				controller.getShuffleControlPane().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR_WIDTH);
 			} else {
-				controller.getGlobalCenterFlowPlane().setScaleX(primaryStage.getHeight() / MIN_HEIGHT);
-				controller.getChessFieldPane().setScaleY(primaryStage.getHeight() / MIN_HEIGHT);
-				controller.getOccupancyListView().setScaleY(primaryStage.getHeight() / MIN_HEIGHT);
-				controller.getShuffleControlPane().setScaleY(primaryStage.getHeight() / MIN_HEIGHT);
+				controller.getGlobalCenterFlowPlane().setScaleX(primaryStage.getHeight() * GENEREL_GROW_FACTOR_HIGHT);
+				controller.getChessFieldPane().setScaleY(primaryStage.getHeight() * GENEREL_GROW_FACTOR_HIGHT);
+				controller.getOccupancyListView().setScaleY(primaryStage.getHeight() * GENEREL_GROW_FACTOR_HIGHT);
+				controller.getShuffleControlPane().setScaleY(primaryStage.getHeight() * GENEREL_GROW_FACTOR_HIGHT);
 			}
+			controller.getMessageButtonSocket().setPrefSize(newVal.doubleValue() - DISTANCE_TO_WINDOW_BORDER, 15);
+			controller.getMessageListView().setPrefSize(newVal.doubleValue() - DISTANCE_TO_WINDOW_BORDER, primaryStage.getHeight() * MESSAGE_GROW_FACTOR);
 		});
 		
 		primaryStage.heightProperty().addListener((obs, oldVal, newVal) -> {
 			if (newVal.doubleValue() < primaryStage.getWidth()) {
-				controller.getGlobalCenterFlowPlane().setScaleX(newVal.doubleValue() / MIN_HEIGHT);
-				controller.getChessFieldPane().setScaleY(newVal.doubleValue() / MIN_HEIGHT);
-				controller.getOccupancyListView().setScaleY(newVal.doubleValue() / MIN_HEIGHT);
-				controller.getShuffleControlPane().setScaleY(newVal.doubleValue() / MIN_HEIGHT);
+				controller.getGlobalCenterFlowPlane().setScaleX(newVal.doubleValue() * GENEREL_GROW_FACTOR_HIGHT);
+				controller.getChessFieldPane().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR_HIGHT);
+				controller.getOccupancyListView().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR_HIGHT);
+				controller.getShuffleControlPane().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR_HIGHT);
 			} else {
-				controller.getGlobalCenterFlowPlane().setScaleX(primaryStage.getWidth() / MIN_WIDTH);
-				controller.getChessFieldPane().setScaleY(primaryStage.getWidth() / MIN_HEIGHT);
-				controller.getOccupancyListView().setScaleY(primaryStage.getWidth() / MIN_HEIGHT);
-				controller.getShuffleControlPane().setScaleY(primaryStage.getWidth() / MIN_HEIGHT);
+				controller.getGlobalCenterFlowPlane().setScaleX(primaryStage.getWidth() * GENEREL_GROW_FACTOR_WIDTH);
+				controller.getChessFieldPane().setScaleY(primaryStage.getWidth() * GENEREL_GROW_FACTOR_HIGHT);
+				controller.getOccupancyListView().setScaleY(primaryStage.getWidth() * GENEREL_GROW_FACTOR_HIGHT);
+				controller.getShuffleControlPane().setScaleY(primaryStage.getWidth() * GENEREL_GROW_FACTOR_HIGHT);
 			}
+			controller.getMessageListView().setPrefSize(primaryStage.getWidth() - DISTANCE_TO_WINDOW_BORDER, newVal.doubleValue() * MESSAGE_GROW_FACTOR);
 		});
 	}
 	

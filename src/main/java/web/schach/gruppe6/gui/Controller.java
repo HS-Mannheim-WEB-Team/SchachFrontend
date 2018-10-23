@@ -8,16 +8,20 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import web.schach.gruppe6.gui.customComponents.BeatenTileField;
 import web.schach.gruppe6.gui.customComponents.ChessTileField;
 import web.schach.gruppe6.gui.customComponents.ColorListView;
+import web.schach.gruppe6.gui.customComponents.LineCountField;
+import web.schach.gruppe6.gui.customComponents.ListType;
 import web.schach.gruppe6.gui.customComponents.MessageListView;
 import web.schach.gruppe6.gui.customComponents.OccupancyListView;
 import web.schach.gruppe6.gui.customComponents.Tile;
@@ -65,6 +69,8 @@ public class Controller {
 	}
 	
 	//object
+	private boolean errorsVisible = true;
+	private boolean infosVisible = true;
 	private boolean messageListIsVisible = true;
 	private boolean menuIsVisible = true;
 	private boolean listVisible = true;
@@ -90,12 +96,22 @@ public class Controller {
 	@FXML
 	private Button optionButton;
 	
+	@FXML
+	private Button showInfosButton;
+	
+	@FXML
+	private Button showErrorsButton;
+	
 	//MENU
 	@FXML
 	private FlowPane menuSocketLeft;
 	
 	@FXML
 	private FlowPane menuSocketMid;
+	
+	@FXML
+	private FlowPane messageButtonSocket;
+
 
 //	@FXML
 //	private Button saveButton;
@@ -133,11 +149,26 @@ public class Controller {
 	@FXML
 	private BeatenTileField beatenFiguresBot;
 	
+	//PLAYER DISPLAY
+	
+	@FXML
+	private Label curPlayerLabelBot;
+	
+	@FXML
+	private Label curPlayerLabelTop;
+	
 	@FXML
 	private Pane chessFieldPane;
 	
 	@FXML
+	private BorderPane borderPane;
+	
+	@FXML
 	private Pane shuffleControlPane;
+	
+	public FlowPane getMessageButtonSocket() {
+		return messageButtonSocket;
+	}
 	
 	public Pane getShuffleControlPane() {
 		return shuffleControlPane;
@@ -173,17 +204,50 @@ public class Controller {
 	
 	@FXML
 	void initialize() {
-		
+		setupPlayerLabels();
 		setupGame();
 		setupLayoutHandler();
 		setupMoveExecution();
 		setupShaker();
-		
-		setupListeners();
 	}
 	
-	private void setupListeners() {
-		messageListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> newValue.showAndWait());
+	private void setupPlayerLabels() {
+		curPlayerLabelTop.setStyle("-fx-border-color:" + ColorEnum.BLACK + ";\n -fx-background-color: " + ColorEnum.WHITE + ";\n -fx-text-fill: " + ColorEnum.BLACK);
+		curPlayerLabelTop.setText(String.valueOf((ColorEnum.WHITE.toString().charAt(0))));
+		curPlayerLabelBot.setStyle("-fx-border-color:" + ColorEnum.BLACK + ";\n -fx-background-color: " + ColorEnum.BLACK + ";\n -fx-text-fill: " + ColorEnum.WHITE);
+		curPlayerLabelBot.setText(String.valueOf((ColorEnum.BLACK.toString().charAt(0))));
+	}
+	
+	public void rotateBoard() {
+		if (chessFieldPane.getRotate() == 0) {
+			for (ImageView icon : figureViewMap.values())
+				icon.setRotate(-180);
+			for (LineCountField field : chessField.getBorderTiles())
+				field.setRotate(-180);
+			chessField.setReverseLineCounters();
+			chessFieldPane.setRotate(180);
+			curPlayerLabelBot.setRotate(180);
+			curPlayerLabelTop.setRotate(180);
+		} else {
+			for (ImageView icon : figureViewMap.values())
+				icon.setRotate(0);
+			for (LineCountField field : chessField.getBorderTiles())
+				field.setRotate(0);
+			chessField.setRegularLineCounters();
+			chessFieldPane.setRotate(0);
+			curPlayerLabelBot.setRotate(0);
+			curPlayerLabelTop.setRotate(0);
+		}
+	}
+	
+	public void switchPlayerLabel(PlayerColor color) {
+		if (color == PlayerColor.BLACK) {
+			curPlayerLabelTop.setVisible(false);
+			curPlayerLabelBot.setVisible(true);
+		} else {
+			curPlayerLabelTop.setVisible(true);
+			curPlayerLabelBot.setVisible(false);
+		}
 	}
 	
 	//element visibility
@@ -211,6 +275,40 @@ public class Controller {
 	public void switchListVisibility() {
 		switchVisibility(occupancyListView, logButton, listVisible);
 		listVisible = !listVisible;
+	}
+	
+	public void switchShowInfos() {
+		if (infosVisible) {
+			setBackgroundColor(showInfosButton, ColorEnum.GREEN);
+			if (errorsVisible)
+				messageListView.switchLists(ListType.ERRORSONLY);
+			else
+				messageListView.switchLists(ListType.WARNINGSONLY);
+		} else {
+			setBackgroundColor(showInfosButton, ColorEnum.RED);
+			if (errorsVisible)
+				messageListView.switchLists(ListType.ALL);
+			else
+				messageListView.switchLists(ListType.INFOONLY);
+		}
+		infosVisible = !infosVisible;
+	}
+	
+	public void switchShowWarnings() {
+		if (errorsVisible) {
+			setBackgroundColor(showErrorsButton, ColorEnum.GREEN);
+			if (infosVisible)
+				messageListView.switchLists(ListType.INFOONLY);
+			else
+				messageListView.switchLists(ListType.WARNINGSONLY);
+		} else {
+			setBackgroundColor(showErrorsButton, ColorEnum.RED);
+			if (infosVisible)
+				messageListView.switchLists(ListType.ALL);
+			else
+				messageListView.switchLists(ListType.ERRORSONLY);
+		}
+		errorsVisible = !errorsVisible;
 	}
 	
 	/**

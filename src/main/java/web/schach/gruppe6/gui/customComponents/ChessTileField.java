@@ -10,6 +10,9 @@ import java.util.function.Consumer;
 public class ChessTileField extends GridPane implements TileField {
 	
 	private ClickAbleTile[][] chessFieldComponents = new ClickAbleTile[8][8];
+	
+	private LineCountField[] borderTiles = new LineCountField[32];
+	
 	private Consumer<Position> onClickCallback;
 	
 	public ChessTileField() {
@@ -17,6 +20,10 @@ public class ChessTileField extends GridPane implements TileField {
 		setupLineCounters();
 		setupChessFields();
 		setMinSize(300, 300);
+	}
+	
+	public LineCountField[] getBorderTiles() {
+		return borderTiles;
 	}
 	
 	private void setupFillers() {
@@ -28,16 +35,64 @@ public class ChessTileField extends GridPane implements TileField {
 	
 	private void setupLineCounters() {
 		for (int x = 1; x < 9; x++) {
-			add(new LineCountField(x, true), x, 0);
+			LineCountField countField = new LineCountField(x, true);
+			add(countField, x, 0);
+			borderTiles[x - 1] = countField;
 		}
 		for (int x = 1; x < 9; x++) {
-			add(new LineCountField(x, true), x, 9);
+			LineCountField countField = new LineCountField(x, true);
+			add(countField, x, 9);
+			borderTiles[x - 1 + 8] = countField;
+			
 		}
 		for (int y = 1; y < 9; y++) {
-			add(new LineCountField(y, false), 0, y);
+			LineCountField countField = new LineCountField(y, false);
+			add(countField, 0, y);
+			borderTiles[y - 1 + 16] = countField;
+			
 		}
 		for (int y = 1; y < 9; y++) {
-			add(new LineCountField(y, false), 9, y);
+			LineCountField countField = new LineCountField(y, false);
+			add(countField, 9, y);
+			borderTiles[y - 1 + 24] = countField;
+		}
+	}
+	
+	private void deleteLineCounters() {
+		for (int i = 0; i < borderTiles.length; i++) {
+			getChildren().remove(borderTiles[i]);
+		}
+	}
+	
+	public void setRegularLineCounters() {
+		deleteLineCounters();
+		for (int x = 7; x >= 0; x--) {
+			add(borderTiles[x], x + 1, 0);
+		}
+		for (int x = 7; x >= 0; x--) {
+			add(borderTiles[x + 8], x + 1, 9);
+		}
+		for (int y = 7; y >= 0; y--) {
+			add(borderTiles[y + 16], 0, y + 1);
+		}
+		for (int y = 7; y >= 0; y--) {
+			add(borderTiles[y + 24], 9, y + 1);
+		}
+	}
+	
+	public void setReverseLineCounters() {
+		deleteLineCounters();
+		for (int x = 8; x > 0; x--) {
+			add(borderTiles[8 - x], x, 0);
+		}
+		for (int x = 8; x > 0; x--) {
+			add(borderTiles[16 - x], x, 9);
+		}
+		for (int y = 8; y > 0; y--) {
+			add(borderTiles[24 - y], 0, y);
+		}
+		for (int y = 8; y > 0; y--) {
+			add(borderTiles[32 - y], 9, y);
 		}
 	}
 	

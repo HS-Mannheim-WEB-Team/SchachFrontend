@@ -1,8 +1,8 @@
 package web.schach.gruppe6.gui.util;
 
 public enum ColorEnum {
-	BLACK("black"),
-	WHITE("white"),
+	BLACK("BLACK"),
+	WHITE("WHITE"),
 	RED("red"),
 	BLUE("blue"),
 	GREEN("chartreuse"),

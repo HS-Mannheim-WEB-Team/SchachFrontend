@@ -1,6 +1,5 @@
 package web.schach.gruppe6.gui.customComponents;
 
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ListCell;
@@ -9,10 +8,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 
-import static javafx.collections.FXCollections.observableArrayList;
-
 public class MessageListView extends ListView<Alert> {
-	public ObservableList<Alert> data = observableArrayList();
+	
+	ListType curListType = ListType.ALL;
+	
 	
 	public MessageListView() {
 		setCellFactory(param -> new ListCell<Alert>() {
@@ -21,8 +20,8 @@ public class MessageListView extends ListView<Alert> {
 			@Override
 			public void updateItem(Alert alert, boolean empty) {
 				super.updateItem(alert, empty);
-				imageView.setFitHeight(30);
-				imageView.setFitWidth(30);
+				imageView.setFitHeight(25);
+				imageView.setFitWidth(25);
 				if (empty) {
 					setText(null);
 					setGraphic(null);
@@ -48,19 +47,29 @@ public class MessageListView extends ListView<Alert> {
 					alert.showAndWait();
 			}
 		});
-		setItems(data);
+		setItems(ListType.ALL.getData());
 	}
 	
 	public void addItem(Alert item) {
-		data.add(item);
+		ListType.add(item);
 		scrollTo(item);
 	}
 	
+	public void updateList() {
+		setItems(curListType.getData());
+		scrollTo(curListType.getData().size());
+	}
+	
 	public boolean removeItem(Alert key) {
-		return data.remove(key);
+		return ListType.remove(key);
 	}
 	
 	public void clear() {
-		data.clear();
+		ListType.clear();
+	}
+	
+	public void switchLists(ListType type) {
+		this.curListType = type;
+		updateList();
 	}
 }
