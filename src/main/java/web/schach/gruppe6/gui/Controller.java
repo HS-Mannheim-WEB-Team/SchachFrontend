@@ -111,6 +111,9 @@ public class Controller {
 	
 	@FXML
 	private FlowPane messageButtonSocket;
+	
+	@FXML
+	private FlowPane messageSocketPane;
 
 
 //	@FXML
@@ -262,7 +265,7 @@ public class Controller {
 	}
 	
 	public void switchEventLogVisibility() {
-		switchVisibility(messageListView, messageButton, messageListIsVisible);
+		switchVisibility(messageSocketPane, messageButton, messageListIsVisible);
 		messageListIsVisible = !messageListIsVisible;
 	}
 	
