@@ -411,9 +411,7 @@ public class Controller {
 							
 							//download new layouts
 							for (int moveId = currCount; moveId < remoteCount; moveId++) {
-								Layout layout = new Layout("After move " + (moveId + 1), newLayout.get(moveId));
-								layout.apply(CONNECTION.getChange(this.id, moveId + 1, layout));
-								newLayout.add(layout);
+								newLayout.add(CONNECTION.getChange(this.id, moveId + 1, newLayout.get(moveId)));
 							}
 							
 							//apply new layouts
@@ -504,7 +502,7 @@ public class Controller {
 			Figures figure = layoutCurrent.at(position);
 			if (figure == null)
 				return;
-			if (game.color != null && figure.color != game.color)
+			if (game.color != null && figure.type.color != game.color)
 				return;
 			
 			lastClicked = position;
@@ -691,7 +689,7 @@ public class Controller {
 	private PositionOnField resolvePositionOnField(Figures figure, Position position) {
 		if (position != null)
 			return new PositionOnField(chessField, position);
-		return new PositionOnField(figure.color == PlayerColor.WHITE ? beatenFiguresTop : beatenFiguresBot, figure.positionBeaten);
+		return new PositionOnField(figure.type.color == PlayerColor.WHITE ? beatenFiguresTop : beatenFiguresBot, figure.positionBeaten);
 	}
 	
 	private static class PositionOnField {

@@ -2,57 +2,76 @@ package web.schach.gruppe6.obj;
 
 import static web.schach.gruppe6.obj.ChessPositionNotation.fromChessNotation;
 import static web.schach.gruppe6.obj.FigureType.*;
-import static web.schach.gruppe6.obj.PlayerColor.*;
 
 public enum Figures {
 	
-	WHITE_ROOK_1(ROOK, WHITE, fromChessNotation("a1")),
-	WHITE_KNIGHT_1(KNIGHT, WHITE, fromChessNotation("b1")),
-	WHITE_BISHOP_1(BISHOP, WHITE, fromChessNotation("c1")),
-	WHITE_QUEEN(QUEEN, WHITE, fromChessNotation("d1")),
-	WHITE_KING(KING, WHITE, fromChessNotation("e1")),
-	WHITE_BISHOP_2(BISHOP, WHITE, fromChessNotation("f1")),
-	WHITE_KNIGHT_2(KNIGHT, WHITE, fromChessNotation("g1")),
-	WHITE_ROOK_2(ROOK, WHITE, fromChessNotation("h1")),
-	WHITE_PAWN_1(PAWN, WHITE, fromChessNotation("a2")),
-	WHITE_PAWN_2(PAWN, WHITE, fromChessNotation("b2")),
-	WHITE_PAWN_3(PAWN, WHITE, fromChessNotation("c2")),
-	WHITE_PAWN_4(PAWN, WHITE, fromChessNotation("d2")),
-	WHITE_PAWN_5(PAWN, WHITE, fromChessNotation("e2")),
-	WHITE_PAWN_6(PAWN, WHITE, fromChessNotation("f2")),
-	WHITE_PAWN_7(PAWN, WHITE, fromChessNotation("g2")),
-	WHITE_PAWN_8(PAWN, WHITE, fromChessNotation("h2")),
+	WHITE_ROOK_1(WHITE_ROOK, fromChessNotation("a1")),
+	WHITE_KNIGHT_1(WHITE_KNIGHT, fromChessNotation("b1")),
+	WHITE_BISHOP_1(WHITE_BISHOP, fromChessNotation("c1")),
+	WHITE_QUEEN_1(WHITE_QUEEN, fromChessNotation("d1")),
+	WHITE_KING_1(WHITE_KING, fromChessNotation("e1")),
+	WHITE_BISHOP_2(WHITE_BISHOP, fromChessNotation("f1")),
+	WHITE_KNIGHT_2(WHITE_KNIGHT, fromChessNotation("g1")),
+	WHITE_ROOK_2(WHITE_ROOK, fromChessNotation("h1")),
+	WHITE_PAWN_1(WHITE_PAWN, fromChessNotation("a2")),
+	WHITE_PAWN_2(WHITE_PAWN, fromChessNotation("b2")),
+	WHITE_PAWN_3(WHITE_PAWN, fromChessNotation("c2")),
+	WHITE_PAWN_4(WHITE_PAWN, fromChessNotation("d2")),
+	WHITE_PAWN_5(WHITE_PAWN, fromChessNotation("e2")),
+	WHITE_PAWN_6(WHITE_PAWN, fromChessNotation("f2")),
+	WHITE_PAWN_7(WHITE_PAWN, fromChessNotation("g2")),
+	WHITE_PAWN_8(WHITE_PAWN, fromChessNotation("h2")),
 	
-	BLACK_ROOK_1(ROOK, BLACK, fromChessNotation("a8")),
-	BLACK_KNIGHT_1(KNIGHT, BLACK, fromChessNotation("b8")),
-	BLACK_BISHOP_1(BISHOP, BLACK, fromChessNotation("c8")),
-	BLACK_QUEEN(QUEEN, BLACK, fromChessNotation("d8")),
-	BLACK_KING(KING, BLACK, fromChessNotation("e8")),
-	BLACK_BISHOP_2(BISHOP, BLACK, fromChessNotation("f8")),
-	BLACK_KNIGHT_2(KNIGHT, BLACK, fromChessNotation("g8")),
-	BLACK_ROOK_2(ROOK, BLACK, fromChessNotation("h8")),
-	BLACK_PAWN_1(PAWN, BLACK, fromChessNotation("a7")),
-	BLACK_PAWN_2(PAWN, BLACK, fromChessNotation("b7")),
-	BLACK_PAWN_3(PAWN, BLACK, fromChessNotation("c7")),
-	BLACK_PAWN_4(PAWN, BLACK, fromChessNotation("d7")),
-	BLACK_PAWN_5(PAWN, BLACK, fromChessNotation("e7")),
-	BLACK_PAWN_6(PAWN, BLACK, fromChessNotation("f7")),
-	BLACK_PAWN_7(PAWN, BLACK, fromChessNotation("g7")),
-	BLACK_PAWN_8(PAWN, BLACK, fromChessNotation("h7"));
+	BLACK_ROOK_1(BLACK_ROOK, fromChessNotation("a8")),
+	BLACK_KNIGHT_1(BLACK_KNIGHT, fromChessNotation("b8")),
+	BLACK_BISHOP_1(BLACK_BISHOP, fromChessNotation("c8")),
+	BLACK_QUEEN_1(BLACK_QUEEN, fromChessNotation("d8")),
+	BLACK_KING_1(BLACK_KING, fromChessNotation("e8")),
+	BLACK_BISHOP_2(BLACK_BISHOP, fromChessNotation("f8")),
+	BLACK_KNIGHT_2(BLACK_KNIGHT, fromChessNotation("g8")),
+	BLACK_ROOK_2(BLACK_ROOK, fromChessNotation("h8")),
+	BLACK_PAWN_1(BLACK_PAWN, fromChessNotation("a7")),
+	BLACK_PAWN_2(BLACK_PAWN, fromChessNotation("b7")),
+	BLACK_PAWN_3(BLACK_PAWN, fromChessNotation("c7")),
+	BLACK_PAWN_4(BLACK_PAWN, fromChessNotation("d7")),
+	BLACK_PAWN_5(BLACK_PAWN, fromChessNotation("e7")),
+	BLACK_PAWN_6(BLACK_PAWN, fromChessNotation("f7")),
+	BLACK_PAWN_7(BLACK_PAWN, fromChessNotation("g7")),
+	BLACK_PAWN_8(BLACK_PAWN, fromChessNotation("h7"));
+	
+	//NOCOMMIT: check if this is required
+//	static {
+//		EnumMap<FigureType, List<Figures>> figuresWhite = new EnumMap<>(FigureType.class);
+//		EnumMap<FigureType, List<Figures>> figuresBlack = new EnumMap<>(FigureType.class);
+//		for (FigureType figureType : FigureType.values()) {
+//			figuresWhite.put(figureType, new ArrayList<>());
+//			figuresBlack.put(figureType, new ArrayList<>());
+//		}
+//		
+//		for (Figures figure : Figures.values())
+//			(figure.color == WHITE ? figuresWhite : figuresBlack).get(figure.type).add(figure);
+//		
+//		for (FigureType figureType : FigureType.values()) {
+//			figureType.figuresWhite = figuresWhite.get(figureType).toArray(new Figures[0]);
+//			figureType.figuresBlack = figuresBlack.get(figureType).toArray(new Figures[0]);
+//		}
+//	}
 	
 	public final FigureType type;
-	public final PlayerColor color;
 	public final Position positionInitial;
 	public final Position positionBeaten;
 	
-	Figures(FigureType type, PlayerColor color, Position positionInitial) {
+	Figures(FigureType type, Position positionInitial) {
 		this.type = type;
-		this.color = color;
 		this.positionInitial = positionInitial;
 		this.positionBeaten = new Position(positionInitial.x, positionInitial.y <= 2 ? positionInitial.y : positionInitial.y - 6);
 	}
 	
 	public String getIconPath() {
-		return color == WHITE ? type.iconPathWhite : type.iconPathBlack;
+		return type.iconPath;
 	}
+
+//	static void init() {
+//	
+//	}
 }

@@ -1,6 +1,5 @@
 package web.schach.gruppe6.network;
 
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import web.schach.gruppe6.network.exceptions.ParseException;
@@ -17,6 +16,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
 import java.util.Iterator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class ParserUtils {
 	
@@ -43,15 +44,23 @@ public class ParserUtils {
 	}
 	
 	//entry key resolver
-	public static Node getEntryKeyFirstNode(Element root, String message) throws ParseException {
+	public static Node getEntryKeyFirstOrThrow(Node root, String message) throws ParseException {
 		//the old line using streams; replaced with the code below
 //		return StreamSupport.stream(nodeListIterable(root.getElementsByTagName("entry")).spliterator(), false).filter(node -> message.equals(node.getAttributes().getNamedItem("key").getNodeValue())).findFirst().orElseThrow(() -> new ParseException("No Entry " + message));
 		
-		for (Node node : nodeListIterable(root.getElementsByTagName("entry"))) {
-			if (message.equals(node.getAttributes().getNamedItem("key").getNodeValue()))
+		for (Node node : nodeListIterable(root.getChildNodes())) {
+			if ("entry".equals(node.getNodeName()) && message.equals(node.getAttributes().getNamedItem("key").getNodeValue()))
 				return node;
 		}
 		throw new ParseException("No Entry " + message);
+	}
+	
+	public static Node getEntryKeyFirstOrNull(Node root, String message) throws ParseException {
+		for (Node node : nodeListIterable(root.getChildNodes())) {
+			if ("entry".equals(node.getNodeName()) && message.equals(node.getAttributes().getNamedItem("key").getNodeValue()))
+				return node;
+		}
+		return null;
 	}
 	
 	//NodeList
@@ -69,6 +78,10 @@ public class ParserUtils {
 				return list.item(i++);
 			}
 		};
+	}
+	
+	public static Stream<Node> nodeListStream(NodeList list) {
+		return StreamSupport.stream(nodeListIterable(list).spliterator(), false);
 	}
 	
 	//debug

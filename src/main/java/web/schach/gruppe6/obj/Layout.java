@@ -20,9 +20,17 @@ public class Layout {
 	public final String name;
 	private EnumMap<Figures, Position> layout;
 	
-	public Layout(String name, EnumMap<Figures, Position> layout) {
+	private Layout(String name, EnumMap<Figures, Position> layout) {
 		this.name = name;
 		this.layout = layout;
+	}
+	
+	public Layout() {
+		this("", new EnumMap<>(Figures.class));
+	}
+	
+	public Layout(String name) {
+		this(name, new EnumMap<>(Figures.class));
 	}
 	
 	public Layout(String name, Layout layout) {
@@ -35,18 +43,6 @@ public class Layout {
 	
 	public Position put(Figures key, Position value) {
 		return layout.put(key, value);
-	}
-	
-	public void apply(Move move) {
-		Position old = get(move.figure);
-		if (!old.equals(move.from))
-			throw new IllegalArgumentException("Figure " + move.figure + " at " + old + " != " + move.from);
-		
-		Figures beaten = at(move.to);
-		if (beaten != null)
-			put(beaten, null);
-		
-		put(move.figure, move.to);
 	}
 	
 	public Figures at(Position pos) {
@@ -82,9 +78,9 @@ public class Layout {
 			Position pos = entry.getValue();
 			Figures figure = entry.getKey();
 			if (pos != null)
-				field[pos.y][pos.x] = (colored ? (figure.color == PlayerColor.WHITE ? "\u001b[36m" : "\u001b[30m") : "") + figure.type.character;
+				field[pos.y][pos.x] = (colored ? (figure.type.color == PlayerColor.WHITE ? "\u001b[36m" : "\u001b[30m") : "") + figure.type.character;
 			else
-				(figure.color == PlayerColor.WHITE ? beatenWhite : beatenBlack).append(figure.type.character);
+				(figure.type.color == PlayerColor.WHITE ? beatenWhite : beatenBlack).append(figure.type.character);
 		}
 		
 		StringBuilder b = new StringBuilder();
