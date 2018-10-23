@@ -12,11 +12,11 @@ public class ChessGUI extends Application {
 	private static final int MIN_WIDTH = 800;
 	private static final int MIN_HIGHT = 600;
 	private static final float GENEREL_GROW_FACTOR = 1 / 600f;
-	
-	public static final double SCALE_FACTOR = 1;
-	public static final boolean OP_MODE_ALLOW_MOVE_BOTH = false;
-	public static final int DISTANCE_TO_WINDOW_BORDER = 15;
 	public static final float MESSAGE_GROW_FACTOR = 0.125f;
+	public static final int DISTANCE_TO_WINDOW_BORDER = 15;
+	
+	public static final double INITIALSCALE = 1;
+	public static final boolean OP_MODE_ALLOW_MOVE_BOTH = false;
 	
 	public Controller controller;
 	
@@ -25,18 +25,18 @@ public class ChessGUI extends Application {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("ChessGUI.fxml"));
 		Parent root = loader.load();
 		root.setId("pane");
-		Scene scene = new Scene(root, SCALE_FACTOR * MIN_WIDTH, SCALE_FACTOR * MIN_HIGHT);
+		Scene scene = new Scene(root, INITIALSCALE * MIN_WIDTH, INITIALSCALE * MIN_HIGHT);
 		scene.getStylesheets().addAll(this.getClass().getResource("styles/BackgroundStyle.css").toExternalForm());
 		primaryStage.getIcons().add(new Image("/web/schach/gruppe6/gui/iconsAndImages/iconset1/queen_white.png"));
 		primaryStage.setMinWidth(MIN_WIDTH);
 		primaryStage.setMinHeight(MIN_HIGHT);
-		primaryStage.setTitle("WEB-Schach");
+		primaryStage.setTitle("WEB-Chess");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		controller = loader.getController();
+		//set current messageListView Scale
 		controller.getMessageListView().setPrefSize(primaryStage.getWidth() - DISTANCE_TO_WINDOW_BORDER, MIN_HIGHT * MESSAGE_GROW_FACTOR);
-		
-		
+		//add rescale on window size changes
 		primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
 			if (newVal.doubleValue() < primaryStage.getHeight())
 				rescale(newVal);
