@@ -110,7 +110,7 @@
 		<FlowPane fx:id="globalCenterFlowPlane" alignment="CENTER" hgap="10.0" prefHeight="150.0" prefWidth="150.0" BorderPane.alignment="CENTER">
 			<children>
 				<Pane fx:id="shuffleControlPane" prefHeight="420.0" prefWidth="210.0"/>
-				<Pane fx:id="chessFieldPane" prefHeight="420.0" prefWidth="330.0">
+				<Pane fx:id="chessFieldPane" prefHeight="420.0" prefWidth="332.0">
 					<children>
 						<BorderPane fx:id="borderPane" prefHeight="420.0" prefWidth="330.0" style="-fx-border-color: white;">
 							<center>
@@ -151,7 +151,7 @@
 								<Pane prefHeight="300.0" prefWidth="15.0" style="-fx-background-color: burlywood;" BorderPane.alignment="CENTER"/>
 							</right>
 							<top>
-								<HBox prefHeight="60.0" prefWidth="330.0" BorderPane.alignment="CENTER">
+								<HBox prefHeight="59.0" prefWidth="330.0" BorderPane.alignment="CENTER">
 									<children>
 										<Pane prefHeight="60.0" prefWidth="51.0" style="-fx-background-color: burlywood;">
 											<children>
@@ -180,9 +180,9 @@
 								</HBox>
 							</top>
 							<bottom>
-								<HBox prefHeight="60.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+								<HBox prefHeight="59.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 									<children>
-										<Pane prefHeight="60.0" prefWidth="51.0" style="-fx-background-color: burlywood;">
+										<Pane prefHeight="59.0" prefWidth="51.0" style="-fx-background-color: burlywood;">
 											<children>
 												<Label fx:id="curPlayerLabelBot" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="15.0"
 													   prefHeight="31.0" prefWidth="27.0"/>
@@ -204,7 +204,7 @@
 												<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
 											</rowConstraints>
 										</BeatenTileField>
-										<Pane prefHeight="60.0" prefWidth="51.0" style="-fx-background-color: burlywood;"/>
+										<Pane prefHeight="59.0" prefWidth="51.0" style="-fx-background-color: burlywood;"/>
 									</children>
 								</HBox>
 							</bottom>
