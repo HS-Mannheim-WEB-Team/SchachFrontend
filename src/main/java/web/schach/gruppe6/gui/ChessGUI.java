@@ -11,7 +11,7 @@ public class ChessGUI extends Application {
 	
 	private static final int MIN_WIDTH = 800;
 	private static final int MIN_HIGHT = 600;
-	private static final float GENEREL_GROW_FACTOR_WIDTH = 1 / 800f;
+	private static final float GENEREL_GROW_FACTOR_WIDTH = 1 / 600f;
 	private static final float GENEREL_GROW_FACTOR_HIGHT = 1 / 600f;
 	
 	public static final double SCALE_FACTOR = 1;
@@ -44,11 +44,6 @@ public class ChessGUI extends Application {
 				controller.getChessFieldPane().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR_WIDTH);
 				controller.getOccupancyListView().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR_WIDTH);
 				controller.getShuffleControlPane().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR_WIDTH);
-			} else {
-				controller.getGlobalCenterFlowPlane().setScaleX(primaryStage.getHeight() * GENEREL_GROW_FACTOR_HIGHT);
-				controller.getChessFieldPane().setScaleY(primaryStage.getHeight() * GENEREL_GROW_FACTOR_HIGHT);
-				controller.getOccupancyListView().setScaleY(primaryStage.getHeight() * GENEREL_GROW_FACTOR_HIGHT);
-				controller.getShuffleControlPane().setScaleY(primaryStage.getHeight() * GENEREL_GROW_FACTOR_HIGHT);
 			}
 			controller.getMessageButtonSocket().setPrefSize(newVal.doubleValue() - DISTANCE_TO_WINDOW_BORDER, 15);
 			controller.getMessageListView().setPrefSize(newVal.doubleValue() - DISTANCE_TO_WINDOW_BORDER, primaryStage.getHeight() * MESSAGE_GROW_FACTOR);
@@ -60,11 +55,6 @@ public class ChessGUI extends Application {
 				controller.getChessFieldPane().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR_HIGHT);
 				controller.getOccupancyListView().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR_HIGHT);
 				controller.getShuffleControlPane().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR_HIGHT);
-			} else {
-				controller.getGlobalCenterFlowPlane().setScaleX(primaryStage.getWidth() * GENEREL_GROW_FACTOR_WIDTH);
-				controller.getChessFieldPane().setScaleY(primaryStage.getWidth() * GENEREL_GROW_FACTOR_HIGHT);
-				controller.getOccupancyListView().setScaleY(primaryStage.getWidth() * GENEREL_GROW_FACTOR_HIGHT);
-				controller.getShuffleControlPane().setScaleY(primaryStage.getWidth() * GENEREL_GROW_FACTOR_HIGHT);
 			}
 			controller.getMessageListView().setPrefSize(primaryStage.getWidth() - DISTANCE_TO_WINDOW_BORDER, newVal.doubleValue() * MESSAGE_GROW_FACTOR);
 		});

@@ -23,7 +23,7 @@
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0"
 			xmlns="http://javafx.com/javafx/8.0.161-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="web.schach.gruppe6.gui.Controller">
 	<top>
-		<GridPane fx:id="topSocket" BorderPane.alignment="CENTER">
+		<GridPane BorderPane.alignment="CENTER">
 			<columnConstraints>
 				<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
 				<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
@@ -112,7 +112,7 @@
 				<Pane fx:id="shuffleControlPane" prefHeight="420.0" prefWidth="210.0"/>
 				<Pane fx:id="chessFieldPane" prefHeight="420.0" prefWidth="330.0">
 					<children>
-						<BorderPane fx:id="borderPane" prefHeight="420.0" prefWidth="332.0" style="-fx-border-color: white;">
+						<BorderPane fx:id="borderPane" prefHeight="420.0" prefWidth="330.0" style="-fx-border-color: white;">
 							<center>
 								<ChessTileField fx:id="chessField" prefHeight="300.0" prefWidth="300.0" style="-fx-border-color: white;" BorderPane.alignment="CENTER">
 									<opaqueInsets>
@@ -211,8 +211,9 @@
 						</BorderPane>
 					</children>
 				</Pane>
-				<OccupancyListView fx:id="occupancyListView" editable="true" opacity="0.8" prefHeight="420.0" prefWidth="200.0" style="-fx-border-color: white;"
+				<OccupancyListView fx:id="occupancyListView" editable="true" opacity="0.8" prefHeight="420.0" prefWidth="120.0" style="-fx-border-color: white;"
 								   stylesheets="@styles/OccupancyListViewStyle.css"/>
+				<Pane prefHeight="420.0" prefWidth="85.0"/>
 			</children>
 		</FlowPane>
 	</center>
