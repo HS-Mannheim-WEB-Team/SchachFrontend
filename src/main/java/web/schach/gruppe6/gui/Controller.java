@@ -232,15 +232,6 @@ public class Controller {
 		}
 	}
 	
-	private void rotateBoard(PlayerColor selectedItem) {
-		if (selectedItem == PlayerColor.WHITE) {
-			setRotation(180);
-			chessField.setReverseLineCounters();
-		} else {
-			setRotation(0);
-			chessField.setRegularLineCounters();
-		}
-	}
 	
 	private void setRotation(int rotateValue) {
 		for (ImageView icon : figureViewMap.values())
@@ -560,7 +551,6 @@ public class Controller {
 				logMessage(AlertType.INFORMATION, "Connection", "Join Game " + iDTextField.getText() + " successful!");
 				logMessage(AlertType.INFORMATION, "Color", "Your Color is " + colorSelectorListView.getSelectionModel().getSelectedItem().toString());
 				switchMenuVisibility();
-				rotateBoard(colorSelectorListView.getSelectionModel().getSelectedItem());
 			} catch (NumberFormatException e) {
 				logMessage(AlertType.ERROR, "Connection", "Join failed: Number " + iDTextField.getText() + " not a valid number!");
 				shake();
@@ -573,7 +563,6 @@ public class Controller {
 				logMessage(AlertType.INFORMATION, "Connection", "Creating new Game " + iDTextField.getText() + " was successful!");
 				logMessage(AlertType.INFORMATION, "Color", "Your Color is " + colorSelectorListView.getSelectionModel().getSelectedItem().toString());
 				switchMenuVisibility();
-				rotateBoard(colorSelectorListView.getSelectionModel().getSelectedItem());
 			} catch (NumberFormatException e) {
 				logMessage(AlertType.ERROR, "Connection", "Creating new Game failed: Number " + iDTextField.getText() + " not a valid number!");
 				shake();
