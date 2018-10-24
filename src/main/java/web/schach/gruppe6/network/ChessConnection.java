@@ -7,13 +7,14 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 import web.schach.gruppe6.network.exceptions.ParseException;
 import web.schach.gruppe6.network.exceptions.ServerErrorException;
-import web.schach.gruppe6.obj.ChessPositionNotation;
 import web.schach.gruppe6.obj.FigureType;
 import web.schach.gruppe6.obj.Figures;
 import web.schach.gruppe6.obj.GameState;
 import web.schach.gruppe6.obj.Layout;
 import web.schach.gruppe6.obj.PlayerColor;
 import web.schach.gruppe6.obj.Position;
+import web.schach.gruppe6.util.ChessConstants;
+import web.schach.gruppe6.util.Grid;
 
 import javax.ws.rs.client.Client;
 import javax.xml.parsers.DocumentBuilder;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +31,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static web.schach.gruppe6.network.ParserUtils.*;
-import static web.schach.gruppe6.obj.ChessPositionNotation.toChessNotation;
+import static web.schach.gruppe6.obj.ChessPositionNotation.*;
 
 public class ChessConnection {
 	
@@ -138,7 +140,7 @@ public class ChessConnection {
 					newFigures.computeIfAbsent(figureType, figureType1 -> new ArrayList<>()).add(null);
 				} else {
 					
-					Position position = ChessPositionNotation.fromChessNotation(positionStr);
+					Position position = fromChessNotation(positionStr);
 					Figures oldFigure = currentLayout.at(position);
 					if (oldFigure != null && oldFigure.type == figureType) {
 						//same
@@ -209,5 +211,25 @@ public class ChessConnection {
 			layout.put(removedLeftOver.get(i), newLeftOver.get(i));
 		
 		return layout;
+	}
+	
+	public Grid<Boolean> getPermittedMoves(int id, Position position) throws IOException, ServerErrorException {
+		Element root = getAndParse("/spiel/getErlaubteZuege/" + id + "/" + toChessNotation(position)).getDocumentElement();
+		rethrowIfServerError(root);
+		
+		Iterable<Node> iterable;
+		if ("propertiesarray".equals(root.getTagName())) {
+			iterable = ParserUtils.nodeListIterable(root.getElementsByTagName("properties"));
+		} else if ("properties".equals(root.getTagName())) {
+			iterable = Collections.singleton(root);
+		} else {
+			throw new ParseException("No Entry 'propertiesarray' or 'properties'");
+		}
+		
+		Grid<Boolean> grid = ChessConstants.createChessGrid();
+		for (Node node : iterable)
+			if ("D_Zug".equals(getEntryKeyFirstOrThrow(node, "klasse").getTextContent()))
+				grid.set(fromChessNotation(getEntryKeyFirstOrThrow(node, "nach").getTextContent()), true);
+		return grid;
 	}
 }

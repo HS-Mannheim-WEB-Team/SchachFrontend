@@ -34,6 +34,7 @@ import web.schach.gruppe6.obj.Layout;
 import web.schach.gruppe6.obj.PlayerColor;
 import web.schach.gruppe6.obj.Position;
 import web.schach.gruppe6.obj.Vector;
+import web.schach.gruppe6.util.Grid;
 import web.schach.gruppe6.util.Task;
 
 import java.io.IOException;
@@ -46,6 +47,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Function;
 
 import static javafx.collections.FXCollections.observableArrayList;
 
@@ -76,8 +78,6 @@ public class Controller {
 	private boolean layoutListVisible = true;
 	
 	private Game game;
-	
-	private Position lastClicked;
 	
 	private Layout layoutCurrent = Layout.INITIAL_BEATEN;
 	private Map<Figures, ImageView> figureViewMap = new EnumMap<>(Figures.class);
@@ -366,9 +366,10 @@ public class Controller {
 		public final int id;
 		public final PlayerColor color;
 		public final ObservableList<Layout> layouts = observableArrayList();
+		private final Thread th;
 		
-		private Thread th;
 		private volatile boolean isRunning = true;
+		private Position lastClicked;
 		
 		public Game(int id, PlayerColor color, boolean newGame) {
 			this.id = id;
@@ -463,6 +464,50 @@ public class Controller {
 		public void stop() {
 			isRunning = false;
 			th.interrupt();
+			unmarkFields();
+		}
+		
+		public void onTileClick(Position position) {
+			if (lastClicked == null) {
+				if (game.layouts.get(game.layouts.size() - 1) != layoutCurrent)
+					return;
+				Figures figure = layoutCurrent.at(position);
+				if (figure == null)
+					return;
+				if (!(game.color == PlayerColor.BOTH || figure.type.color == game.color))
+					return;
+				
+				lastClicked = position;
+				
+				try {
+					Grid<Boolean> permittedMoves = CONNECTION.getPermittedMoves(game.id, position);
+					markFields(pos -> permittedMoves.get(pos) == Boolean.TRUE ? ColorEnum.GREEN : null);
+					chessField.mark(lastClicked, ColorEnum.RED);
+				} catch (IOException e) {
+					logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
+					e.printStackTrace();
+				} catch (ServerErrorException e) {
+					logMessage(AlertType.ERROR, "Server", "Server error: " + e.getMessage());
+				}
+			} else if (lastClicked.equals(position)) {
+				unmarkFields();
+				lastClicked = null;
+			} else {
+				try {
+					CONNECTION.takeMove(game.id, lastClicked, position);
+				} catch (IOException e) {
+					logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
+					e.printStackTrace();
+					shake();
+					return;
+				} catch (ServerErrorException e) {
+					logMessage(AlertType.ERROR, "Server", "Server error: " + e.getMessage());
+					shake();
+				}
+				
+				unmarkFields();
+				lastClicked = null;
+			}
 		}
 	}
 	
@@ -517,38 +562,25 @@ public class Controller {
 	}
 	
 	public void onTileClick(Position position) {
-		if (game == null)
-			return;
-		
-		if (lastClicked == null) {
-			if (game.layouts.get(game.layouts.size() - 1) != layoutCurrent)
-				return;
-			Figures figure = layoutCurrent.at(position);
-			if (figure == null)
-				return;
-			if (!(game.color == PlayerColor.BOTH || figure.type.color == game.color))
-				return;
-			
-			lastClicked = position;
-			chessField.mark(lastClicked);
-		} else if (lastClicked.equals(position)) {
-			chessField.unmark(lastClicked);
-			lastClicked = null;
-		} else {
-			try {
-				CONNECTION.takeMove(game.id, lastClicked, position);
-			} catch (IOException e) {
-				logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
-				e.printStackTrace();
-				shake();
-				return;
-			} catch (ServerErrorException e) {
-				logMessage(AlertType.ERROR, "Server", "Server error: " + e.getMessage());
-				shake();
+		if (game != null) {
+			game.onTileClick(position);
+		}
+	}
+	
+	private void unmarkFields() {
+		markFields(pos -> null);
+	}
+	
+	private void markFields(ColorEnum color) {
+		markFields(pos -> color);
+	}
+	
+	private void markFields(Function<Position, ColorEnum> color) {
+		for (int x = 0; x < 8; x++) {
+			for (int y = 0; y < 8; y++) {
+				Position pos = new Position(x, y);
+				chessField.mark(pos, color.apply(pos));
 			}
-			
-			chessField.unmark(lastClicked);
-			lastClicked = null;
 		}
 	}
 	

@@ -48,10 +48,9 @@ public class ParserUtils {
 		//the old line using streams; replaced with the code below
 //		return StreamSupport.stream(nodeListIterable(root.getElementsByTagName("entry")).spliterator(), false).filter(node -> message.equals(node.getAttributes().getNamedItem("key").getNodeValue())).findFirst().orElseThrow(() -> new ParseException("No Entry " + message));
 		
-		for (Node node : nodeListIterable(root.getChildNodes())) {
+		for (Node node : nodeListIterable(root.getChildNodes()))
 			if ("entry".equals(node.getNodeName()) && message.equals(node.getAttributes().getNamedItem("key").getNodeValue()))
 				return node;
-		}
 		throw new ParseException("No Entry " + message);
 	}
 	
@@ -85,7 +84,7 @@ public class ParserUtils {
 	}
 	
 	//debug
-	public static String debugPrint(Node doc) {
+	public static String dump(Node doc) {
 		try {
 			StringWriter writer = new StringWriter();
 			DEFAULT_TRANSFORMER.transform(new DOMSource(doc), new StreamResult(writer));

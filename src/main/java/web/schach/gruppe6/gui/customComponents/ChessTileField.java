@@ -43,13 +43,11 @@ public class ChessTileField extends GridPane implements TileField {
 			LineCountField countField = new LineCountField(x, true);
 			add(countField, x, 9);
 			borderTiles[x - 1 + 8] = countField;
-			
 		}
 		for (int y = 1; y < 9; y++) {
 			LineCountField countField = new LineCountField(y, false);
 			add(countField, 0, y);
 			borderTiles[y - 1 + 16] = countField;
-			
 		}
 		for (int y = 1; y < 9; y++) {
 			LineCountField countField = new LineCountField(y, false);
@@ -135,14 +133,13 @@ public class ChessTileField extends GridPane implements TileField {
 		return chessFieldComponents;
 	}
 	
-	public void mark(Position pos) {
+	public void mark(Position pos, ColorEnum color) {
 		Tile tile = chessFieldComponents[pos.x][pos.y];
-		tile.setStyle("-fx-border-color: red; \r\n" + "-fx-border-width: 3; \r\n" + "-fx-background-color: " + tile.getColor() + ";\r\n");
+		tile.setStyle((color != null ? "-fx-border-color: " + color + ";" : "") + " \r\n" + "-fx-border-width: 3; \r\n" + "-fx-background-color: " + tile.getColor() + ";\r\n");
 	}
 	
 	public void unmark(Position pos) {
-		Tile tile = chessFieldComponents[pos.x][pos.y];
-		tile.setStyle("-fx-border-color: white ;\r\n" + "-fx-background-color: " + tile.getColor().toString());
+		mark(pos, null);
 	}
 	
 	public void doClick(Position pos) {

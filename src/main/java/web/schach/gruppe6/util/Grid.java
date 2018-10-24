@@ -42,9 +42,10 @@ public class Grid<T> {
 	
 	//internal
 	private int getIndex(Position position) throws ArrayIndexOutOfBoundsException {
-		if (!position.boundsCheck(NULL_VECTOR, size))
-			throw new ArrayIndexOutOfBoundsException(NULL_VECTOR + " <= " + position + " < " + size);
-		return position.y * size.x + position.x;
+		Position abs = position.sub(offset);
+		if (!abs.boundsCheck(NULL_VECTOR, size))
+			throw new ArrayIndexOutOfBoundsException(offset + " <= " + position + " < " + size.add(offset));
+		return abs.y * size.x + abs.x;
 	}
 	
 	//access
