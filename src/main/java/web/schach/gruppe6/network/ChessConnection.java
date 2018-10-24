@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -127,6 +128,8 @@ public class ChessConnection {
 		EnumMap<Figures, Boolean> sameFigures = new EnumMap<>(Figures.class);
 		EnumMap<FigureType, List<Position>> newFigures = new EnumMap<>(FigureType.class);
 		GameState state = null;
+		
+		outer:
 		for (Node properties : ParserUtils.nodeListIterable(root.getElementsByTagName("properties"))) {
 			if ("D_Figur".equals(getEntryKeyFirstOrThrow(properties, "klasse").getTextContent())) {
 				
@@ -135,20 +138,31 @@ public class ChessConnection {
 						getEntryKeyFirstOrThrow(properties, "typ").getTextContent()
 				));
 				String positionStr = getEntryKeyFirstOrThrow(properties, "position").getTextContent();
-				if (positionStr.isEmpty()) {
-					//figure is beaten: unknown (until first:)
-					newFigures.computeIfAbsent(figureType, figureType1 -> new ArrayList<>()).add(null);
-				} else {
-					
+				if (!positionStr.isEmpty()) {
+					//on chess field
 					Position position = fromChessNotation(positionStr);
 					Figures oldFigure = currentLayout.at(position);
 					if (oldFigure != null && oldFigure.type == figureType) {
 						//same
 						sameFigures.put(oldFigure, true);
-					} else {
-						//different
-						newFigures.computeIfAbsent(figureType, figureType1 -> new ArrayList<>()).add(position);
+						continue;
 					}
+					
+					//different
+					newFigures.computeIfAbsent(figureType, figureType1 -> new ArrayList<>()).add(position);
+				} else {
+					//already beaten
+					for (Entry<Figures, Position> entry : currentLayout.entrySet()) {
+						Figures oldFigure = entry.getKey();
+						if (entry.getValue() == null && oldFigure.type == figureType && sameFigures.get(oldFigure) != Boolean.TRUE) {
+							//same
+							sameFigures.put(oldFigure, true);
+							continue outer;
+						}
+					}
+					
+					//different
+					newFigures.computeIfAbsent(figureType, figureType1 -> new ArrayList<>()).add(null);
 				}
 			} else if ("D_Belegung".equals(getEntryKeyFirstOrThrow(properties, "klasse").getTextContent())) {
 				state = NAME_TO_STATE.get(getEntryKeyFirstOrThrow(properties, "status").getTextContent());
@@ -164,31 +178,31 @@ public class ChessConnection {
 			else
 				removedFigures.computeIfAbsent(figure.type, figureType -> new ArrayList<>()).add(figure);
 		}
-		
-		//first: filter beaten figures
-		for (FigureType figureType : FigureType.values()) {
-			List<Figures> removedFigureTypes = removedFigures.get(figureType);
-			List<Position> newFigureTypes = newFigures.get(figureType);
-			if (removedFigureTypes == null || newFigureTypes == null)
-				continue;
-			
-			int removedIndex = 0;
-			int newIndex = 0;
-			label:
-			for (; removedIndex < removedFigureTypes.size(); removedIndex++) {
-				if (currentLayout.get(removedFigureTypes.get(removedIndex)) == null) {
-					
-					for (; newIndex < newFigureTypes.size(); newIndex++) {
-						if (newFigureTypes.get(newIndex) == null) {
-							removedFigureTypes.remove(removedIndex);
-							newFigureTypes.remove(newIndex);
-							continue label;
-						}
-					}
-					break;
-				}
-			}
-		}
+
+//		//first: filter beaten figures
+//		for (FigureType figureType : FigureType.values()) {
+//			List<Figures> removedFigureTypes = removedFigures.get(figureType);
+//			List<Position> newFigureTypes = newFigures.get(figureType);
+//			if (removedFigureTypes == null || newFigureTypes == null)
+//				continue;
+//
+//			int removedIndex = 0;
+//			int newIndex = 0;
+//			label:
+//			for (; removedIndex < removedFigureTypes.size(); removedIndex++) {
+//				if (currentLayout.get(removedFigureTypes.get(removedIndex)) == null) {
+//
+//					for (; newIndex < newFigureTypes.size(); newIndex++) {
+//						if (newFigureTypes.get(newIndex) == null) {
+//							removedFigureTypes.remove(removedIndex);
+//							newFigureTypes.remove(newIndex);
+//							continue label;
+//						}
+//					}
+//					break;
+//				}
+//			}
+//		}
 		
 		//second: same type (not perfect if multiple of one type are moved)
 		for (FigureType figureType : FigureType.values()) {
