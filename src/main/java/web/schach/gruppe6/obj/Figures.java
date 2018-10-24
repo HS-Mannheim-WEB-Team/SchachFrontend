@@ -1,5 +1,7 @@
 package web.schach.gruppe6.obj;
 
+import web.schach.gruppe6.util.Position;
+
 import static web.schach.gruppe6.obj.ChessPositionNotation.fromChessNotation;
 import static web.schach.gruppe6.obj.FigureType.*;
 

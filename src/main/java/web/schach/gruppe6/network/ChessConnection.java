@@ -12,9 +12,9 @@ import web.schach.gruppe6.obj.Figures;
 import web.schach.gruppe6.obj.GameState;
 import web.schach.gruppe6.obj.Layout;
 import web.schach.gruppe6.obj.PlayerColor;
-import web.schach.gruppe6.obj.Position;
 import web.schach.gruppe6.util.ChessConstants;
 import web.schach.gruppe6.util.Grid;
+import web.schach.gruppe6.util.Position;
 
 import javax.ws.rs.client.Client;
 import javax.xml.parsers.DocumentBuilder;

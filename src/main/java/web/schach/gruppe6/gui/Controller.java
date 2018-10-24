@@ -32,10 +32,10 @@ import web.schach.gruppe6.network.exceptions.ServerErrorException;
 import web.schach.gruppe6.obj.Figures;
 import web.schach.gruppe6.obj.Layout;
 import web.schach.gruppe6.obj.PlayerColor;
-import web.schach.gruppe6.obj.Position;
-import web.schach.gruppe6.obj.Vector;
 import web.schach.gruppe6.util.Grid;
+import web.schach.gruppe6.util.Position;
 import web.schach.gruppe6.util.Task;
+import web.schach.gruppe6.util.Vector;
 
 import java.io.IOException;
 import java.util.ArrayList;

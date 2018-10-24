@@ -1,7 +1,5 @@
 package web.schach.gruppe6.util;
 
-import web.schach.gruppe6.obj.Position;
-
 import static web.schach.gruppe6.obj.ChessPositionNotation.fromChessNotation;
 
 public class ChessConstants {

@@ -1,11 +1,9 @@
 package web.schach.gruppe6.util;
 
-import web.schach.gruppe6.obj.Position;
-
 import java.util.Arrays;
 import java.util.function.UnaryOperator;
 
-import static web.schach.gruppe6.obj.Position.NULL_VECTOR;
+import static web.schach.gruppe6.util.Position.NULL_VECTOR;
 
 public class Grid<T> {
 	

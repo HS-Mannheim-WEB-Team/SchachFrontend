@@ -1,4 +1,4 @@
-package web.schach.gruppe6.obj;
+package web.schach.gruppe6.util;
 
 import java.util.Objects;
 

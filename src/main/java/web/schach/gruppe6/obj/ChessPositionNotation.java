@@ -1,5 +1,7 @@
 package web.schach.gruppe6.obj;
 
+import web.schach.gruppe6.util.Position;
+
 public class ChessPositionNotation {
 	
 	public static char toChessNotationCharX(Position pos) {

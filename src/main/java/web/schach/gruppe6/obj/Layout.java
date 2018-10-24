@@ -1,5 +1,7 @@
 package web.schach.gruppe6.obj;
 
+import web.schach.gruppe6.util.Position;
+
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map.Entry;
