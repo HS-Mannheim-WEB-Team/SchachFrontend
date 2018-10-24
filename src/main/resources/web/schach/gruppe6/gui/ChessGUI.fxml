@@ -212,7 +212,7 @@
 					</children>
 				</Pane>
 				<OccupancyListView fx:id="occupancyListView" editable="true" opacity="0.8" prefHeight="420.0" prefWidth="120.0" style="-fx-border-color: white;"
-								   stylesheets="@styles/OccupancyListViewStyle.css" visible="false"/>
+								   stylesheets="@styles/OccupancyListViewStyle.css"/>
 				<Pane prefHeight="420.0" prefWidth="85.0"/>
 			</children>
 		</FlowPane>
