@@ -1,6 +1,7 @@
 package web.schach.gruppe6.gui;
 
 import javafx.application.Platform;
+import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
@@ -52,6 +53,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
 
+import static java.lang.Integer.parseInt;
 import static javafx.collections.FXCollections.observableArrayList;
 
 public class Controller {
@@ -176,6 +178,14 @@ public class Controller {
 	private Pane shuffleControlPane;
 	
 	//GETTER
+	public Button getNewGameButton() {
+		return newGameButton;
+	}
+	
+	public Button getJoinButton() {
+		return joinButton;
+	}
+	
 	public FlowPane getMessageButtonSocket() {
 		return messageButtonSocket;
 	}
@@ -212,6 +222,10 @@ public class Controller {
 		return messageListView;
 	}
 	
+	public ColorListView getColorSelectorListView() {
+		return colorSelectorListView;
+	}
+	
 	//INITIALIZE
 	@FXML
 	void initialize() {
@@ -231,7 +245,6 @@ public class Controller {
 			chessField.setRegularLineCounters();
 		}
 	}
-	
 	
 	private void setRotation(int rotateValue) {
 		for (ImageView icon : figureViewMap.values())
@@ -535,7 +548,7 @@ public class Controller {
 	}
 	
 	public void setGameFromUI(boolean newGame) {
-		setGame(Integer.parseInt(iDTextField.getText()), colorSelectorListView.getSelectionModel().getSelectedItem(), newGame);
+		setGame(parseInt(iDTextField.getText()), colorSelectorListView.getSelectionModel().getSelectedItem(), newGame);
 	}
 	
 	private void setupGame() {
@@ -544,7 +557,16 @@ public class Controller {
 				addLayout(newValue);
 		});
 		
-		joinButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+		iDTextField.textProperty().addListener(
+				(observable, oldValue, newValue) -> {
+					if (!"0123456789".contains(newValue)) {
+						((StringProperty) observable).setValue(oldValue);
+					} else
+						((StringProperty) observable).setValue(newValue);
+				}
+		);
+		
+		joinButton.setOnAction(event -> {
 			try {
 				messageListView.clear();
 				setGameFromUI(false);
@@ -556,7 +578,7 @@ public class Controller {
 				shake();
 			}
 		});
-		newGameButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+		newGameButton.setOnAction(event -> {
 			try {
 				messageListView.clear();
 				setGameFromUI(true);

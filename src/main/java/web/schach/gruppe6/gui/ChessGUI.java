@@ -51,6 +51,22 @@ public class ChessGUI extends Application {
 				rescaleCenter(newVal);
 			controller.getMessageListView().setPrefSize(primaryStage.getWidth() - DISTANCE_TO_WINDOW_BORDER, newVal.doubleValue() * MESSAGE_GROW_FACTOR);
 		});
+		
+		primaryStage.addEventFilter(KeyEvent.KEY_TYPED, event -> {
+			String newInput = event.getCharacter().toLowerCase();
+			if (newInput.equals("r"))
+				controller.rotateBoard();
+			else if (newInput.equals("w"))
+				controller.getColorSelectorListView().getSelectionModel().select(0);
+			else if (newInput.equals("b"))
+				controller.getColorSelectorListView().getSelectionModel().select(1);
+			else if (newInput.equals("m"))
+				controller.getColorSelectorListView().getSelectionModel().select(2);
+			else if (newInput.equals("j"))
+				controller.getJoinButton().fire();
+			else if (newInput.equals("n"))
+				controller.getNewGameButton().fire();
+		});
 	}
 	
 	private void rescaleCenter(Number newVal) {
