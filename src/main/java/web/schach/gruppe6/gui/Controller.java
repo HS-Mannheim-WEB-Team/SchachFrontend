@@ -485,6 +485,7 @@ public class Controller {
 		
 		joinButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
 			try {
+				messageListView.clear();
 				setGameFromUI(false);
 				logMessage(AlertType.INFORMATION, "Connection", "Join successful!");
 				switchMenuVisibility();
@@ -495,6 +496,7 @@ public class Controller {
 		});
 		newGameButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
 			try {
+				messageListView.clear();
 				setGameFromUI(true);
 				logMessage(AlertType.INFORMATION, "Connection", "New Game successful!");
 				switchMenuVisibility();
