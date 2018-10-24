@@ -11,7 +11,7 @@ public class Layout {
 	public static final Layout INITIAL_LAYOUT;
 	
 	static {
-		INITIAL_LAYOUT = new Layout("Initial", 0, new EnumMap<>(Figures.class));
+		INITIAL_LAYOUT = new Layout("Initial", 0, null, new EnumMap<>(Figures.class));
 		for (Figures figure : Figures.values()) {
 			INITIAL_LAYOUT.layout.put(figure, figure.positionInitial);
 		}
@@ -19,15 +19,17 @@ public class Layout {
 	
 	public final String name;
 	public final int moveId;
+	public final GameState state;
 	private EnumMap<Figures, Position> layout;
 	
-	public Layout(String name, int moveId) {
-		this(name, moveId, new EnumMap<>(Figures.class));
+	public Layout(String name, int moveId, GameState state) {
+		this(name, moveId, state, new EnumMap<>(Figures.class));
 	}
 	
-	private Layout(String name, int moveId, EnumMap<Figures, Position> layout) {
+	private Layout(String name, int moveId, GameState state, EnumMap<Figures, Position> layout) {
 		this.name = name;
 		this.moveId = moveId;
+		this.state = state;
 		this.layout = layout;
 	}
 	

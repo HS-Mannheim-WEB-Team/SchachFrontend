@@ -407,10 +407,15 @@ public class Controller {
 							} else {
 								newLayout = new ArrayList<>(layouts);
 							}
+							List<Layout> newLayoutsWithState = new ArrayList<>();
 							
 							//download new layouts
 							for (int moveId = currCount; moveId < remoteCount; moveId++) {
-								newLayout.add(CONNECTION.getChange(this.id, moveId + 1, newLayout.get(moveId)));
+								Layout change = CONNECTION.getChange(this.id, moveId + 1, newLayout.get(moveId));
+								newLayout.add(change);
+								if (change.state != null) {
+									newLayoutsWithState.add(change);
+								}
 							}
 							
 							//apply new layouts
@@ -420,6 +425,22 @@ public class Controller {
 								layouts.setAll(newLayout);
 								if (selectLast)
 									occupancyListView.getSelectionModel().selectLast();
+								
+								for (Layout layout : newLayoutsWithState) {
+									switch (layout.state) {
+										case WHITE_CHECK:
+										case BLACK_CHECK:
+											logMessageWithJumpToLayout(AlertType.WARNING, "Check", layout.state.color + " is in Check!", layout.moveId);
+											break;
+										case WHITE_CHECK_MATE:
+										case BLACK_CHECK_MATE:
+											logMessageWithJumpToLayout(AlertType.WARNING, "Checkmate", layout.state.color + " is in Checkmate!", layout.moveId);
+											break;
+										case STALEMATE:
+											logMessageWithJumpToLayout(AlertType.WARNING, "Stalemate", "Game ended in Stalemate!", layout.moveId);
+											break;
+									}
+								}
 							});
 							Platform.runLater(task);
 							task.await();

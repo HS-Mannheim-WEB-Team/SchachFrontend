@@ -10,6 +10,7 @@ import web.schach.gruppe6.network.exceptions.ServerErrorException;
 import web.schach.gruppe6.obj.ChessPositionNotation;
 import web.schach.gruppe6.obj.FigureType;
 import web.schach.gruppe6.obj.Figures;
+import web.schach.gruppe6.obj.GameState;
 import web.schach.gruppe6.obj.Layout;
 import web.schach.gruppe6.obj.PlayerColor;
 import web.schach.gruppe6.obj.Position;
@@ -34,6 +35,7 @@ public class ChessConnection {
 	
 	public static final String DEFAULT_URL = "http://www.game-engineering.de:8080/rest/schach";
 	public static final HashMap<Pair<PlayerColor, String>, FigureType> NAME_TO_TYPE = new HashMap<>();
+	public static final HashMap<String, GameState> NAME_TO_STATE = new HashMap<>();
 	
 	static {
 		NAME_TO_TYPE.put(new Pair<>(PlayerColor.WHITE, "Turm"), FigureType.WHITE_ROOK);
@@ -49,6 +51,12 @@ public class ChessConnection {
 		NAME_TO_TYPE.put(new Pair<>(PlayerColor.BLACK, "Dame"), FigureType.BLACK_QUEEN);
 		NAME_TO_TYPE.put(new Pair<>(PlayerColor.BLACK, "Koenig"), FigureType.BLACK_KING);
 		NAME_TO_TYPE.put(new Pair<>(PlayerColor.BLACK, "Bauer"), FigureType.BLACK_PAWN);
+		
+		NAME_TO_STATE.put("WeissImSchach", GameState.WHITE_CHECK);
+		NAME_TO_STATE.put("SchwarzImSchach", GameState.BLACK_CHECK);
+		NAME_TO_STATE.put("WeissSchachMatt", GameState.WHITE_CHECK_MATE);
+		NAME_TO_STATE.put("SchwarzSchachMatt", GameState.BLACK_CHECK_MATE);
+		NAME_TO_STATE.put("Patt", GameState.STALEMATE);
 	}
 	
 	private static void rethrowIfServerError(Element root) throws ServerErrorException {
@@ -116,6 +124,7 @@ public class ChessConnection {
 		//parse which figures have stayed the same / which got added
 		EnumMap<Figures, Boolean> sameFigures = new EnumMap<>(Figures.class);
 		EnumMap<FigureType, List<Position>> newFigures = new EnumMap<>(FigureType.class);
+		GameState state = null;
 		for (Node properties : ParserUtils.nodeListIterable(root.getElementsByTagName("properties"))) {
 			if ("D_Figur".equals(getEntryKeyFirstOrThrow(properties, "klasse").getTextContent())) {
 				
@@ -139,11 +148,13 @@ public class ChessConnection {
 						newFigures.computeIfAbsent(figureType, figureType1 -> new ArrayList<>()).add(position);
 					}
 				}
+			} else if ("D_Belegung".equals(getEntryKeyFirstOrThrow(properties, "klasse").getTextContent())) {
+				state = NAME_TO_STATE.get(getEntryKeyFirstOrThrow(properties, "status").getTextContent());
 			}
 		}
 		
 		//copy same figures and resolve removed ones
-		Layout layout = new Layout("After move " + moveId, moveId);
+		Layout layout = new Layout("After move " + moveId, moveId, state);
 		EnumMap<FigureType, List<Figures>> removedFigures = new EnumMap<>(FigureType.class);
 		for (Figures figure : Figures.values()) {
 			if (sameFigures.get(figure) == Boolean.TRUE)
@@ -175,15 +186,6 @@ public class ChessConnection {
 					break;
 				}
 			}
-
-//			List<Figures> removedFigureTypesFiltered = removedFigureTypes.stream().filter(figure -> currentLayout.get(figure) == null).collect(Collectors.toList());
-//			List<ServerFigureVariant> newFigureTypesFiltered = newFigureTypes.stream().filter(entry -> entry.position == null).collect(Collectors.toList());
-//			int min = Math.min(removedFigureTypesFiltered.size(), newFigureTypesFiltered.size());
-//			for (int i = 0; i < min; i++) {
-//				layout.put(removedFigureTypesFiltered.get(i), null);
-//				removedFigureTypes.remove(removedFigureTypesFiltered.get(i));
-//				newFigureTypes.remove(newFigureTypesFiltered.get(i));
-//			}
 		}
 		
 		//second: same type (not perfect if multiple of one type are moved)
