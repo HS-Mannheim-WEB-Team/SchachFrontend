@@ -515,7 +515,7 @@ public class Controller {
 			try {
 				messageListView.clear();
 				setGameFromUI(false);
-				logMessage(AlertType.INFORMATION, "Connection", "Join successful!");
+				logMessage(AlertType.INFORMATION, "Connection", "Join Game " + iDTextField.getText() + " successful!");
 				switchMenuVisibility();
 			} catch (NumberFormatException e) {
 				logMessage(AlertType.ERROR, "Connection", "Join failed: Number " + iDTextField.getText() + " not a valid number!");
@@ -526,10 +526,10 @@ public class Controller {
 			try {
 				messageListView.clear();
 				setGameFromUI(true);
-				logMessage(AlertType.INFORMATION, "Connection", "New Game successful!");
+				logMessage(AlertType.INFORMATION, "Connection", "Creating new Game " + iDTextField.getText() + " was successful!");
 				switchMenuVisibility();
 			} catch (NumberFormatException e) {
-				logMessage(AlertType.ERROR, "Connection", "New Game failed: Number " + iDTextField.getText() + " not a valid number!");
+				logMessage(AlertType.ERROR, "Connection", "Creating new Game failed: Number " + iDTextField.getText() + " not a valid number!");
 				shake();
 			}
 		});
