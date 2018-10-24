@@ -11,30 +11,32 @@ public class Layout {
 	public static final Layout INITIAL_LAYOUT;
 	
 	static {
-		INITIAL_LAYOUT = new Layout("Initial", new EnumMap<>(Figures.class));
+		INITIAL_LAYOUT = new Layout("Initial", 0, new EnumMap<>(Figures.class));
 		for (Figures figure : Figures.values()) {
 			INITIAL_LAYOUT.layout.put(figure, figure.positionInitial);
 		}
 	}
 	
 	public final String name;
+	public final int moveId;
 	private EnumMap<Figures, Position> layout;
 	
-	private Layout(String name, EnumMap<Figures, Position> layout) {
+	public Layout(String name, int moveId) {
+		this(name, moveId, new EnumMap<>(Figures.class));
+	}
+	
+	private Layout(String name, int moveId, EnumMap<Figures, Position> layout) {
 		this.name = name;
+		this.moveId = moveId;
 		this.layout = layout;
 	}
 	
-	public Layout() {
-		this("", new EnumMap<>(Figures.class));
+	public PlayerColor playerColorCurrent() {
+		return moveId % 2 == 0 ? PlayerColor.BLACK : PlayerColor.WHITE;
 	}
 	
-	public Layout(String name) {
-		this(name, new EnumMap<>(Figures.class));
-	}
-	
-	public Layout(String name, Layout layout) {
-		this(name, layout.layout.clone());
+	public PlayerColor playerColorNext() {
+		return moveId % 2 == 0 ? PlayerColor.WHITE : PlayerColor.BLACK;
 	}
 	
 	public Position get(Figures key) {

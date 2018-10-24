@@ -608,6 +608,7 @@ public class Controller {
 					Layout layoutDest = layoutQueue.take();
 					Layout layoutSrc = layoutCurrent;
 					layoutCurrent = layoutDest;
+					switchPlayerLabel(layoutDest.playerColorCurrent());
 					
 					long timeStart = System.nanoTime();
 					long timeEnd = timeStart + TIME_MOVEMENT_TOTAL_NANO;
@@ -657,6 +658,7 @@ public class Controller {
 					}
 					
 					updateMovement(movements, timeEnd);
+					switchPlayerLabel(layoutDest.playerColorNext());
 				} catch (InterruptedException ignore) {
 				
 				}
