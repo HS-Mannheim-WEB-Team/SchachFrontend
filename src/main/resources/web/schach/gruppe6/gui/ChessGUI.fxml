@@ -75,7 +75,7 @@
 							</graphic>
 						</Button>
 						<Button fx:id="logButton" mnemonicParsing="false" onAction="#switchListVisibility" prefHeight="6.0" prefWidth="50.0"
-								style="-fx-background-color: chartreuse;" textOverrun="CLIP">
+								style="-fx-background-color: red;" textOverrun="CLIP">
 							<graphic>
 								<ImageView fx:id="logImage" fitHeight="20.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
 									<image>
