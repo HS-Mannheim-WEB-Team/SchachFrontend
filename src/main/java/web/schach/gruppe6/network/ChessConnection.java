@@ -121,7 +121,14 @@ public class ChessConnection {
 	}
 	
 	public Layout getChange(int id, int moveId, Layout currentLayout) throws IOException, ServerErrorException {
-		Element root = getAndParse("/spiel/getBelegung/" + id + "/" + moveId).getDocumentElement();
+		return getChangeProcess(id, moveId, currentLayout, getChangeQuery(id, moveId));
+	}
+	
+	public Element getChangeQuery(int id, int moveId) throws IOException {
+		return getAndParse("/spiel/getBelegung/" + id + "/" + moveId).getDocumentElement();
+	}
+	
+	public Layout getChangeProcess(int id, int moveId, Layout currentLayout, Element root) throws ServerErrorException {
 		rethrowIfServerError(root);
 		
 		//parse which figures have stayed the same / which got added
@@ -178,31 +185,6 @@ public class ChessConnection {
 			else
 				removedFigures.computeIfAbsent(figure.type, figureType -> new ArrayList<>()).add(figure);
 		}
-
-//		//first: filter beaten figures
-//		for (FigureType figureType : FigureType.values()) {
-//			List<Figures> removedFigureTypes = removedFigures.get(figureType);
-//			List<Position> newFigureTypes = newFigures.get(figureType);
-//			if (removedFigureTypes == null || newFigureTypes == null)
-//				continue;
-//
-//			int removedIndex = 0;
-//			int newIndex = 0;
-//			label:
-//			for (; removedIndex < removedFigureTypes.size(); removedIndex++) {
-//				if (currentLayout.get(removedFigureTypes.get(removedIndex)) == null) {
-//
-//					for (; newIndex < newFigureTypes.size(); newIndex++) {
-//						if (newFigureTypes.get(newIndex) == null) {
-//							removedFigureTypes.remove(removedIndex);
-//							newFigureTypes.remove(newIndex);
-//							continue label;
-//						}
-//					}
-//					break;
-//				}
-//			}
-//		}
 		
 		//second: same type (not perfect if multiple of one type are moved)
 		for (FigureType figureType : FigureType.values()) {

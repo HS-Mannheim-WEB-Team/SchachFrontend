@@ -16,6 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
+import org.w3c.dom.Element;
 import web.schach.gruppe6.gui.customComponents.BeatenTileField;
 import web.schach.gruppe6.gui.customComponents.ChessTileField;
 import web.schach.gruppe6.gui.customComponents.ColorListView;
@@ -46,6 +47,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
 
@@ -58,6 +61,12 @@ public class Controller {
 	private static final long TIME_MOVEMENT_TOTAL_NANO = 1000 * 1000000;
 	private static final long TIME_MOVEMENT_STEP_NANO = 20 * 1000000;
 	public static final int TIME_NETWORK_QUERIES_IN_BETWEEN_MS = 250;
+	
+	public static final ExecutorService CACHED_THREAD_POOL = Executors.newCachedThreadPool(r -> {
+		Thread th = new Thread(r);
+		th.setDaemon(true);
+		return th;
+	});
 	
 	public static final ChessConnection CONNECTION = new ChessConnection();
 	
@@ -397,40 +406,63 @@ public class Controller {
 							List<Layout> newLayoutsWithState = new ArrayList<>();
 							
 							//download new layouts
+							Task[] tasks = new Task[remoteCount - currCount];
+							Element[] elements = new Element[remoteCount - currCount];
 							for (int moveId = currCount; moveId < remoteCount; moveId++) {
-								Layout change = CONNECTION.getChange(this.id, moveId + 1, newLayout.get(moveId));
-								newLayout.add(change);
-								if (change.state != null) {
-									newLayoutsWithState.add(change);
-								}
+								final int moveId0 = moveId;
+								final int currCount0 = currCount;
+								Task task = new Task(() -> {
+									try {
+										elements[moveId0 - currCount0] = CONNECTION.getChangeQuery(id, moveId0);
+									} catch (IOException e) {
+										logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
+										e.printStackTrace();
+									}
+								});
+								tasks[moveId - currCount] = task;
+								CACHED_THREAD_POOL.execute(task);
 							}
 							
-							//apply new layouts
-							Task task = new Task(() -> {
-								MultipleSelectionModel<Layout> selectionModel = occupancyListView.getSelectionModel();
-								boolean selectLast = layouts.isEmpty() || selectionModel.getSelectedItem() == layouts.get(layouts.size() - 1);
-								layouts.setAll(newLayout);
-								if (selectLast)
-									occupancyListView.getSelectionModel().selectLast();
+							for (int moveId = currCount; moveId < remoteCount; moveId++) {
+								tasks[moveId - currCount].await();
+								Element element = elements[moveId - currCount];
+								if (element == null)
+									return;
 								
-								for (Layout layout : newLayoutsWithState) {
-									switch (layout.state) {
-										case WHITE_CHECK:
-										case BLACK_CHECK:
-											logMessageWithJumpToLayout(AlertType.WARNING, "Check", layout.state.color + " is in Check!", layout.moveId);
-											break;
-										case WHITE_CHECK_MATE:
-										case BLACK_CHECK_MATE:
-											logMessageWithJumpToLayout(AlertType.WARNING, "Checkmate", layout.state.color + " is in Checkmate!", layout.moveId);
-											break;
-										case STALEMATE:
-											logMessageWithJumpToLayout(AlertType.WARNING, "Stalemate", "Game ended in Stalemate!", layout.moveId);
-											break;
+								Layout change = CONNECTION.getChangeProcess(this.id, moveId + 1, newLayout.get(moveId), element);
+								newLayout.add(change);
+								if (change.state != null)
+									newLayoutsWithState.add(change);
+							}
+							
+							if (isRunning) {
+								//apply new layouts
+								Task task = new Task(() -> {
+									MultipleSelectionModel<Layout> selectionModel = occupancyListView.getSelectionModel();
+									boolean selectLast = layouts.isEmpty() || selectionModel.getSelectedItem() == layouts.get(layouts.size() - 1);
+									layouts.setAll(newLayout);
+									if (selectLast)
+										occupancyListView.getSelectionModel().selectLast();
+									
+									for (Layout layout : newLayoutsWithState) {
+										switch (layout.state) {
+											case WHITE_CHECK:
+											case BLACK_CHECK:
+												logMessageWithJumpToLayout(AlertType.WARNING, "Check", layout.state.color + " is in Check!", layout.moveId);
+												break;
+											case WHITE_CHECK_MATE:
+											case BLACK_CHECK_MATE:
+												logMessageWithJumpToLayout(AlertType.WARNING, "Checkmate", layout.state.color + " is in Checkmate!", layout.moveId);
+												break;
+											case STALEMATE:
+												logMessageWithJumpToLayout(AlertType.WARNING, "Stalemate", "Game ended in Stalemate!", layout.moveId);
+												break;
+										}
 									}
-								}
-							});
-							Platform.runLater(task);
-							task.await();
+								});
+								Platform.runLater(task);
+								task.await();
+							}
 						}
 					} catch (InterruptedException ignore) {
 					
