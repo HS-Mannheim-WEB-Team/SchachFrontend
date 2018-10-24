@@ -515,9 +515,11 @@ public class Controller {
 			} catch (IOException e) {
 				logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
 				e.printStackTrace();
+				shake();
 				return;
 			} catch (ServerErrorException e) {
 				logMessage(AlertType.ERROR, "Server", "Server error: " + e.getMessage());
+				shake();
 			}
 			
 			chessField.unmark(lastClicked);
