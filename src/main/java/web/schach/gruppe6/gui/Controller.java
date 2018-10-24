@@ -27,6 +27,7 @@ import web.schach.gruppe6.gui.customComponents.Tile;
 import web.schach.gruppe6.gui.customComponents.TileField;
 import web.schach.gruppe6.gui.util.ColorEnum;
 import web.schach.gruppe6.network.ChessConnection;
+import web.schach.gruppe6.network.exceptions.ParseException;
 import web.schach.gruppe6.network.exceptions.ServerErrorException;
 import web.schach.gruppe6.obj.Figures;
 import web.schach.gruppe6.obj.Layout;
@@ -365,7 +366,7 @@ public class Controller {
 				if (newGame) {
 					try {
 						CONNECTION.newGame(id);
-					} catch (IOException e) {
+					} catch (IOException | ParseException e) {
 						logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
 						e.printStackTrace();
 						return;
@@ -433,7 +434,7 @@ public class Controller {
 						}
 					} catch (InterruptedException ignore) {
 					
-					} catch (IOException e) {
+					} catch (IOException | ParseException e) {
 						logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
 						e.printStackTrace();
 						return;
@@ -468,7 +469,7 @@ public class Controller {
 					Grid<Boolean> permittedMoves = CONNECTION.getPermittedMoves(game.id, position);
 					markFields(pos -> permittedMoves.get(pos) == Boolean.TRUE ? ColorEnum.GREEN : null);
 					chessField.mark(lastClicked, ColorEnum.RED);
-				} catch (IOException e) {
+				} catch (IOException | ParseException e) {
 					logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
 					e.printStackTrace();
 				} catch (ServerErrorException e) {
@@ -480,18 +481,15 @@ public class Controller {
 			} else {
 				try {
 					CONNECTION.takeMove(game.id, lastClicked, position);
-				} catch (IOException e) {
+				} catch (IOException | ParseException e) {
 					logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
 					e.printStackTrace();
-					shake();
-					return;
 				} catch (ServerErrorException e) {
 					logMessage(AlertType.ERROR, "Server", "Server error: " + e.getMessage());
-					shake();
+				} finally {
+					unmarkFields();
+					lastClicked = null;
 				}
-				
-				unmarkFields();
-				lastClicked = null;
 			}
 		}
 	}
