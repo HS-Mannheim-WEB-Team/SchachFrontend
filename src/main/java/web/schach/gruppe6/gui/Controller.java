@@ -275,7 +275,7 @@ public class Controller {
 		if (infosVisible) {
 			setBackgroundColor(showInfosButton, ColorEnum.GREEN);
 			if (errorsVisible)
-				messageListView.switchLists(ListType.NO_INFO);
+				messageListView.switchLists(ListType.NO_WARNING);
 			else
 				messageListView.switchLists(ListType.WARNINGS_ONLY);
 		} else {
@@ -300,7 +300,7 @@ public class Controller {
 			if (infosVisible)
 				messageListView.switchLists(ListType.ALL);
 			else
-				messageListView.switchLists(ListType.NO_INFO);
+				messageListView.switchLists(ListType.NO_WARNING);
 		}
 		errorsVisible = !errorsVisible;
 	}
@@ -516,7 +516,11 @@ public class Controller {
 				messageListView.clear();
 				setGameFromUI(false);
 				logMessage(AlertType.INFORMATION, "Connection", "Join Game " + iDTextField.getText() + " successful!");
-				switchMenuVisibility();
+				logMessage(AlertType.INFORMATION, "Color", "Your Color is " + colorSelectorListView.getSelectionModel().getSelectedItem().toString());
+				if (colorSelectorListView.getSelectionModel().getSelectedItem() == PlayerColor.WHITE) {
+					setRotation(180);
+					chessField.setReverseLineCounters();
+				}
 			} catch (NumberFormatException e) {
 				logMessage(AlertType.ERROR, "Connection", "Join failed: Number " + iDTextField.getText() + " not a valid number!");
 				shake();
@@ -527,6 +531,11 @@ public class Controller {
 				messageListView.clear();
 				setGameFromUI(true);
 				logMessage(AlertType.INFORMATION, "Connection", "Creating new Game " + iDTextField.getText() + " was successful!");
+				logMessage(AlertType.INFORMATION, "Color", "Your Color is " + colorSelectorListView.getSelectionModel().getSelectedItem().toString());
+				if (colorSelectorListView.getSelectionModel().getSelectedItem() == PlayerColor.WHITE) {
+					setRotation(180);
+					chessField.setReverseLineCounters();
+				}
 				switchMenuVisibility();
 			} catch (NumberFormatException e) {
 				logMessage(AlertType.ERROR, "Connection", "Creating new Game failed: Number " + iDTextField.getText() + " not a valid number!");
