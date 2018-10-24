@@ -73,7 +73,7 @@ public class Controller {
 	private boolean infosVisible = true;
 	private boolean messageListIsVisible = true;
 	private boolean menuIsVisible = true;
-	private boolean listVisible = true;
+	private boolean layoutListVisible = false;
 	
 	private Game game;
 	
@@ -275,8 +275,8 @@ public class Controller {
 	}
 	
 	public void switchListVisibility() {
-		switchVisibility(occupancyListView, logButton, listVisible);
-		listVisible = !listVisible;
+		switchVisibility(occupancyListView, logButton, layoutListVisible);
+		layoutListVisible = !layoutListVisible;
 	}
 	
 	public void switchShowInfos() {
@@ -466,6 +466,8 @@ public class Controller {
 			try {
 				setGameFromUI(false);
 				logMessage(AlertType.INFORMATION, "Connection", "Join successful!");
+				switchMenuVisibility();
+				switchListVisibility();
 			} catch (NumberFormatException e) {
 				logMessage(AlertType.ERROR, "Connection", "Join failed: Number " + iDTextField.getText() + " not a valid number!");
 				shake();
@@ -475,6 +477,8 @@ public class Controller {
 			try {
 				setGameFromUI(true);
 				logMessage(AlertType.INFORMATION, "Connection", "New Game successful!");
+				switchMenuVisibility();
+				switchListVisibility();
 			} catch (NumberFormatException e) {
 				logMessage(AlertType.ERROR, "Connection", "New Game failed: Number " + iDTextField.getText() + " not a valid number!");
 				shake();

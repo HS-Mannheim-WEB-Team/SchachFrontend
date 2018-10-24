@@ -75,7 +75,7 @@
 							</graphic>
 						</Button>
 						<Button fx:id="logButton" mnemonicParsing="false" onAction="#switchListVisibility" prefHeight="6.0" prefWidth="50.0"
-								style="-fx-background-color: red;" textOverrun="CLIP">
+								style="-fx-background-color: chartreuse;" textOverrun="CLIP">
 							<graphic>
 								<ImageView fx:id="logImage" fitHeight="20.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
 									<image>
@@ -156,7 +156,7 @@
 										<Pane prefHeight="60.0" prefWidth="51.0" style="-fx-background-color: burlywood;">
 											<children>
 												<Label fx:id="curPlayerLabelTop" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="15.0"
-													   prefHeight="31.0" prefWidth="27.0"/>
+													   prefHeight="31.0" prefWidth="27.0" visible="false"/>
 											</children>
 										</Pane>
 										<BeatenTileField fx:id="beatenFiguresTop" prefHeight="60.0" prefWidth="240.0">
@@ -185,7 +185,7 @@
 										<Pane prefHeight="59.0" prefWidth="51.0" style="-fx-background-color: burlywood;">
 											<children>
 												<Label fx:id="curPlayerLabelBot" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="15.0"
-													   prefHeight="31.0" prefWidth="27.0"/>
+													   prefHeight="31.0" prefWidth="27.0" visible="false"/>
 											</children>
 										</Pane>
 										<BeatenTileField fx:id="beatenFiguresBot" prefHeight="60.0" prefWidth="240.0">
@@ -212,7 +212,7 @@
 					</children>
 				</Pane>
 				<OccupancyListView fx:id="occupancyListView" editable="true" opacity="0.8" prefHeight="420.0" prefWidth="120.0" style="-fx-border-color: white;"
-								   stylesheets="@styles/OccupancyListViewStyle.css"/>
+								   stylesheets="@styles/OccupancyListViewStyle.css" visible="false"/>
 				<Pane prefHeight="420.0" prefWidth="85.0"/>
 			</children>
 		</FlowPane>
