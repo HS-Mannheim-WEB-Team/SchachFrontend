@@ -9,12 +9,14 @@ import java.util.Set;
 public class Layout {
 	
 	public static final Layout INITIAL_LAYOUT;
+	public static final Layout INITIAL_BEATEN;
 	
 	static {
-		INITIAL_LAYOUT = new Layout("Initial", 0, null, new EnumMap<>(Figures.class));
+		INITIAL_LAYOUT = new Layout("Initial", 0, null);
 		for (Figures figure : Figures.values()) {
 			INITIAL_LAYOUT.layout.put(figure, figure.positionInitial);
 		}
+		INITIAL_BEATEN = new Layout("AllBeaten", -1, null);
 	}
 	
 	public final String name;

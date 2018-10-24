@@ -79,7 +79,7 @@ public class Controller {
 	
 	private Position lastClicked;
 	
-	private Layout layoutCurrent = Layout.INITIAL_LAYOUT;
+	private Layout layoutCurrent = Layout.INITIAL_BEATEN;
 	private Map<Figures, ImageView> figureViewMap = new EnumMap<>(Figures.class);
 	private BlockingQueue<Layout> layoutQueue = new LinkedBlockingQueue<>();
 	
@@ -600,9 +600,8 @@ public class Controller {
 		Thread th = new Thread(() -> {
 			try {
 				Task setInitialLayout = new Task(() -> {
-					for (Entry<Figures, Position> entry : layoutCurrent.entrySet()) {
-						Figures figure = entry.getKey();
-						Position position = entry.getValue();
+					for (Figures figure : Figures.values()) {
+						Position position = layoutCurrent.get(figure);
 						
 						ImageView icon = new ImageView();
 						icon.setImage(new Image(figure.getIconPath()));
@@ -613,10 +612,11 @@ public class Controller {
 						chessFieldPane.getChildren().add(icon);
 						figureViewMap.put(figure, icon);
 						
-						Tile desTile = ((TileField) chessField).getFieldComponents()[position.x][position.y];
-						Bounds rel = getRelativeBounds(desTile, chessFieldPane);
-						icon.setLayoutX(rel.getMinX());
-						icon.setLayoutY(rel.getMinY());
+						PositionOnField pof = resolvePositionOnField(figure, position);
+						Tile node = pof.field.getFieldComponents()[pof.position.x][pof.position.y];
+						Bounds bounds = getRelativeBounds(node, chessFieldPane);
+						icon.setLayoutX(bounds.getMinX());
+						icon.setLayoutY(bounds.getMinY());
 					}
 				});
 				Platform.runLater(setInitialLayout);
