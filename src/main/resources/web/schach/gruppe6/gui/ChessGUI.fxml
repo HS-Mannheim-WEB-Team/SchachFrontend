@@ -227,7 +227,7 @@
 							<graphic>
 								<ImageView fitHeight="20.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
 									<image>
-										<Image url="@iconsAndImages/icon-warning.png"/>
+										<Image url="@iconsAndImages/icon-error.png"/>
 									</image>
 								</ImageView>
 							</graphic>
