@@ -8,9 +8,9 @@ import static javafx.collections.FXCollections.observableArrayList;
 
 public enum ListType {
 	ALL(observableArrayList()),
-	INFOONLY(observableArrayList()),
-	ERRORSONLY(observableArrayList()),
-	WARNINGSONLY(observableArrayList());
+	NO_ERROR(observableArrayList()),
+	NO_INFO(observableArrayList()),
+	WARNINGS_ONLY(observableArrayList());
 	
 	private final ObservableList<Alert> data;
 	
@@ -25,29 +25,29 @@ public enum ListType {
 	public static void add(Alert alert) {
 		if (alert.getAlertType() == AlertType.ERROR) {
 			ALL.data.add(alert);
-			ERRORSONLY.data.add(alert);
+			NO_INFO.data.add(alert);
 		} else if (alert.getAlertType() == AlertType.INFORMATION) {
 			ALL.data.add(alert);
-			INFOONLY.data.add(alert);
+			NO_ERROR.data.add(alert);
 		} else {
 			ALL.data.add(alert);
-			WARNINGSONLY.data.add(alert);
-			INFOONLY.data.add(alert);
-			ERRORSONLY.data.add(alert);
+			WARNINGS_ONLY.data.add(alert);
+			NO_ERROR.data.add(alert);
+			NO_INFO.data.add(alert);
 		}
 	}
 	
 	public static boolean remove(Alert key) {
-		INFOONLY.data.remove(key);
-		ERRORSONLY.data.remove(key);
-		WARNINGSONLY.data.remove(key);
+		NO_ERROR.data.remove(key);
+		NO_INFO.data.remove(key);
+		WARNINGS_ONLY.data.remove(key);
 		return ALL.data.remove(key);
 	}
 	
 	public static void clear() {
 		ALL.data.clear();
-		INFOONLY.data.clear();
-		ERRORSONLY.data.clear();
-		WARNINGSONLY.data.clear();
+		NO_ERROR.data.clear();
+		NO_INFO.data.clear();
+		WARNINGS_ONLY.data.clear();
 	}
 }

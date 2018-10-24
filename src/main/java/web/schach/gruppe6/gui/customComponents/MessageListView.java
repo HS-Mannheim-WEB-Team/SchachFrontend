@@ -12,7 +12,6 @@ public class MessageListView extends ListView<Alert> {
 	
 	ListType curListType = ListType.ALL;
 	
-	
 	public MessageListView() {
 		setCellFactory(param -> new ListCell<Alert>() {
 			private ImageView imageView = new ImageView();
@@ -28,12 +27,10 @@ public class MessageListView extends ListView<Alert> {
 				} else {
 					if (alert.getAlertType() == Alert.AlertType.WARNING)
 						imageView.setImage(new Image("web/schach/gruppe6/gui/iconsAndImages/icon-warning.png"));
-					else if (alert.getAlertType() == Alert.AlertType.ERROR) {
+					else if (alert.getAlertType() == Alert.AlertType.ERROR)
 						imageView.setImage(new Image("web/schach/gruppe6/gui/iconsAndImages/icon-error.png"));
-					} else if (alert.getAlertType() == Alert.AlertType.INFORMATION) {
+					else if (alert.getAlertType() == Alert.AlertType.INFORMATION)
 						imageView.setImage(new Image("web/schach/gruppe6/gui/iconsAndImages/icon-info.png"));
-					}
-					
 					setText(alert.getTitle() + "  " + alert.getContentText());
 					setGraphic(imageView);
 				}
@@ -69,7 +66,7 @@ public class MessageListView extends ListView<Alert> {
 	}
 	
 	public void switchLists(ListType type) {
-		this.curListType = type;
+		curListType = type;
 		updateList();
 	}
 }

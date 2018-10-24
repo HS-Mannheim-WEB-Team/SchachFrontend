@@ -4,7 +4,6 @@ public enum ColorEnum {
 	BLACK("BLACK"),
 	WHITE("WHITE"),
 	RED("red"),
-	BLUE("blue"),
 	GREEN("chartreuse"),
 	BROWN("chocolate"),
 	LIGHT_BROWN("burlywood");

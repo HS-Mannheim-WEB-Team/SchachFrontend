@@ -14,7 +14,7 @@ public class Tile extends StackPane {
 	
 	public Tile(ColorEnum color) {
 		this.color = color;
-		setStyle("-fx-background-color: " + color.toString());
+		setStyle("-fx-background-color: " + color);
 	}
 	
 	public Bounds getBounds() {
@@ -24,5 +24,4 @@ public class Tile extends StackPane {
 	public ColorEnum getColor() {
 		return color;
 	}
-	
 }

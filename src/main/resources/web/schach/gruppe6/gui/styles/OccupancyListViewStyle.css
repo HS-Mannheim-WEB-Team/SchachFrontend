@@ -1,4 +1,5 @@
 .list-view {
+    -fx-border-color: white;
     -fx-background-color: burlywood;
     -fx-text-fill: black;
 }

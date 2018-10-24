@@ -15,6 +15,9 @@ import static javafx.collections.FXCollections.observableArrayList;
 
 public class ColorListView extends ListView<PlayerColor> {
 	
+	private static final int RECTANGLE_WIDTH = 15;
+	private static final int RECTANGLE_HIGHT = 15;
+	
 	public ColorListView() {
 		setOrientation(Orientation.HORIZONTAL);
 		setCellFactory(list -> new ColorRectCell());
@@ -33,17 +36,15 @@ public class ColorListView extends ListView<PlayerColor> {
 			super.updateItem(item, empty);
 			if (item != null) {
 				if (item != PlayerColor.BOTH) {
-					Rectangle rect = new Rectangle(15, 15);
+					Rectangle rect = new Rectangle(RECTANGLE_WIDTH, RECTANGLE_HIGHT);
 					rect.setFill(Color.web(item.toString()));
 					setGraphic(rect);
 				} else {
 					GridPane pane = new GridPane();
 					pane.setAlignment(Pos.CENTER);
-					setPrefSize(30, 15);
-					pane.setStyle("-fx-background-color: transparent");
 					pane.setVgap(2);
-					Rectangle rect = new Rectangle(15, 7);
-					Rectangle rect2 = new Rectangle(15, 7);
+					Rectangle rect = new Rectangle(RECTANGLE_WIDTH, RECTANGLE_HIGHT / 2.5);
+					Rectangle rect2 = new Rectangle(RECTANGLE_WIDTH, RECTANGLE_HIGHT / 2.5);
 					rect.setFill(Color.web(ColorEnum.WHITE.toString()));
 					rect2.setFill(Color.web(ColorEnum.BLACK.toString()));
 					pane.add(rect, 0, 0);

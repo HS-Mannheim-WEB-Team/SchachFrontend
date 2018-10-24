@@ -15,7 +15,7 @@ public class ChessGUI extends Application {
 	public static final float MESSAGE_GROW_FACTOR = 0.125f;
 	public static final int DISTANCE_TO_WINDOW_BORDER = 15;
 	
-	public static final double INITIALSCALE = 1.5;
+	public static final double INITIAL_SCALE = 1.5;
 	
 	public Controller controller;
 	
@@ -24,33 +24,36 @@ public class ChessGUI extends Application {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("ChessGUI.fxml"));
 		Parent root = loader.load();
 		root.setId("pane");
-		Scene scene = new Scene(root, INITIALSCALE * MIN_WIDTH, INITIALSCALE * MIN_HIGHT);
+		Scene scene = new Scene(root, INITIAL_SCALE * MIN_WIDTH, INITIAL_SCALE * MIN_HIGHT);
 		scene.getStylesheets().addAll(this.getClass().getResource("styles/BackgroundStyle.css").toExternalForm());
 		primaryStage.getIcons().add(new Image("/web/schach/gruppe6/gui/iconsAndImages/iconset1/queen_white.png"));
 		primaryStage.setMinWidth(MIN_WIDTH);
 		primaryStage.setMinHeight(MIN_HIGHT);
 		primaryStage.setTitle("WEB-Chess");
 		primaryStage.setScene(scene);
-		primaryStage.show();
 		controller = loader.getController();
 		//set current messageListView Scale
 		controller.getMessageListView().setPrefSize(primaryStage.getWidth() - DISTANCE_TO_WINDOW_BORDER, MIN_HIGHT * MESSAGE_GROW_FACTOR);
-		//add rescale on window size changes
+		setupRescaleOnSizeChanges(primaryStage);
+		primaryStage.show();
+	}
+	
+	private void setupRescaleOnSizeChanges(Stage primaryStage) {
 		primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
 			if (newVal.doubleValue() < primaryStage.getHeight())
-				rescale(newVal);
+				rescaleCenter(newVal);
 			controller.getMessageButtonSocket().setPrefSize(newVal.doubleValue() - DISTANCE_TO_WINDOW_BORDER, 15);
 			controller.getMessageListView().setPrefSize(newVal.doubleValue() - DISTANCE_TO_WINDOW_BORDER, primaryStage.getHeight() * MESSAGE_GROW_FACTOR);
 		});
 		
 		primaryStage.heightProperty().addListener((obs, oldVal, newVal) -> {
 			if (newVal.doubleValue() < primaryStage.getWidth())
-				rescale(newVal);
+				rescaleCenter(newVal);
 			controller.getMessageListView().setPrefSize(primaryStage.getWidth() - DISTANCE_TO_WINDOW_BORDER, newVal.doubleValue() * MESSAGE_GROW_FACTOR);
 		});
 	}
 	
-	private void rescale(Number newVal) {
+	private void rescaleCenter(Number newVal) {
 		controller.getGlobalCenterFlowPlane().setScaleX(newVal.doubleValue() * GENEREL_GROW_FACTOR);
 		controller.getChessFieldPane().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR);
 		controller.getOccupancyListView().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR);

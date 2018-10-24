@@ -156,7 +156,7 @@
 										<Pane prefHeight="60.0" prefWidth="51.0" style="-fx-background-color: burlywood;">
 											<children>
 												<Label fx:id="curPlayerLabelTop" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="15.0"
-													   prefHeight="31.0" prefWidth="27.0" visible="false"/>
+													   prefHeight="31.0" prefWidth="27.0" stylesheets="@styles/PlayerLabelWhiteStyle.css" text="W" visible="false"/>
 											</children>
 										</Pane>
 										<BeatenTileField fx:id="beatenFiguresTop" prefHeight="60.0" prefWidth="240.0">
@@ -185,7 +185,7 @@
 										<Pane prefHeight="59.0" prefWidth="51.0" style="-fx-background-color: burlywood;">
 											<children>
 												<Label fx:id="curPlayerLabelBot" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="15.0"
-													   prefHeight="31.0" prefWidth="27.0" visible="false"/>
+													   prefHeight="31.0" prefWidth="27.0" stylesheets="@styles/PlayerLabelBlackStyle.css" text="B" visible="false"/>
 											</children>
 										</Pane>
 										<BeatenTileField fx:id="beatenFiguresBot" prefHeight="60.0" prefWidth="240.0">
@@ -211,9 +211,9 @@
 						</BorderPane>
 					</children>
 				</Pane>
-				<OccupancyListView fx:id="occupancyListView" editable="true" opacity="0.8" prefHeight="420.0" prefWidth="120.0" style="-fx-border-color: white;"
+				<OccupancyListView fx:id="occupancyListView" editable="true" opacity="0.8" prefHeight="420.0" prefWidth="120.0"
 								   stylesheets="@styles/OccupancyListViewStyle.css"/>
-				<Pane prefHeight="420.0" prefWidth="85.0"/>
+				<Pane prefHeight="420.0" prefWidth="80.0"/>
 			</children>
 		</FlowPane>
 	</center>

@@ -1,0 +1,5 @@
+.label {
+    -fx-border-color: black;
+    -fx-background-color: white;
+    -fx-text-fill: black;
+}

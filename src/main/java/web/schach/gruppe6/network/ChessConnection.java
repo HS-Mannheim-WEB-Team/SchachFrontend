@@ -156,7 +156,7 @@ public class ChessConnection {
 		}
 		
 		//copy same figures and resolve removed ones
-		Layout layout = new Layout("After move " + moveId, moveId, state);
+		Layout layout = new Layout("Move " + moveId, moveId, state);
 		EnumMap<FigureType, List<Figures>> removedFigures = new EnumMap<>(FigureType.class);
 		for (Figures figure : Figures.values()) {
 			if (sameFigures.get(figure) == Boolean.TRUE)

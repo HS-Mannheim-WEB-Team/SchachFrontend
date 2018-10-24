@@ -14,7 +14,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import web.schach.gruppe6.gui.customComponents.BeatenTileField;
@@ -70,13 +69,14 @@ public class Controller {
 		return ret;
 	}
 	
-	//object
+	//BOOLEANS VISIBILITY
 	private boolean errorsVisible = true;
 	private boolean infosVisible = true;
 	private boolean messageListIsVisible = true;
 	private boolean menuIsVisible = true;
 	private boolean layoutListVisible = true;
 	
+	//object
 	private Game game;
 	
 	private Layout layoutCurrent = Layout.INITIAL_BEATEN;
@@ -102,7 +102,7 @@ public class Controller {
 	@FXML
 	private Button showErrorsButton;
 	
-	//MENU
+	//SOCKETS
 	@FXML
 	private FlowPane menuSocketLeft;
 	
@@ -114,8 +114,8 @@ public class Controller {
 	
 	@FXML
 	private FlowPane messageSocketPane;
-
-
+	
+	//MENU BUTTONS
 //	@FXML
 //	private Button saveButton;
 	
@@ -126,7 +126,6 @@ public class Controller {
 	private Button joinButton;
 	
 	@FXML
-	@SuppressWarnings("unused")
 	private TextField iDTextField;
 	
 	@FXML
@@ -159,15 +158,14 @@ public class Controller {
 	@FXML
 	private Label curPlayerLabelTop;
 	
+	//OTHER PANES
 	@FXML
 	private Pane chessFieldPane;
 	
 	@FXML
-	private BorderPane borderPane;
-	
-	@FXML
 	private Pane shuffleControlPane;
 	
+	//GETTER
 	public FlowPane getMessageButtonSocket() {
 		return messageButtonSocket;
 	}
@@ -204,44 +202,38 @@ public class Controller {
 		return messageListView;
 	}
 	
+	//INITIALIZE
 	@FXML
 	void initialize() {
-		setupPlayerLabels();
 		setupGame();
 		setupLayoutHandler();
 		setupMoveExecution();
 		setupShaker();
 	}
 	
-	private void setupPlayerLabels() {
-		curPlayerLabelTop.setStyle("-fx-border-color:" + ColorEnum.BLACK + ";\n -fx-background-color: " + ColorEnum.WHITE + ";\n -fx-text-fill: " + ColorEnum.BLACK);
-		curPlayerLabelTop.setText(String.valueOf((ColorEnum.WHITE.toString().charAt(0))));
-		curPlayerLabelBot.setStyle("-fx-border-color:" + ColorEnum.BLACK + ";\n -fx-background-color: " + ColorEnum.BLACK + ";\n -fx-text-fill: " + ColorEnum.WHITE);
-		curPlayerLabelBot.setText(String.valueOf((ColorEnum.BLACK.toString().charAt(0))));
-	}
-	
+	//ROTATION
 	public void rotateBoard() {
 		if (chessFieldPane.getRotate() == 0) {
-			for (ImageView icon : figureViewMap.values())
-				icon.setRotate(-180);
-			for (LineCountField field : chessField.getBorderTiles())
-				field.setRotate(-180);
+			setRotation(180);
 			chessField.setReverseLineCounters();
-			chessFieldPane.setRotate(180);
-			curPlayerLabelBot.setRotate(180);
-			curPlayerLabelTop.setRotate(180);
 		} else {
-			for (ImageView icon : figureViewMap.values())
-				icon.setRotate(0);
-			for (LineCountField field : chessField.getBorderTiles())
-				field.setRotate(0);
+			setRotation(0);
 			chessField.setRegularLineCounters();
-			chessFieldPane.setRotate(0);
-			curPlayerLabelBot.setRotate(0);
-			curPlayerLabelTop.setRotate(0);
 		}
 	}
 	
+	private void setRotation(int rotateValue) {
+		for (ImageView icon : figureViewMap.values())
+			icon.setRotate(rotateValue);
+		for (LineCountField field : chessField.getBorderTiles())
+			field.setRotate(rotateValue);
+		chessField.setReverseLineCounters();
+		chessFieldPane.setRotate(rotateValue);
+		curPlayerLabelBot.setRotate(rotateValue);
+		curPlayerLabelTop.setRotate(rotateValue);
+	}
+	
+	//VISIBILITY
 	public void switchPlayerLabel(PlayerColor color) {
 		if (color == PlayerColor.BLACK) {
 			curPlayerLabelTop.setVisible(false);
@@ -252,7 +244,6 @@ public class Controller {
 		}
 	}
 	
-	//element visibility
 	private void switchVisibility(Node node, Button button, boolean curVisible) {
 		if (curVisible) {
 			node.setVisible(false);
@@ -283,15 +274,15 @@ public class Controller {
 		if (infosVisible) {
 			setBackgroundColor(showInfosButton, ColorEnum.GREEN);
 			if (errorsVisible)
-				messageListView.switchLists(ListType.ERRORSONLY);
+				messageListView.switchLists(ListType.NO_INFO);
 			else
-				messageListView.switchLists(ListType.WARNINGSONLY);
+				messageListView.switchLists(ListType.WARNINGS_ONLY);
 		} else {
 			setBackgroundColor(showInfosButton, ColorEnum.RED);
 			if (errorsVisible)
 				messageListView.switchLists(ListType.ALL);
 			else
-				messageListView.switchLists(ListType.INFOONLY);
+				messageListView.switchLists(ListType.NO_ERROR);
 		}
 		infosVisible = !infosVisible;
 	}
@@ -300,27 +291,21 @@ public class Controller {
 		if (errorsVisible) {
 			setBackgroundColor(showErrorsButton, ColorEnum.GREEN);
 			if (infosVisible)
-				messageListView.switchLists(ListType.INFOONLY);
+				messageListView.switchLists(ListType.NO_ERROR);
 			else
-				messageListView.switchLists(ListType.WARNINGSONLY);
+				messageListView.switchLists(ListType.WARNINGS_ONLY);
 		} else {
 			setBackgroundColor(showErrorsButton, ColorEnum.RED);
 			if (infosVisible)
 				messageListView.switchLists(ListType.ALL);
 			else
-				messageListView.switchLists(ListType.ERRORSONLY);
+				messageListView.switchLists(ListType.NO_INFO);
 		}
 		errorsVisible = !errorsVisible;
 	}
 	
-	/**
-	 * removes all other styles. Use only if the Node has no style sheet and the border isn t changed
-	 */
-	private void setBackgroundColor(Node component, ColorEnum color) {
-		component.setStyle("-fx-background-color: " + color.toString());
-	}
 	
-	//log
+	//LOG
 	
 	/**
 	 * @param type should only use ERROR,WARNING or INFORMATION
@@ -360,7 +345,7 @@ public class Controller {
 		return alert;
 	}
 	
-	//game
+	//GAME
 	public class Game {
 		
 		public final int id;
@@ -746,12 +731,23 @@ public class Controller {
 		taskUpdatePosition.await();
 	}
 	
+	
+	//UTIL
+	
+	/**
+	 * removes all other styles. Use only if the Node has no style sheet and the border isn t changed
+	 */
+	private void setBackgroundColor(Node component, ColorEnum color) {
+		component.setStyle("-fx-background-color: " + color);
+	}
+	
 	private PositionOnField resolvePositionOnField(Figures figure, Position position) {
 		if (position != null)
 			return new PositionOnField(chessField, position);
 		return new PositionOnField(figure.type.color == PlayerColor.WHITE ? beatenFiguresTop : beatenFiguresBot, figure.positionBeaten);
 	}
 	
+	//STATIC CLASSES
 	private static class PositionOnField {
 		
 		final TileField field;

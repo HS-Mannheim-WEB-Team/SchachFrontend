@@ -19,7 +19,6 @@ public class ChessTileField extends GridPane implements TileField {
 		setupFillers();
 		setupLineCounters();
 		setupChessFields();
-		setMinSize(300, 300);
 	}
 	
 	public LineCountField[] getBorderTiles() {
@@ -42,17 +41,17 @@ public class ChessTileField extends GridPane implements TileField {
 		for (int x = 1; x < 9; x++) {
 			LineCountField countField = new LineCountField(x, true);
 			add(countField, x, 9);
-			borderTiles[x - 1 + 8] = countField;
+			borderTiles[x + 7] = countField;
 		}
 		for (int y = 1; y < 9; y++) {
 			LineCountField countField = new LineCountField(y, false);
 			add(countField, 0, y);
-			borderTiles[y - 1 + 16] = countField;
+			borderTiles[y + 15] = countField;
 		}
 		for (int y = 1; y < 9; y++) {
 			LineCountField countField = new LineCountField(y, false);
 			add(countField, 9, y);
-			borderTiles[y - 1 + 24] = countField;
+			borderTiles[y + 23] = countField;
 		}
 	}
 	
@@ -64,17 +63,17 @@ public class ChessTileField extends GridPane implements TileField {
 	
 	public void setRegularLineCounters() {
 		deleteLineCounters();
-		for (int x = 7; x >= 0; x--) {
-			add(borderTiles[x], x + 1, 0);
+		for (int x = 8; x > 0; x--) {
+			add(borderTiles[x - 1], x, 0);
 		}
-		for (int x = 7; x >= 0; x--) {
-			add(borderTiles[x + 8], x + 1, 9);
+		for (int x = 8; x > 0; x--) {
+			add(borderTiles[x + 7], x, 9);
 		}
-		for (int y = 7; y >= 0; y--) {
-			add(borderTiles[y + 16], 0, y + 1);
+		for (int y = 8; y > 0; y--) {
+			add(borderTiles[y + 15], 0, y);
 		}
-		for (int y = 7; y >= 0; y--) {
-			add(borderTiles[y + 24], 9, y + 1);
+		for (int y = 8; y > 0; y--) {
+			add(borderTiles[y + 23], 9, y);
 		}
 	}
 	
@@ -95,30 +94,19 @@ public class ChessTileField extends GridPane implements TileField {
 	}
 	
 	private void setupChessFields() {
-		boolean secondRow = false;
-		boolean giveColor;
-		
+		boolean giveColor = false;
 		for (int x = 1; x < 9; x++) {
-			if (secondRow) {
-				giveColor = true;
-				secondRow = false;
-			} else {
-				giveColor = false;
-				secondRow = true;
-			}
-			
+			giveColor = !giveColor;
 			for (int y = 1; y < 9; y++) {
 				ClickAbleTile tile;
 				Position pos = new Position(x - 1, y - 1);
 				if (giveColor) {
 					tile = new ClickAbleTile(ColorEnum.BROWN, pos);
-					giveColor = false;
 				} else {
 					tile = new ClickAbleTile(ColorEnum.WHITE, pos);
-					giveColor = true;
 				}
+				giveColor = !giveColor;
 				tile.setStyle("-fx-border-color: white ;" + tile.getStyle());
-				tile.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> tile.doClick());
 				chessFieldComponents[pos.x][pos.y] = tile;
 				add(tile, x, y);
 			}
@@ -135,10 +123,13 @@ public class ChessTileField extends GridPane implements TileField {
 	
 	public void mark(Position pos, ColorEnum color) {
 		Tile tile = chessFieldComponents[pos.x][pos.y];
+		tile.setStyle("-fx-border-color: red; \n" + "-fx-border-width: 3; \n" + "-fx-background-color: " + tile.getColor());
 		tile.setStyle((color != null ? "-fx-border-color: " + color + ";" : "") + " \r\n" + "-fx-border-width: 3; \r\n" + "-fx-background-color: " + tile.getColor() + ";\r\n");
 	}
 	
 	public void unmark(Position pos) {
+		Tile tile = chessFieldComponents[pos.x][pos.y];
+		tile.setStyle("-fx-background-color: " + tile.getColor());
 		mark(pos, null);
 	}
 	
@@ -153,6 +144,9 @@ public class ChessTileField extends GridPane implements TileField {
 		public ClickAbleTile(ColorEnum color, Position pos) {
 			super(color);
 			this.pos = pos;
+			addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+				doClick();
+			});
 		}
 		
 		public void doClick() {
