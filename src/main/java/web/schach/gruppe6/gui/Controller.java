@@ -153,7 +153,6 @@ public class Controller {
 	private BeatenTileField beatenFiguresBot;
 	
 	//PLAYER DISPLAY
-	
 	@FXML
 	private Label curPlayerLabelBot;
 	
@@ -454,7 +453,7 @@ public class Controller {
 	}
 	
 	public void setGameFromUI(boolean newGame) {
-		setGame(Integer.parseInt(iDTextField.getText()), ChessGUI.OP_MODE_ALLOW_MOVE_BOTH ? null : colorSelectorListView.getSelectionModel().getSelectedItem(), newGame);
+		setGame(Integer.parseInt(iDTextField.getText()), colorSelectorListView.getSelectionModel().getSelectedItem(), newGame);
 	}
 	
 	private void setupGame() {
@@ -502,7 +501,7 @@ public class Controller {
 			Figures figure = layoutCurrent.at(position);
 			if (figure == null)
 				return;
-			if (game.color != null && figure.type.color != game.color)
+			if (!(game.color == PlayerColor.BOTH || figure.type.color == game.color))
 				return;
 			
 			lastClicked = position;

@@ -15,8 +15,7 @@ public class ChessGUI extends Application {
 	public static final float MESSAGE_GROW_FACTOR = 0.125f;
 	public static final int DISTANCE_TO_WINDOW_BORDER = 15;
 	
-	public static final double INITIALSCALE = 1;
-	public static final boolean OP_MODE_ALLOW_MOVE_BOTH = false;
+	public static final double INITIALSCALE = 1.5;
 	
 	public Controller controller;
 	
