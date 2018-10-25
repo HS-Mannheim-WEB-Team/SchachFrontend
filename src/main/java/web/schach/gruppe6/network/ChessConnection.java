@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static web.schach.gruppe6.network.ParserUtils.*;
@@ -122,11 +123,11 @@ public class ChessConnection {
 		Element root = getAndParse("/spiel/getBelegung/" + id + "/" + moveId).getDocumentElement();
 		rethrowIfServerError(root);
 		
-		//parse which figures have stayed the same / which got added
 		EnumMap<Figures, Boolean> sameFigures = new EnumMap<>(Figures.class);
 		EnumMap<FigureType, List<Position>> newFigures = new EnumMap<>(FigureType.class);
 		GameState state = null;
 		
+		//parse all figures
 		outer:
 		for (Node properties : ParserUtils.nodeListIterable(root.getElementsByTagName("properties"))) {
 			if ("D_Figur".equals(getEntryKeyFirstOrThrow(properties, "klasse").getTextContent())) {
@@ -136,31 +137,19 @@ public class ChessConnection {
 						getEntryKeyFirstOrThrow(properties, "typ").getTextContent()
 				));
 				String positionStr = getEntryKeyFirstOrThrow(properties, "position").getTextContent();
-				if (!positionStr.isEmpty()) {
-					//on chess field
-					Position position = fromChessNotation(positionStr);
-					Figures oldFigure = currentLayout.at(position);
-					if (oldFigure != null && currentLayout.getType(oldFigure) == figureType) {
-						//same
-						sameFigures.put(oldFigure, true);
-						continue;
+				Position position = positionStr.isEmpty() ? null : fromChessNotation(positionStr);
+				
+				//try to find a figure on the same place
+				for (Figures figure : Figures.values()) {
+					if (Objects.equals(currentLayout.get(figure), position) && currentLayout.getType(figure) == figureType && sameFigures.get(figure) != Boolean.TRUE) {
+						//same place
+						sameFigures.put(figure, true);
+						continue outer;
 					}
-					
-					//different
-					newFigures.computeIfAbsent(figureType, figureType1 -> new ArrayList<>()).add(position);
-				} else {
-					//already beaten
-					for (Figures oldFigure : Figures.values()) {
-						if (currentLayout.get(oldFigure) == null && currentLayout.getType(oldFigure) == figureType && sameFigures.get(oldFigure) != Boolean.TRUE) {
-							//same
-							sameFigures.put(oldFigure, true);
-							continue outer;
-						}
-					}
-					
-					//different
-					newFigures.computeIfAbsent(figureType, figureType1 -> new ArrayList<>()).add(null);
 				}
+				
+				//changed
+				newFigures.computeIfAbsent(figureType, figureType1 -> new ArrayList<>()).add(position);
 			} else if ("D_Belegung".equals(getEntryKeyFirstOrThrow(properties, "klasse").getTextContent())) {
 				state = NAME_TO_STATE.get(getEntryKeyFirstOrThrow(properties, "status").getTextContent());
 			}
@@ -192,7 +181,7 @@ public class ChessConnection {
 			}
 		}
 		
-		//map all remaining remapping type (not perfect if multiple are left over)
+		//map all remaining and remap their type (not perfect if multiple are left over)
 		List<Figures> removedLeftOver = removedFigures.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
 		List<Pair<FigureType, Position>> newLeftOver = newFigures.entrySet().stream().flatMap(entry -> entry.getValue().stream().map(position -> new Pair<>(entry.getKey(), position))).collect(Collectors.toList());
 		int leftOverCnt = removedLeftOver.size();
