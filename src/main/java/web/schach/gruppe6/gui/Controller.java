@@ -503,7 +503,7 @@ public class Controller {
 				Figures figure = layoutCurrent.at(position);
 				if (figure == null)
 					return;
-				if (!(game.color == PlayerColor.BOTH || figure.type.color == game.color))
+				if (!(game.color == PlayerColor.BOTH || layoutCurrent.getType(figure).color == game.color))
 					return;
 				
 				lastClicked = position;
@@ -608,10 +608,6 @@ public class Controller {
 		markFields(pos -> null);
 	}
 	
-	private void markFields(ColorEnum color) {
-		markFields(pos -> color);
-	}
-	
 	private void markFields(Function<Position, ColorEnum> color) {
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
@@ -675,7 +671,7 @@ public class Controller {
 						Position position = layoutCurrent.get(figure);
 						
 						ImageView icon = new ImageView();
-						icon.setImage(new Image(figure.getIconPath()));
+						icon.setImage(new Image(layoutCurrent.getType(figure).iconPath));
 						icon.setFitWidth(30);
 						icon.setFitHeight(30);
 						icon.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> chessField.doClick(layoutCurrent.get(figure)));
@@ -683,7 +679,7 @@ public class Controller {
 						chessFieldPane.getChildren().add(icon);
 						figureViewMap.put(figure, icon);
 						
-						PositionOnField pof = resolvePositionOnField(figure, position);
+						PositionOnField pof = resolvePositionOnField(layoutCurrent, figure, position);
 						Tile node = pof.field.getFieldComponents()[pof.position.x][pof.position.y];
 						Bounds bounds = getRelativeBounds(node, chessFieldPane);
 						icon.setLayoutX(bounds.getMinX());
@@ -716,8 +712,8 @@ public class Controller {
 							Position positionDest = layoutDest.get(figure);
 							if (!Objects.equals(positionSrc, positionDest)) {
 								
-								PositionOnField pofSrc = resolvePositionOnField(figure, positionSrc);
-								PositionOnField pofDest = resolvePositionOnField(figure, positionDest);
+								PositionOnField pofSrc = resolvePositionOnField(layoutSrc, figure, positionSrc);
+								PositionOnField pofDest = resolvePositionOnField(layoutDest, figure, positionDest);
 								
 								Tile nodeSrc = pofSrc.field.getFieldComponents()[pofSrc.position.x][pofSrc.position.y];
 								Tile nodeDest = pofDest.field.getFieldComponents()[pofDest.position.x][pofDest.position.y];
@@ -793,10 +789,10 @@ public class Controller {
 		component.setStyle("-fx-background-color: " + color);
 	}
 	
-	private PositionOnField resolvePositionOnField(Figures figure, Position position) {
+	private PositionOnField resolvePositionOnField(Layout layout, Figures figure, Position position) {
 		if (position != null)
 			return new PositionOnField(chessField, position);
-		return new PositionOnField(figure.type.color == PlayerColor.WHITE ? beatenFiguresTop : beatenFiguresBot, figure.positionBeaten);
+		return new PositionOnField(layout.getType(figure).color == PlayerColor.WHITE ? beatenFiguresTop : beatenFiguresBot, figure.positionBeaten);
 	}
 	
 	//STATIC CLASSES

@@ -27,8 +27,6 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static web.schach.gruppe6.network.ParserUtils.*;
@@ -142,7 +140,7 @@ public class ChessConnection {
 					//on chess field
 					Position position = fromChessNotation(positionStr);
 					Figures oldFigure = currentLayout.at(position);
-					if (oldFigure != null && oldFigure.type == figureType) {
+					if (oldFigure != null && currentLayout.getType(oldFigure) == figureType) {
 						//same
 						sameFigures.put(oldFigure, true);
 						continue;
@@ -152,9 +150,8 @@ public class ChessConnection {
 					newFigures.computeIfAbsent(figureType, figureType1 -> new ArrayList<>()).add(position);
 				} else {
 					//already beaten
-					for (Entry<Figures, Position> entry : currentLayout.entrySet()) {
-						Figures oldFigure = entry.getKey();
-						if (entry.getValue() == null && oldFigure.type == figureType && sameFigures.get(oldFigure) != Boolean.TRUE) {
+					for (Figures oldFigure : Figures.values()) {
+						if (currentLayout.get(oldFigure) == null && currentLayout.getType(oldFigure) == figureType && sameFigures.get(oldFigure) != Boolean.TRUE) {
 							//same
 							sameFigures.put(oldFigure, true);
 							continue outer;
@@ -173,31 +170,40 @@ public class ChessConnection {
 		Layout layout = new Layout("Move " + moveId, moveId, state);
 		EnumMap<FigureType, List<Figures>> removedFigures = new EnumMap<>(FigureType.class);
 		for (Figures figure : Figures.values()) {
-			if (sameFigures.get(figure) == Boolean.TRUE)
+			if (sameFigures.get(figure) == Boolean.TRUE) {
 				layout.put(figure, currentLayout.get(figure));
-			else
-				removedFigures.computeIfAbsent(figure.type, figureType -> new ArrayList<>()).add(figure);
+				layout.putType(figure, currentLayout.getType(figure));
+			} else {
+				removedFigures.computeIfAbsent(currentLayout.getType(figure), figureType -> new ArrayList<>()).add(figure);
+			}
 		}
 		
-		//second: same type (not perfect if multiple of one type are moved)
+		//map all of same type (not perfect if multiple of one type are moved)
 		for (FigureType figureType : FigureType.values()) {
 			List<Figures> removedFigureTypes = removedFigures.get(figureType);
 			List<Position> newFigureTypes = newFigures.get(figureType);
 			if (removedFigureTypes == null || newFigureTypes == null)
 				continue;
 			int min = Math.min(removedFigureTypes.size(), newFigureTypes.size());
-			for (int i = 0; i < min; i++)
-				layout.put(removedFigureTypes.remove(0), newFigureTypes.remove(0));
+			for (int i = 0; i < min; i++) {
+				Figures figure = removedFigureTypes.remove(0);
+				layout.put(figure, newFigureTypes.remove(0));
+				layout.putType(figure, figureType);
+			}
 		}
 		
-		//third: all remaining (not perfect if multiple are left over)
-		List<Figures> removedLeftOver = removedFigures.values().stream().filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toList());
-		List<Position> newLeftOver = newFigures.values().stream().filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toList());
+		//map all remaining remapping type (not perfect if multiple are left over)
+		List<Figures> removedLeftOver = removedFigures.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
+		List<Pair<FigureType, Position>> newLeftOver = newFigures.entrySet().stream().flatMap(entry -> entry.getValue().stream().map(position -> new Pair<>(entry.getKey(), position))).collect(Collectors.toList());
 		int leftOverCnt = removedLeftOver.size();
 		if (leftOverCnt != newLeftOver.size())
 			throw new RuntimeException("Figures got added(" + newLeftOver.size() + ") or removed(" + leftOverCnt + ")!");
-		for (int i = 0; i < leftOverCnt; i++)
-			layout.put(removedLeftOver.get(i), newLeftOver.get(i));
+		for (int i = 0; i < leftOverCnt; i++) {
+			Figures figure = removedLeftOver.get(i);
+			Pair<FigureType, Position> entry = newLeftOver.get(i);
+			layout.put(figure, entry.getValue());
+			layout.putType(figure, entry.getKey());
+		}
 		
 		return layout;
 	}

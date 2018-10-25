@@ -41,17 +41,13 @@ public enum Figures {
 	BLACK_PAWN_7(BLACK_PAWN, fromChessNotation("g7")),
 	BLACK_PAWN_8(BLACK_PAWN, fromChessNotation("h7"));
 	
-	public final FigureType type;
+	public final FigureType typeInitial;
 	public final Position positionInitial;
 	public final Position positionBeaten;
 	
-	Figures(FigureType type, Position positionInitial) {
-		this.type = type;
+	Figures(FigureType typeInitial, Position positionInitial) {
+		this.typeInitial = typeInitial;
 		this.positionInitial = positionInitial;
 		this.positionBeaten = new Position(positionInitial.x, positionInitial.y <= 2 ? positionInitial.y : positionInitial.y - 6);
-	}
-	
-	public String getIconPath() {
-		return type.iconPath;
 	}
 }

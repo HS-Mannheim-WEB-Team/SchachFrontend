@@ -4,9 +4,7 @@ import web.schach.gruppe6.util.Position;
 
 import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Set;
 
 public class Layout {
 	
@@ -15,28 +13,35 @@ public class Layout {
 	
 	static {
 		INITIAL_LAYOUT = new Layout("Initial", 0, null);
-		for (Figures figure : Figures.values()) {
-			INITIAL_LAYOUT.layout.put(figure, figure.positionInitial);
-		}
 		INITIAL_BEATEN = new Layout("AllBeaten", -1, null);
+		for (Figures figure : Figures.values()) {
+			INITIAL_LAYOUT.put(figure, figure.positionInitial);
+			INITIAL_LAYOUT.putType(figure, figure.typeInitial);
+			INITIAL_BEATEN.put(figure, null);
+			INITIAL_BEATEN.putType(figure, figure.typeInitial);
+		}
 	}
 	
 	public final String name;
 	public final int moveId;
 	public final GameState state;
+	
 	private EnumMap<Figures, Position> layout;
+	private EnumMap<Figures, FigureType> typeMap;
 	
 	public Layout(String name, int moveId, GameState state) {
-		this(name, moveId, state, new EnumMap<>(Figures.class));
+		this(name, moveId, state, new EnumMap<>(Figures.class), new EnumMap<>(Figures.class));
 	}
 	
-	private Layout(String name, int moveId, GameState state, EnumMap<Figures, Position> layout) {
+	private Layout(String name, int moveId, GameState state, EnumMap<Figures, Position> layout, EnumMap<Figures, FigureType> typeMap) {
 		this.name = name;
 		this.moveId = moveId;
 		this.state = state;
 		this.layout = layout;
+		this.typeMap = typeMap;
 	}
 	
+	//state
 	public PlayerColor playerColorCurrent() {
 		return moveId % 2 == 0 ? PlayerColor.BLACK : PlayerColor.WHITE;
 	}
@@ -45,26 +50,35 @@ public class Layout {
 		return moveId % 2 == 0 ? PlayerColor.WHITE : PlayerColor.BLACK;
 	}
 	
+	//layout
 	public Position get(Figures key) {
 		return layout.get(key);
 	}
 	
+	@SuppressWarnings("UnusedReturnValue")
 	public Position put(Figures key, Position value) {
 		return layout.put(key, value);
 	}
 	
 	public Figures at(Position pos) {
-		for (Entry<Figures, Position> entry : layout.entrySet()) {
-			if (Objects.equals(entry.getValue(), pos))
-				return entry.getKey();
+		for (Figures figure : Figures.values()) {
+			if (Objects.equals(get(figure), pos))
+				return figure;
 		}
 		return null;
 	}
 	
-	public Set<Entry<Figures, Position>> entrySet() {
-		return layout.entrySet();
+	//typeMap
+	public FigureType getType(Figures key) {
+		return typeMap.get(key);
 	}
 	
+	@SuppressWarnings("UnusedReturnValue")
+	public FigureType putType(Figures key, FigureType value) {
+		return typeMap.put(key, value);
+	}
+	
+	//toString
 	@Override
 	public String toString() {
 		return toStringColored(false);
@@ -82,13 +96,13 @@ public class Layout {
 		StringBuilder beatenWhite = new StringBuilder();
 		StringBuilder beatenBlack = new StringBuilder();
 		
-		for (Entry<Figures, Position> entry : layout.entrySet()) {
-			Position pos = entry.getValue();
-			Figures figure = entry.getKey();
+		for (Figures figure : Figures.values()) {
+			Position pos = get(figure);
+			FigureType type = getType(figure);
 			if (pos != null)
-				field[pos.y][pos.x] = (colored ? (figure.type.color == PlayerColor.WHITE ? "\u001b[36m" : "\u001b[30m") : "") + figure.type.character;
+				field[pos.y][pos.x] = (colored ? (type.color == PlayerColor.WHITE ? "\u001b[36m" : "\u001b[30m") : "") + type.character;
 			else
-				(figure.type.color == PlayerColor.WHITE ? beatenWhite : beatenBlack).append(figure.type.character);
+				(type.color == PlayerColor.WHITE ? beatenWhite : beatenBlack).append(type.character);
 		}
 		
 		StringBuilder b = new StringBuilder();
