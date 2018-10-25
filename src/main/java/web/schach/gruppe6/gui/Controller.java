@@ -50,6 +50,8 @@ import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import static java.lang.Integer.parseInt;
 import static javafx.collections.FXCollections.observableArrayList;
@@ -62,6 +64,7 @@ public class Controller {
 	private static final long TIME_MOVEMENT_STEP_NANO = 20 * 1000000;
 	public static final int TIME_NETWORK_QUERIES_IN_BETWEEN_MS = 250;
 	
+	public static final Predicate<String> ONLY_DIGITS = Pattern.compile("^\\d*$").asPredicate();
 	public static final ChessConnection CONNECTION = new ChessConnection();
 	
 	private static Bounds getRelativeBounds(Node child, Node parent) {
@@ -558,10 +561,8 @@ public class Controller {
 		
 		iDTextField.textProperty().addListener(
 				(observable, oldValue, newValue) -> {
-					if (!"0123456789".contains(newValue)) {
+					if (!ONLY_DIGITS.test(newValue))
 						((StringProperty) observable).setValue(oldValue);
-					} else
-						((StringProperty) observable).setValue(newValue);
 				}
 		);
 		
