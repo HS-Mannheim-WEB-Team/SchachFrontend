@@ -1,5 +1,6 @@
 package web.schach.gruppe6.gui.customComponents;
 
+import javafx.beans.InvalidationListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -12,7 +13,6 @@ public class OccupancyListView extends ListView<Layout> {
 			@Override
 			protected void updateItem(Layout item, boolean empty) {
 				super.updateItem(item, empty);
-				
 				setText(empty || item == null ? null : item.name);
 			}
 		});
@@ -20,5 +20,8 @@ public class OccupancyListView extends ListView<Layout> {
 	
 	public void setData(ObservableList<Layout> data) {
 		setItems(data);
+		data.addListener((InvalidationListener) c -> {
+			scrollTo(data.size());
+		});
 	}
 }

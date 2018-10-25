@@ -351,7 +351,7 @@ public class Controller {
 	/**
 	 * @param type should only use ERROR,WARNING or INFORMATION
 	 */
-	public void logMessageWithJumpToLayout(Alert.AlertType type, String title, String content, int layoutIndex) {
+	public void logMessageWithJumpToLayoutAndShow(Alert.AlertType type, String title, String content, int layoutIndex) {
 		Platform.runLater(() -> messageListView.addItem(getMessageWithJumpToLayout(type, title, content, layoutIndex)));
 	}
 	
@@ -364,6 +364,7 @@ public class Controller {
 			occupancyListView.scrollTo(layoutIndex);
 			occupancyListView.getSelectionModel().clearAndSelect(layoutIndex);
 		});
+		alert.showAndWait();
 		return alert;
 	}
 	
@@ -458,14 +459,14 @@ public class Controller {
 										switch (layout.state) {
 											case WHITE_CHECK:
 											case BLACK_CHECK:
-												logMessageWithJumpToLayout(AlertType.WARNING, "Check", layout.state.color + " is in Check!", layout.moveId);
+												logMessageWithJumpToLayoutAndShow(AlertType.WARNING, "Check", layout.state.color + " is in Check!", layout.moveId);
 												break;
 											case WHITE_CHECK_MATE:
 											case BLACK_CHECK_MATE:
-												logMessageWithJumpToLayout(AlertType.WARNING, "Checkmate", layout.state.color + " is in Checkmate!", layout.moveId);
+												logMessageWithJumpToLayoutAndShow(AlertType.WARNING, "Checkmate", layout.state.color + " is in Checkmate!", layout.moveId);
 												break;
 											case STALEMATE:
-												logMessageWithJumpToLayout(AlertType.WARNING, "Stalemate", "Game ended in Stalemate!", layout.moveId);
+												logMessageWithJumpToLayoutAndShow(AlertType.WARNING, "Stalemate", "Game ended in Stalemate!", layout.moveId);
 												break;
 										}
 									}
