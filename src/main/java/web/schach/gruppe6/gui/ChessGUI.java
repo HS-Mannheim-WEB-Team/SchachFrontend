@@ -5,7 +5,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import web.schach.gruppe6.gui.customComponents.OccupancyListView;
 
 public class ChessGUI extends Application {
 	
@@ -54,18 +56,46 @@ public class ChessGUI extends Application {
 		
 		primaryStage.addEventFilter(KeyEvent.KEY_TYPED, event -> {
 			String newInput = event.getCharacter().toLowerCase();
-			if (newInput.equals("r"))
-				controller.rotateBoard();
-			else if (newInput.equals("w"))
-				controller.getColorSelectorListView().getSelectionModel().select(0);
-			else if (newInput.equals("b"))
-				controller.getColorSelectorListView().getSelectionModel().select(1);
-			else if (newInput.equals("m"))
-				controller.getColorSelectorListView().getSelectionModel().select(2);
-			else if (newInput.equals("j"))
-				controller.getJoinButton().fire();
-			else if (newInput.equals("n"))
-				controller.getNewGameButton().fire();
+			switch (newInput) {
+				case "r":
+					controller.rotateBoard();
+					break;
+				case "w":
+					controller.getColorSelectorListView().getSelectionModel().select(0);
+					break;
+				case "b":
+					controller.getColorSelectorListView().getSelectionModel().select(1);
+					break;
+				case "m":
+					controller.getColorSelectorListView().getSelectionModel().select(2);
+					break;
+				case "j":
+					if (controller.isMenuIsVisible()) {
+						controller.getJoinButton().fire();
+						break;
+					}
+				case "n":
+					if (controller.isMenuIsVisible()) {
+						controller.getNewGameButton().fire();
+						break;
+					}
+				case "l": {
+					OccupancyListView list = controller.getOccupancyListView();
+					list.scrollTo(list.getItems().size() - 1);
+					list.getSelectionModel().select(list.getItems().size() - 1);
+					break;
+				}
+				case "f": {
+					OccupancyListView list = controller.getOccupancyListView();
+					list.scrollTo(0);
+					break;
+				}
+				case "c": {
+					OccupancyListView list = controller.getOccupancyListView();
+					list.scrollTo(list.getSelectionModel().getSelectedIndex());
+					break;
+				}
+			}
 		});
 	}
 	

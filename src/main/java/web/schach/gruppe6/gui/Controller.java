@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -178,6 +179,11 @@ public class Controller {
 	private Pane shuffleControlPane;
 	
 	//GETTER
+	
+	public boolean isMenuIsVisible() {
+		return menuIsVisible;
+	}
+	
 	public Button getNewGameButton() {
 		return newGameButton;
 	}
@@ -233,6 +239,26 @@ public class Controller {
 		setupLayoutHandler();
 		setupMoveExecution();
 		setupShaker();
+		setupToolTips();
+	}
+	
+	//TOOLTIP
+	private void setupToolTips() {
+		joinButton.setTooltip(getToolTip("Shortcut: J/j", "icon-info.png"));
+		newGameButton.setTooltip(getToolTip("Shortcut: N/n", "icon-info.png"));
+		iDTextField.setTooltip(getToolTip("Numbers only", "icon-info.png"));
+		colorSelectorListView.setTooltip(getToolTip("Shortcuts: \r\nWhite: W/w \r\nBlack: B/b\r\nBoth: m/m", "icon-info.png"));
+		occupancyListView.setTooltip(getToolTip("Shortcuts: \r\nScroll to First: F/f\r\nScroll to Current: C/c\r\nScroll to Last: L/l", "icon-info.png"));
+	}
+	
+	private Tooltip getToolTip(String content, String iconName) {
+		Tooltip tip = new Tooltip();
+		tip.setText(content);
+		ImageView image = new ImageView("/web/schach/gruppe6/gui/iconsAndImages/" + iconName);
+		image.setFitHeight(30);
+		image.setFitWidth(30);
+		tip.setGraphic(image);
+		return tip;
 	}
 	
 	//ROTATION
