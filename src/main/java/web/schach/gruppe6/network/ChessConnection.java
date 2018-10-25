@@ -121,14 +121,7 @@ public class ChessConnection {
 	}
 	
 	public Layout getChange(int id, int moveId, Layout currentLayout) throws IOException, ServerErrorException {
-		return getChangeProcess(id, moveId, currentLayout, getChangeQuery(id, moveId));
-	}
-	
-	public Element getChangeQuery(int id, int moveId) throws IOException {
-		return getAndParse("/spiel/getBelegung/" + id + "/" + moveId).getDocumentElement();
-	}
-	
-	public Layout getChangeProcess(int id, int moveId, Layout currentLayout, Element root) throws ServerErrorException {
+		Element root = getAndParse("/spiel/getBelegung/" + id + "/" + moveId).getDocumentElement();
 		rethrowIfServerError(root);
 		
 		//parse which figures have stayed the same / which got added
