@@ -41,24 +41,6 @@ public enum Figures {
 	BLACK_PAWN_7(BLACK_PAWN, fromChessNotation("g7")),
 	BLACK_PAWN_8(BLACK_PAWN, fromChessNotation("h7"));
 	
-	//NOCOMMIT: check if this is required
-//	static {
-//		EnumMap<FigureType, List<Figures>> figuresWhite = new EnumMap<>(FigureType.class);
-//		EnumMap<FigureType, List<Figures>> figuresBlack = new EnumMap<>(FigureType.class);
-//		for (FigureType figureType : FigureType.values()) {
-//			figuresWhite.put(figureType, new ArrayList<>());
-//			figuresBlack.put(figureType, new ArrayList<>());
-//		}
-//		
-//		for (Figures figure : Figures.values())
-//			(figure.color == WHITE ? figuresWhite : figuresBlack).get(figure.type).add(figure);
-//		
-//		for (FigureType figureType : FigureType.values()) {
-//			figureType.figuresWhite = figuresWhite.get(figureType).toArray(new Figures[0]);
-//			figureType.figuresBlack = figuresBlack.get(figureType).toArray(new Figures[0]);
-//		}
-//	}
-	
 	public final FigureType type;
 	public final Position positionInitial;
 	public final Position positionBeaten;
@@ -72,8 +54,4 @@ public enum Figures {
 	public String getIconPath() {
 		return type.iconPath;
 	}
-
-//	static void init() {
-//	
-//	}
 }

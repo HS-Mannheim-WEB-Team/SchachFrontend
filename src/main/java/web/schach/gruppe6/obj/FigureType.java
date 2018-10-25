@@ -17,16 +17,10 @@ public enum FigureType {
 	BLACK_KNIGHT('K', BLACK, "web/schach/gruppe6/gui/iconsAndImages/iconset1/knight_black.png"),
 	BLACK_ROOK('R', BLACK, "web/schach/gruppe6/gui/iconsAndImages/iconset1/rook_black.png"),
 	BLACK_BISHOP('B', BLACK, "web/schach/gruppe6/gui/iconsAndImages/iconset1/bishop_black.png");
-
-//	static {
-//		Figures.init();
-//	}
 	
 	public final char character;
 	public final PlayerColor color;
 	public final String iconPath;
-//	public Figures[] figuresWhite;
-//	public Figures[] figuresBlack;
 	
 	FigureType(char character, PlayerColor color, String iconPath) {
 		this.character = character;
