@@ -123,11 +123,15 @@ public class ChessConnection {
 		Element root = getAndParse("/spiel/getBelegung/" + id + "/" + moveId).getDocumentElement();
 		rethrowIfServerError(root);
 		
+		Element notationQuery = getAndParse("/spiel/getZugHistorie/" + id).getDocumentElement();
+		rethrowIfServerError(notationQuery);
+		String notation = getEntryKeyFirstOrThrow(notationQuery.getElementsByTagName("properties").item(moveId - 1), "zug").getTextContent();
+		
+		//parse all figures
 		EnumMap<Figures, Boolean> sameFigures = new EnumMap<>(Figures.class);
 		EnumMap<FigureType, List<Position>> newFigures = new EnumMap<>(FigureType.class);
 		GameState state = null;
 		
-		//parse all figures
 		outer:
 		for (Node properties : ParserUtils.nodeListIterable(root.getElementsByTagName("properties"))) {
 			if ("D_Figur".equals(getEntryKeyFirstOrThrow(properties, "klasse").getTextContent())) {
@@ -156,7 +160,7 @@ public class ChessConnection {
 		}
 		
 		//copy same figures and resolve removed ones
-		Layout layout = new Layout("Move " + moveId, moveId, state);
+		Layout layout = new Layout(moveId + ": " + notation, moveId, state);
 		EnumMap<FigureType, List<Figures>> removedFigures = new EnumMap<>(FigureType.class);
 		for (Figures figure : Figures.values()) {
 			if (sameFigures.get(figure) == Boolean.TRUE) {
