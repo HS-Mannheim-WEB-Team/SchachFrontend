@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -125,7 +124,7 @@ public class ChessConnection {
 		
 		Element notationQuery = getAndParse("/spiel/getZugHistorie/" + id).getDocumentElement();
 		rethrowIfServerError(notationQuery);
-		String notation = getEntryKeyFirstOrThrow(notationQuery.getElementsByTagName("properties").item(moveId - 1), "zug").getTextContent();
+		String notation = getEntryKeyFirstOrThrow(propertiesArrayStream(notationQuery).skip(moveId - 1).findFirst().orElseThrow(ParseException::new), "zug").getTextContent();
 		
 		//parse all figures
 		EnumMap<Figures, Boolean> sameFigures = new EnumMap<>(Figures.class);
@@ -133,7 +132,7 @@ public class ChessConnection {
 		GameState state = null;
 		
 		outer:
-		for (Node properties : ParserUtils.nodeListIterable(root.getElementsByTagName("properties"))) {
+		for (Node properties : propertiesArrayNodeList(root)) {
 			if ("D_Figur".equals(getEntryKeyFirstOrThrow(properties, "klasse").getTextContent())) {
 				
 				FigureType figureType = NAME_TO_TYPE.get(new Pair<>(
@@ -205,17 +204,8 @@ public class ChessConnection {
 		Element root = getAndParse("/spiel/getErlaubteZuege/" + id + "/" + toChessNotation(position)).getDocumentElement();
 		rethrowIfServerError(root);
 		
-		Iterable<Node> iterable;
-		if ("propertiesarray".equals(root.getTagName())) {
-			iterable = ParserUtils.nodeListIterable(root.getElementsByTagName("properties"));
-		} else if ("properties".equals(root.getTagName())) {
-			iterable = Collections.singleton(root);
-		} else {
-			throw new ParseException("No Entry 'propertiesarray' or 'properties'");
-		}
-		
 		Grid<Boolean> grid = ChessConstants.createChessGrid();
-		for (Node node : iterable)
+		for (Node node : propertiesArrayNodeList(root))
 			if ("D_Zug".equals(getEntryKeyFirstOrThrow(node, "klasse").getTextContent()))
 				grid.set(fromChessNotation(getEntryKeyFirstOrThrow(node, "nach").getTextContent()), true);
 		return grid;
