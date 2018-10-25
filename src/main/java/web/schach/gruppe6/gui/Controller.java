@@ -351,20 +351,21 @@ public class Controller {
 	/**
 	 * @param type should only use ERROR,WARNING or INFORMATION
 	 */
-	public void logMessageWithJumpToLayoutAndShow(Alert.AlertType type, String title, String content, int layoutIndex) {
-		Platform.runLater(() -> messageListView.addItem(getMessageWithJumpToLayout(type, title, content, layoutIndex)));
+	public void logMessageWithJumpToLayout(Alert.AlertType type, String title, String content, int layoutIndex, boolean show) {
+		Platform.runLater(() -> messageListView.addItem(getMessageWithJumpToLayout(type, title, content, layoutIndex, show)));
 	}
 	
 	/**
 	 * @param type should only use ERROR,WARNING or INFORMATION
 	 */
-	public Alert getMessageWithJumpToLayout(Alert.AlertType type, String title, String content, int layoutIndex) {
+	public Alert getMessageWithJumpToLayout(Alert.AlertType type, String title, String content, int layoutIndex, boolean show) {
 		Alert alert = getMessage(type, title, content);
 		alert.setOnCloseRequest(value -> {
 			occupancyListView.scrollTo(layoutIndex);
 			occupancyListView.getSelectionModel().clearAndSelect(layoutIndex);
 		});
-		alert.showAndWait();
+		if (show)
+			alert.showAndWait();
 		return alert;
 	}
 	
@@ -446,6 +447,7 @@ public class Controller {
 								}
 							}
 							
+							boolean show = currCount != 0;
 							if (isRunning) {
 								//apply new layouts
 								Task task = new Task(() -> {
@@ -459,14 +461,14 @@ public class Controller {
 										switch (layout.state) {
 											case WHITE_CHECK:
 											case BLACK_CHECK:
-												logMessageWithJumpToLayoutAndShow(AlertType.WARNING, "Check", layout.state.color + " is in Check!", layout.moveId);
+												logMessageWithJumpToLayout(AlertType.WARNING, "Check", layout.state.color + " is in Check!", layout.moveId, show);
 												break;
 											case WHITE_CHECK_MATE:
 											case BLACK_CHECK_MATE:
-												logMessageWithJumpToLayoutAndShow(AlertType.WARNING, "Checkmate", layout.state.color + " is in Checkmate!", layout.moveId);
+												logMessageWithJumpToLayout(AlertType.WARNING, "Checkmate", layout.state.color + " is in Checkmate!", layout.moveId, show);
 												break;
 											case STALEMATE:
-												logMessageWithJumpToLayoutAndShow(AlertType.WARNING, "Stalemate", "Game ended in Stalemate!", layout.moveId);
+												logMessageWithJumpToLayout(AlertType.WARNING, "Stalemate", "Game ended in Stalemate!", layout.moveId, show);
 												break;
 										}
 									}
@@ -485,7 +487,7 @@ public class Controller {
 						logMessage(AlertType.ERROR, "Server", "Server error: " + e.getMessage());
 					}
 				}
-			});
+			}, "GameUpdateThread" + id);
 			th.setDaemon(true);
 			th.start();
 		}
