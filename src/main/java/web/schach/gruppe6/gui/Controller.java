@@ -240,7 +240,7 @@ public class Controller {
 		joinButton.setTooltip(getToolTip("Shortcut: J/j", "icon-info.png"));
 		newGameButton.setTooltip(getToolTip("Shortcut: N/n", "icon-info.png"));
 		iDTextField.setTooltip(getToolTip("Numbers only", "icon-info.png"));
-		colorSelectorListView.setTooltip(getToolTip("Shortcuts: \r\nWhite: W/w \r\nBlack: B/b\r\nBoth: m/m", "icon-info.png"));
+		colorSelectorListView.setTooltip(getToolTip("Shortcuts: \r\nWhite: W/w \r\nBlack: B/b\r\nBoth: M/m", "icon-info.png"));
 		occupancyListView.setTooltip(getToolTip("Shortcuts: \r\nScroll to First: F/f\r\nScroll to Current: C/c\r\nScroll to Last: L/l", "icon-info.png"));
 	}
 	
