@@ -123,8 +123,7 @@ public class ChessTileField extends GridPane implements TileField {
 	
 	public void mark(Position pos, ColorEnum color) {
 		Tile tile = chessFieldComponents[pos.x][pos.y];
-		tile.setStyle("-fx-border-color: red; \n" + "-fx-border-width: 3; \n" + "-fx-background-color: " + tile.getColor());
-		tile.setStyle((color != null ? "-fx-border-color: " + color + ";" : "") + " \r\n" + "-fx-border-width: 3; \r\n" + "-fx-background-color: " + tile.getColor() + ";\r\n");
+		tile.setStyle((color != null ? "-fx-border-color: " + color + ";" + "-fx-border-width: 3; \r\n" : "-fx-border-color: white;") + " \r\n" + "-fx-background-color: " + tile.getColor() + ";\r\n");
 	}
 	
 	public void unmark(Position pos) {
