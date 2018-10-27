@@ -185,7 +185,6 @@ public class Controller {
 	public Button getJoinButton() {
 		return joinButton;
 	}
-	
 	public FlowPane getMessageButtonSocket() {
 		return messageButtonSocket;
 	}
