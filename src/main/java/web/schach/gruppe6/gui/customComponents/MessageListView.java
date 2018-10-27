@@ -31,7 +31,7 @@ public class MessageListView extends ListView<Alert> {
 						imageView.setImage(new Image("web/schach/gruppe6/gui/iconsAndImages/icon-error.png"));
 					else if (alert.getAlertType() == Alert.AlertType.INFORMATION)
 						imageView.setImage(new Image("web/schach/gruppe6/gui/iconsAndImages/icon-info.png"));
-					setText(alert.getTitle() + ":  " + alert.getContentText());
+					setText(alert.getTitle() + ":   " + alert.getContentText());
 					setGraphic(imageView);
 				}
 			}

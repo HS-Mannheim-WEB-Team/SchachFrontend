@@ -569,7 +569,7 @@ public class Controller {
 			try {
 				messageListView.clear();
 				setGameFromUI(false);
-				logMessage(AlertType.INFORMATION, "Connection", "Join Game " + iDTextField.getText() + " successful!");
+				logMessage(AlertType.INFORMATION, "Connection", "Joining Game " + iDTextField.getText() + " successful!");
 				logMessage(AlertType.INFORMATION, "Color", "Your Color is " + colorSelectorListView.getSelectionModel().getSelectedItem().toString());
 				switchMenuVisibility();
 			} catch (NumberFormatException e) {
