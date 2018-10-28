@@ -699,7 +699,11 @@ public class Controller {
 						icon.setFitWidth(30);
 						icon.setFitHeight(30);
 						//click on figure -> click on field behind
-						icon.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> chessField.doClick(layoutCurrent.get(figure)));
+						icon.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+							Position pos = layoutCurrent.get(figure);
+							if (pos != null)
+								chessField.doClick(pos);
+						});
 						
 						//add to chess pane
 						chessFieldPane.getChildren().add(icon);
