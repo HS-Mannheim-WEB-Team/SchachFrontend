@@ -1,5 +1,7 @@
 package web.schach.gruppe6.obj;
 
+import javafx.scene.image.Image;
+
 import static web.schach.gruppe6.obj.PlayerColor.*;
 
 public enum FigureType {
@@ -20,11 +22,11 @@ public enum FigureType {
 	
 	public final char character;
 	public final PlayerColor color;
-	public final String iconPath;
+	public final Image icon;
 	
-	FigureType(char character, PlayerColor color, String iconPath) {
+	FigureType(char character, PlayerColor color, String icon) {
 		this.character = character;
 		this.color = color;
-		this.iconPath = iconPath;
+		this.icon = new Image(icon);
 	}
 }

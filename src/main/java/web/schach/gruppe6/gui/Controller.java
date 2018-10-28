@@ -13,7 +13,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
@@ -31,6 +30,7 @@ import web.schach.gruppe6.gui.util.ColorEnum;
 import web.schach.gruppe6.network.ChessConnection;
 import web.schach.gruppe6.network.exceptions.ParseException;
 import web.schach.gruppe6.network.exceptions.ServerErrorException;
+import web.schach.gruppe6.obj.FigureType;
 import web.schach.gruppe6.obj.Figures;
 import web.schach.gruppe6.obj.Layout;
 import web.schach.gruppe6.obj.PlayerColor;
@@ -695,7 +695,7 @@ public class Controller {
 						Position position = layoutCurrent.get(figure);
 						
 						ImageView icon = new ImageView();
-						icon.setImage(new Image(layoutCurrent.getType(figure).iconPath));
+						icon.setImage(layoutCurrent.getType(figure).icon);
 						icon.setFitWidth(30);
 						icon.setFitHeight(30);
 						//click on figure -> click on field behind
@@ -790,6 +790,23 @@ public class Controller {
 					
 					updateMovement(movements, timeEnd);
 					switchPlayerLabel(layoutDest.playerColorNext());
+					
+					//update images if figure has transformed
+					Task taskUpdateImages = new Task(() -> {
+						//go over all figures
+						for (Figures figure : Figures.values()) {
+							FigureType typeSrc = layoutSrc.getType(figure);
+							FigureType typeDest = layoutDest.getType(figure);
+							
+							//has position changed?
+							if (!Objects.equals(typeSrc, typeDest)) {
+								ImageView imageView = figureViewMap.get(figure);
+								imageView.setImage(typeDest.icon);
+							}
+						}
+					});
+					Platform.runLater(taskUpdateImages);
+					taskUpdateImages.await();
 				} catch (InterruptedException ignore) {
 				
 				}
