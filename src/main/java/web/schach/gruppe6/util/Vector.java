@@ -36,7 +36,7 @@ public final class Vector {
 		return new Vector(-x, -y);
 	}
 	
-	public Vector multiply(float multi) {
+	public Vector multiply(double multi) {
 		return new Vector(x * multi, y * multi);
 	}
 	

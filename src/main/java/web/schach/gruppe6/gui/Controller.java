@@ -45,7 +45,6 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -59,7 +58,7 @@ import static javafx.collections.FXCollections.observableArrayList;
 public class Controller {
 	
 	//static
-	private static final int SHUFFLE_COUNT = 2;
+	private static final int SHAKE_COUNT = 2;
 	private static final long TIME_MOVEMENT_TOTAL_NANO = 1000 * 1000000;
 	private static final long TIME_MOVEMENT_STEP_NANO = 20 * 1000000;
 	public static final int TIME_NETWORK_QUERIES_IN_BETWEEN_MS = 250;
@@ -67,6 +66,13 @@ public class Controller {
 	public static final Predicate<String> ONLY_DIGITS = Pattern.compile("^\\d*$").asPredicate();
 	public static final ChessConnection CONNECTION = new ChessConnection();
 	
+	/**
+	 * Get the relative position to a children.
+	 *
+	 * @param child  the children to go from
+	 * @param parent the parent
+	 * @return relative Bounds between them
+	 */
 	private static Bounds getRelativeBounds(Node child, Node parent) {
 		Bounds ret = child.getBoundsInLocal();
 		while (!child.equals(parent)) {
@@ -76,7 +82,7 @@ public class Controller {
 		return ret;
 	}
 	
-	//BOOLEANS VISIBILITY
+	//visibility booleans
 	private boolean errorsVisible = true;
 	private boolean infosVisible = true;
 	private boolean messageListIsVisible = true;
@@ -123,9 +129,6 @@ public class Controller {
 	private FlowPane messageSocketPane;
 	
 	//MENU BUTTONS
-//	@FXML
-//	private Button saveButton;
-	
 	@FXML
 	private Button newGameButton;
 	
@@ -140,7 +143,7 @@ public class Controller {
 	
 	//LIST VIEW
 	@FXML
-	private OccupancyListView occupancyListView;
+	private OccupancyListView layoutListView;
 	
 	@FXML
 	private MessageListView messageListView;
@@ -156,11 +159,11 @@ public class Controller {
 	private ChessTileField chessField;
 	
 	@FXML
-	private BeatenTileField beatenFiguresBot;
+	private BeatenTileField beatenFiguresBottom;
 	
 	//PLAYER DISPLAY
 	@FXML
-	private Label curPlayerLabelBot;
+	private Label curPlayerLabelBottom;
 	
 	@FXML
 	private Label curPlayerLabelTop;
@@ -170,7 +173,7 @@ public class Controller {
 	private Pane chessFieldPane;
 	
 	@FXML
-	private Pane shuffleControlPane;
+	private Pane shakeControlPane;
 	
 	//GETTER
 	
@@ -185,12 +188,13 @@ public class Controller {
 	public Button getJoinButton() {
 		return joinButton;
 	}
+	
 	public FlowPane getMessageButtonSocket() {
 		return messageButtonSocket;
 	}
 	
-	public Pane getShuffleControlPane() {
-		return shuffleControlPane;
+	public Pane getShakeControlPane() {
+		return shakeControlPane;
 	}
 	
 	public Pane getChessFieldPane() {
@@ -209,12 +213,12 @@ public class Controller {
 		return chessField;
 	}
 	
-	public BeatenTileField getBeatenFiguresBot() {
-		return beatenFiguresBot;
+	public BeatenTileField getBeatenFiguresBottom() {
+		return beatenFiguresBottom;
 	}
 	
-	public OccupancyListView getOccupancyListView() {
-		return occupancyListView;
+	public OccupancyListView getLayoutListView() {
+		return layoutListView;
 	}
 	
 	public MessageListView getMessageListView() {
@@ -237,14 +241,14 @@ public class Controller {
 	
 	//TOOLTIP
 	private void setupToolTips() {
-		joinButton.setTooltip(getToolTip("Shortcut: J/j", "icon-info.png"));
-		newGameButton.setTooltip(getToolTip("Shortcut: N/n", "icon-info.png"));
-		iDTextField.setTooltip(getToolTip("Numbers only", "icon-info.png"));
-		colorSelectorListView.setTooltip(getToolTip("Shortcuts: \r\nWhite: W/w \r\nBlack: B/b\r\nBoth: M/m", "icon-info.png"));
-		occupancyListView.setTooltip(getToolTip("Shortcuts: \r\nScroll to First: F/f\r\nScroll to Current: C/c\r\nScroll to Last: L/l", "icon-info.png"));
+		joinButton.setTooltip(createToolTip("Shortcut: J/j", "icon-info.png"));
+		newGameButton.setTooltip(createToolTip("Shortcut: N/n", "icon-info.png"));
+		iDTextField.setTooltip(createToolTip("Numbers only", "icon-info.png"));
+		colorSelectorListView.setTooltip(createToolTip("Shortcuts: \r\nWhite: W/w \r\nBlack: B/b\r\nBoth: M/m", "icon-info.png"));
+		layoutListView.setTooltip(createToolTip("Shortcuts: \r\nScroll to First: F/f\r\nScroll to Current: C/c\r\nScroll to Last: L/l", "icon-info.png"));
 	}
 	
-	private Tooltip getToolTip(String content, String iconName) {
+	private Tooltip createToolTip(String content, String iconName) {
 		Tooltip tip = new Tooltip();
 		tip.setText(content);
 		ImageView image = new ImageView("/web/schach/gruppe6/gui/iconsAndImages/" + iconName);
@@ -272,21 +276,22 @@ public class Controller {
 			field.setRotate(rotateValue);
 		chessField.setReverseLineCounters();
 		chessFieldPane.setRotate(rotateValue);
-		curPlayerLabelBot.setRotate(rotateValue);
+		curPlayerLabelBottom.setRotate(rotateValue);
 		curPlayerLabelTop.setRotate(rotateValue);
 	}
 	
-	//VISIBILITY
+	//PLAYER LABEL
 	public void switchPlayerLabel(PlayerColor color) {
 		if (color == PlayerColor.BLACK) {
 			curPlayerLabelTop.setVisible(false);
-			curPlayerLabelBot.setVisible(true);
+			curPlayerLabelBottom.setVisible(true);
 		} else {
 			curPlayerLabelTop.setVisible(true);
-			curPlayerLabelBot.setVisible(false);
+			curPlayerLabelBottom.setVisible(false);
 		}
 	}
 	
+	//VISIBILITY
 	private void switchVisibility(Node node, Button button, boolean curVisible) {
 		if (curVisible) {
 			node.setVisible(false);
@@ -309,7 +314,7 @@ public class Controller {
 	}
 	
 	public void switchListVisibility() {
-		switchVisibility(occupancyListView, logButton, layoutListVisible);
+		switchVisibility(layoutListView, logButton, layoutListVisible);
 		layoutListVisible = !layoutListVisible;
 	}
 	
@@ -347,46 +352,45 @@ public class Controller {
 		errorsVisible = !errorsVisible;
 	}
 	
-	
 	//LOG
 	
 	/**
 	 * @param type should only use ERROR,WARNING or INFORMATION
 	 */
-	public void logMessageWithJumpToLayout(Alert.AlertType type, String title, String content, int layoutIndex, boolean show) {
-		Platform.runLater(() -> messageListView.addItem(getMessageWithJumpToLayout(type, title, content, layoutIndex, show)));
+	public void logMessage(Alert.AlertType type, String title, String content) {
+		Platform.runLater(() -> messageListView.addItem(createMessage(type, title, content)));
 	}
 	
 	/**
 	 * @param type should only use ERROR,WARNING or INFORMATION
 	 */
-	public Alert getMessageWithJumpToLayout(Alert.AlertType type, String title, String content, int layoutIndex, boolean show) {
-		Alert alert = getMessage(type, title, content);
-		alert.setOnCloseRequest(value -> {
-			occupancyListView.scrollTo(layoutIndex);
-			occupancyListView.getSelectionModel().clearAndSelect(layoutIndex);
-		});
-		if (show)
-			alert.showAndWait();
+	private Alert createMessage(Alert.AlertType type, String title, String content) {
+		Alert alert = new Alert(type);
+		alert.setTitle(title);
+		String name = type.name();
+		alert.setHeaderText(Character.toUpperCase(name.charAt(0)) + name.substring(1).toLowerCase());
+		alert.setContentText(content);
 		return alert;
 	}
 	
 	/**
 	 * @param type should only use ERROR,WARNING or INFORMATION
 	 */
-	public void logMessage(Alert.AlertType type, String title, String content) {
-		Platform.runLater(() -> messageListView.addItem(getMessage(type, title, content)));
+	public void logMessageWithJumpToLayout(Alert.AlertType type, String title, String content, int layoutIndex, boolean show) {
+		Platform.runLater(() -> messageListView.addItem(createMessageWithJumpToLayout(type, title, content, layoutIndex, show)));
 	}
 	
 	/**
 	 * @param type should only use ERROR,WARNING or INFORMATION
 	 */
-	private Alert getMessage(Alert.AlertType type, String title, String content) {
-		Alert alert = new Alert(type);
-		alert.setTitle(title);
-		String name = type.name();
-		alert.setHeaderText(Character.toUpperCase(name.charAt(0)) + name.substring(1).toLowerCase());
-		alert.setContentText(content);
+	public Alert createMessageWithJumpToLayout(Alert.AlertType type, String title, String content, int layoutIndex, boolean show) {
+		Alert alert = createMessage(type, title, content);
+		alert.setOnCloseRequest(value -> {
+			layoutListView.scrollTo(layoutIndex);
+			layoutListView.getSelectionModel().clearAndSelect(layoutIndex);
+		});
+		if (show)
+			alert.showAndWait();
 		return alert;
 	}
 	
@@ -453,21 +457,21 @@ public class Controller {
 							if (isRunning) {
 								//apply new layouts
 								Task task = new Task(() -> {
-									MultipleSelectionModel<Layout> selectionModel = occupancyListView.getSelectionModel();
+									MultipleSelectionModel<Layout> selectionModel = layoutListView.getSelectionModel();
 									boolean selectLast = layouts.isEmpty() || selectionModel.getSelectedItem() == layouts.get(layouts.size() - 1);
 									layouts.setAll(newLayout);
 									if (selectLast)
-										occupancyListView.getSelectionModel().selectLast();
+										layoutListView.getSelectionModel().selectLast();
 									
 									for (Layout layout : newLayoutsWithState) {
 										switch (layout.state) {
 											case WHITE_CHECK:
 											case BLACK_CHECK:
-												logMessageWithJumpToLayout(AlertType.WARNING, "Check", layout.state.color + " is in Check!", layout.moveId, show);
+												logMessageWithJumpToLayout(AlertType.WARNING, "Check", layout.state.loosingColor + " is in Check!", layout.moveId, show);
 												break;
 											case WHITE_CHECK_MATE:
 											case BLACK_CHECK_MATE:
-												logMessageWithJumpToLayout(AlertType.WARNING, "Checkmate", layout.state.color + " is in Checkmate!", layout.moveId, show);
+												logMessageWithJumpToLayout(AlertType.WARNING, "Checkmate", layout.state.loosingColor + " is in Checkmate!", layout.moveId, show);
 												break;
 											case STALEMATE:
 												logMessageWithJumpToLayout(AlertType.WARNING, "Stalemate", "Game ended in Stalemate!", layout.moveId, show);
@@ -501,21 +505,28 @@ public class Controller {
 		}
 		
 		public void onTileClick(Position position) {
+			//requirement: last layout selected
+			if (game.layouts.get(game.layouts.size() - 1) != layoutCurrent)
+				return;
+			
+			//no figure selected
 			if (lastClicked == null) {
-				if (game.layouts.get(game.layouts.size() - 1) != layoutCurrent)
-					return;
+				//requirement: clicked on a figure
 				Figures figure = layoutCurrent.at(position);
 				if (figure == null)
 					return;
-				if (!(game.color == PlayerColor.BOTH || layoutCurrent.getType(figure).color == game.color))
+				
+				//requirement: correct color
+				if (!(game.color == PlayerColor.BOTH || game.color == layoutCurrent.getType(figure).color))
 					return;
 				
 				lastClicked = position;
 				
+				//mark permitted moves
 				try {
 					Grid<Boolean> permittedMoves = CONNECTION.getPermittedMoves(game.id, position);
 					markFields(pos -> permittedMoves.get(pos) == Boolean.TRUE ? ColorEnum.GREEN : null);
-					chessField.mark(lastClicked, ColorEnum.RED);
+					chessField.mark(position, ColorEnum.RED);
 				} catch (IOException | ParseException e) {
 					logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
 					e.printStackTrace();
@@ -523,9 +534,13 @@ public class Controller {
 					logMessage(AlertType.ERROR, "Server", "Server error: " + e.getMessage());
 				}
 			} else if (lastClicked.equals(position)) {
+				
+				//click on same position: de-select figure
 				unmarkFields();
 				lastClicked = null;
 			} else {
+				
+				//click on different figure: take move
 				try {
 					CONNECTION.takeMove(game.id, lastClicked, position);
 				} catch (IOException | ParseException e) {
@@ -545,7 +560,7 @@ public class Controller {
 		if (game != null)
 			game.stop();
 		game = new Game(id, color, newGame);
-		occupancyListView.setData(game.layouts);
+		layoutListView.setData(game.layouts);
 	}
 	
 	public void setGameFromUI(boolean newGame) {
@@ -553,9 +568,9 @@ public class Controller {
 	}
 	
 	private void setupGame() {
-		occupancyListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+		layoutListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue != null)
-				addLayout(newValue);
+				setLayout(newValue);
 		});
 		
 		iDTextField.textProperty().addListener(
@@ -589,15 +604,12 @@ public class Controller {
 				shake();
 			}
 		});
-//		saveButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-//			Alert message = getMessage(AlertType.INFORMATION, "Test Connection", "Results:", "Game NOT saved!");
-//			messageListView.addItem(message);
-//		});
 	}
 	
 	//move execution
+	@SuppressWarnings("Convert2MethodRef")
 	private void setupMoveExecution() {
-		chessField.setOnClickCallback(this::onTileClick);
+		chessField.setOnClickCallback(position -> onTileClick(position));
 	}
 	
 	public void onTileClick(Position position) {
@@ -620,31 +632,40 @@ public class Controller {
 	}
 	
 	//shake
+	
+	/**
+	 * shakes the ChessField
+	 */
 	public void shake() {
 		shakeQueue.add(Boolean.TRUE);
 	}
 	
+	/**
+	 * setup the shaker
+	 */
 	public void setupShaker() {
 		Thread th = new Thread(() -> {
 			//noinspection InfiniteLoopStatement
 			while (true) {
 				try {
+					//waits for an new element
 					shakeQueue.take();
 					
-					for (int i = 0; i < SHUFFLE_COUNT; i++) {
-						Platform.runLater(() -> shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() - 10, shuffleControlPane.getPrefHeight()));
+					//shakes the ChessField
+					for (int i = 0; i < SHAKE_COUNT; i++) {
+						Platform.runLater(() -> shakeControlPane.setPrefSize(shakeControlPane.getPrefWidth() - 10, shakeControlPane.getPrefHeight()));
 						try {
 							Thread.sleep(30);
 						} catch (InterruptedException ignored) {
 						
 						}
-						Platform.runLater(() -> shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() + 20, shuffleControlPane.getPrefHeight()));
+						Platform.runLater(() -> shakeControlPane.setPrefSize(shakeControlPane.getPrefWidth() + 20, shakeControlPane.getPrefHeight()));
 						try {
 							Thread.sleep(30);
 						} catch (InterruptedException ignored) {
 						
 						}
-						Platform.runLater(() -> shuffleControlPane.setPrefSize(shuffleControlPane.getPrefWidth() - 10, shuffleControlPane.getPrefHeight()));
+						Platform.runLater(() -> shakeControlPane.setPrefSize(shakeControlPane.getPrefWidth() - 10, shakeControlPane.getPrefHeight()));
 						try {
 							Thread.sleep(30);
 						} catch (InterruptedException ignored) {
@@ -661,13 +682,14 @@ public class Controller {
 	}
 	
 	//layout handling
-	public void addLayout(Layout layout) {
+	public void setLayout(Layout layout) {
 		layoutQueue.add(layout);
 	}
 	
 	private void setupLayoutHandler() {
 		Thread th = new Thread(() -> {
 			try {
+				//setup all figures on the chess pane
 				Task setInitialLayout = new Task(() -> {
 					for (Figures figure : Figures.values()) {
 						Position position = layoutCurrent.get(figure);
@@ -676,11 +698,14 @@ public class Controller {
 						icon.setImage(new Image(layoutCurrent.getType(figure).iconPath));
 						icon.setFitWidth(30);
 						icon.setFitHeight(30);
+						//click on figure -> click on field behind
 						icon.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> chessField.doClick(layoutCurrent.get(figure)));
 						
+						//add to chess pane
 						chessFieldPane.getChildren().add(icon);
 						figureViewMap.put(figure, icon);
 						
+						//set initial position
 						PositionOnField pof = resolvePositionOnField(layoutCurrent, figure, position);
 						Tile node = pof.field.getFieldComponents()[pof.position.x][pof.position.y];
 						Bounds bounds = getRelativeBounds(node, chessFieldPane);
@@ -699,30 +724,41 @@ public class Controller {
 			//noinspection InfiniteLoopStatement
 			while (true) {
 				try {
+					//get new layout and set as current
 					Layout layoutDest = layoutQueue.take();
 					Layout layoutSrc = layoutCurrent;
 					layoutCurrent = layoutDest;
 					switchPlayerLabel(layoutDest.playerColorCurrent());
 					
+					//calculate which figures need to move how (Movement)
 					long timeStart = System.nanoTime();
 					long timeEnd = timeStart + TIME_MOVEMENT_TOTAL_NANO;
-					EnumMap<Figures, Movement> movements = new EnumMap<>(Figures.class);
+					List<Movement> movements = new ArrayList<>();
 					
 					Task taskCalcMovement = new Task(() -> {
+						//go over all figures
 						for (Figures figure : Figures.values()) {
 							Position positionSrc = layoutSrc.get(figure);
 							Position positionDest = layoutDest.get(figure);
+							
+							//has position changed?
 							if (!Objects.equals(positionSrc, positionDest)) {
 								
+								//resolve field and position on that field
 								PositionOnField pofSrc = resolvePositionOnField(layoutSrc, figure, positionSrc);
 								PositionOnField pofDest = resolvePositionOnField(layoutDest, figure, positionDest);
 								
+								//get Tiles of the fields
 								Tile nodeSrc = pofSrc.field.getFieldComponents()[pofSrc.position.x][pofSrc.position.y];
 								Tile nodeDest = pofDest.field.getFieldComponents()[pofDest.position.x][pofDest.position.y];
 								
+								//get relative position of tiles to chess pane
 								Bounds boundsSrc = getRelativeBounds(nodeSrc, chessFieldPane);
 								Bounds boundsDest = getRelativeBounds(nodeDest, chessFieldPane);
-								movements.put(figure, new Movement(
+								
+								//add new Movement to be done
+								movements.add(new Movement(
+										figure,
 										new Vector(boundsSrc.getMinX(), boundsSrc.getMinY()),
 										timeStart,
 										new Vector(boundsDest.getMinX(), boundsDest.getMinY()),
@@ -733,6 +769,7 @@ public class Controller {
 					Platform.runLater(taskCalcMovement);
 					taskCalcMovement.await();
 					
+					//do actual movements with timer
 					long timeNextUpdate = timeStart;
 					while (true) {
 						//timer
@@ -762,17 +799,14 @@ public class Controller {
 		th.start();
 	}
 	
-	private void updateMovement(EnumMap<Figures, Movement> movements, long timeCurr) throws InterruptedException {
+	private void updateMovement(List<Movement> movements, long timeCurr) throws InterruptedException {
 		Task taskUpdatePosition = new Task(() -> {
-			for (Entry<Figures, Movement> entry : movements.entrySet()) {
-				Movement movement = entry.getValue();
-				if (movement == null)
-					continue;
-				
-				Figures figure = entry.getKey();
+			for (Movement movement : movements) {
+				//get position at timeCurr
 				Vector currPosition = movement.getPosition(timeCurr);
 				
-				ImageView imageView = figureViewMap.get(figure);
+				//set position of figure view
+				ImageView imageView = figureViewMap.get(movement.figure);
 				imageView.setLayoutX(currPosition.x);
 				imageView.setLayoutY(currPosition.y);
 			}
@@ -794,7 +828,7 @@ public class Controller {
 	private PositionOnField resolvePositionOnField(Layout layout, Figures figure, Position position) {
 		if (position != null)
 			return new PositionOnField(chessField, position);
-		return new PositionOnField(layout.getType(figure).color == PlayerColor.WHITE ? beatenFiguresTop : beatenFiguresBot, figure.positionBeaten);
+		return new PositionOnField(layout.getType(figure).color == PlayerColor.WHITE ? beatenFiguresTop : beatenFiguresBottom, figure.positionBeaten);
 	}
 	
 	//STATIC CLASSES
@@ -811,6 +845,7 @@ public class Controller {
 	
 	private static class Movement {
 		
+		final Figures figure;
 		final Vector from;
 		final long fromTime;
 		final Vector to;
@@ -818,7 +853,8 @@ public class Controller {
 		final Vector delta;
 		final long deltaTime;
 		
-		public Movement(Vector from, long fromTime, Vector to, long toTime) {
+		public Movement(Figures figure, Vector from, long fromTime, Vector to, long toTime) {
+			this.figure = figure;
 			this.from = from;
 			this.fromTime = fromTime;
 			this.to = to;
@@ -828,13 +864,20 @@ public class Controller {
 		}
 		
 		public Vector getPosition(long currTime) {
+			//too big
 			if (currTime <= fromTime)
 				return from;
+			//too tiny
 			if (currTime >= toTime)
 				return to;
 			
-			float d = (float) (currTime - fromTime) / deltaTime;
+			//d [0, 1]
+			double d = (double) (currTime - fromTime) / deltaTime;
+			
+			//smoothstep
 			d = d * d * (3 - 2 * d);
+			
+			//result vector
 			return from.add(delta.multiply(d));
 		}
 		

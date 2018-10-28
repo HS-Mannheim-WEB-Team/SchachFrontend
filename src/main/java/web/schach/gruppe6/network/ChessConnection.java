@@ -122,6 +122,7 @@ public class ChessConnection {
 		Element root = getAndParse("/spiel/getBelegung/" + id + "/" + moveId).getDocumentElement();
 		rethrowIfServerError(root);
 		
+		//get chess notation of this move
 		Element notationQuery = getAndParse("/spiel/getZugHistorie/" + id).getDocumentElement();
 		rethrowIfServerError(notationQuery);
 		String notation = getEntryKeyFirstOrThrow(propertiesArrayStream(notationQuery).skip(moveId - 1).findFirst().orElseThrow(ParseException::new), "zug").getTextContent();

@@ -22,10 +22,12 @@ public class Layout {
 		}
 	}
 	
+	//informational
 	public final String name;
 	public final int moveId;
 	public final GameState state;
 	
+	//actual layout of every figure
 	private EnumMap<Figures, Position> layout;
 	private EnumMap<Figures, FigureType> typeMap;
 	

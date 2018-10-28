@@ -8,9 +8,9 @@ public enum GameState {
 	BLACK_CHECK_MATE(PlayerColor.BLACK),
 	STALEMATE(null);
 	
-	public final PlayerColor color;
+	public final PlayerColor loosingColor;
 	
-	GameState(PlayerColor color) {
-		this.color = color;
+	GameState(PlayerColor loosingColor) {
+		this.loosingColor = loosingColor;
 	}
 }

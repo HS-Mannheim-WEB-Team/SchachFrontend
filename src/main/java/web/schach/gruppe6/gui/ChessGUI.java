@@ -21,6 +21,7 @@ public class ChessGUI extends Application {
 	
 	public Controller controller;
 	
+	//start execution
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("ChessGUI.fxml"));
@@ -36,11 +37,12 @@ public class ChessGUI extends Application {
 		controller = loader.getController();
 		//set current messageListView Scale
 		controller.getMessageListView().setPrefSize(primaryStage.getWidth() - DISTANCE_TO_WINDOW_BORDER, MIN_HIGHT * MESSAGE_GROW_FACTOR);
-		setupRescaleOnSizeChanges(primaryStage);
+		setupResizeCallback(primaryStage);
 		primaryStage.show();
 	}
 	
-	private void setupRescaleOnSizeChanges(Stage primaryStage) {
+	//setup resize callbacks for scaling and keyboard shortcut
+	private void setupResizeCallback(Stage primaryStage) {
 		primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
 			if (newVal.doubleValue() < primaryStage.getHeight())
 				rescaleCenter(newVal);
@@ -80,18 +82,18 @@ public class ChessGUI extends Application {
 						break;
 					}
 				case "l": {
-					OccupancyListView list = controller.getOccupancyListView();
+					OccupancyListView list = controller.getLayoutListView();
 					list.scrollTo(list.getItems().size() - 1);
 					list.getSelectionModel().select(list.getItems().size() - 1);
 					break;
 				}
 				case "f": {
-					OccupancyListView list = controller.getOccupancyListView();
+					OccupancyListView list = controller.getLayoutListView();
 					list.scrollTo(0);
 					break;
 				}
 				case "c": {
-					OccupancyListView list = controller.getOccupancyListView();
+					OccupancyListView list = controller.getLayoutListView();
 					list.scrollTo(list.getSelectionModel().getSelectedIndex());
 					break;
 				}
@@ -102,8 +104,8 @@ public class ChessGUI extends Application {
 	private void rescaleCenter(Number newVal) {
 		controller.getGlobalCenterFlowPlane().setScaleX(newVal.doubleValue() * GENEREL_GROW_FACTOR);
 		controller.getChessFieldPane().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR);
-		controller.getOccupancyListView().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR);
-		controller.getShuffleControlPane().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR);
+		controller.getLayoutListView().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR);
+		controller.getShakeControlPane().setScaleY(newVal.doubleValue() * GENEREL_GROW_FACTOR);
 	}
 	
 	public static void main(String[] args) {
