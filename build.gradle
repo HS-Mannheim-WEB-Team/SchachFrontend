@@ -1,10 +1,12 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group 'WebGroup6'
 version '1.0'
 
+mainClassName = "web.schach.gruppe6.gui.ChessGUI"
 sourceCompatibility = 1.8
 
 repositories {
