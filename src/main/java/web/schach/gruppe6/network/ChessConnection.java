@@ -129,10 +129,11 @@ public class ChessConnection {
 		
 		//parse all figures
 		EnumMap<Figures, Boolean> sameFigures = new EnumMap<>(Figures.class);
+		//sorted after Type
 		EnumMap<FigureType, List<Position>> newFigures = new EnumMap<>(FigureType.class);
 		GameState state = null;
 		
-		outer:
+		nextFigure:
 		for (Node properties : propertiesArrayNodeList(root)) {
 			if ("D_Figur".equals(getEntryKeyFirstOrThrow(properties, "klasse").getTextContent())) {
 				
@@ -148,11 +149,12 @@ public class ChessConnection {
 					if (Objects.equals(currentLayout.get(figure), position) && currentLayout.getType(figure) == figureType && sameFigures.get(figure) != Boolean.TRUE) {
 						//same place
 						sameFigures.put(figure, true);
-						continue outer;
+						continue nextFigure;
 					}
 				}
 				
 				//changed
+				//computeIfAbsent: add a new List if not yet created
 				newFigures.computeIfAbsent(figureType, figureType1 -> new ArrayList<>()).add(position);
 			} else if ("D_Belegung".equals(getEntryKeyFirstOrThrow(properties, "klasse").getTextContent())) {
 				state = NAME_TO_STATE.get(getEntryKeyFirstOrThrow(properties, "status").getTextContent());
@@ -161,12 +163,15 @@ public class ChessConnection {
 		
 		//copy same figures and resolve removed ones
 		Layout layout = new Layout(moveId + ": " + notation, moveId, state);
+		//sorted after Type
 		EnumMap<FigureType, List<Figures>> removedFigures = new EnumMap<>(FigureType.class);
+		
 		for (Figures figure : Figures.values()) {
 			if (sameFigures.get(figure) == Boolean.TRUE) {
 				layout.put(figure, currentLayout.get(figure));
 				layout.putType(figure, currentLayout.getType(figure));
 			} else {
+				//computeIfAbsent: add a new List if not yet created
 				removedFigures.computeIfAbsent(currentLayout.getType(figure), figureType -> new ArrayList<>()).add(figure);
 			}
 		}
@@ -186,8 +191,10 @@ public class ChessConnection {
 		}
 		
 		//map all remaining and remap their type (not perfect if multiple are left over)
+		//convert Map<Type -> List<Position>> to List<Position>
 		List<Figures> removedLeftOver = removedFigures.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
 		List<Pair<FigureType, Position>> newLeftOver = newFigures.entrySet().stream().flatMap(entry -> entry.getValue().stream().map(position -> new Pair<>(entry.getKey(), position))).collect(Collectors.toList());
+		
 		int leftOverCnt = removedLeftOver.size();
 		if (leftOverCnt != newLeftOver.size())
 			throw new RuntimeException("Figures got added(" + newLeftOver.size() + ") or removed(" + leftOverCnt + ")!");

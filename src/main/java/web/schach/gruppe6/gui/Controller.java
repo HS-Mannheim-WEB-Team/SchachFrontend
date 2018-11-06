@@ -463,6 +463,7 @@ public class Controller {
 									if (selectLast)
 										layoutListView.getSelectionModel().selectLast();
 									
+									//add state warnings
 									for (Layout layout : newLayoutsWithState) {
 										switch (layout.state) {
 											case WHITE_CHECK:

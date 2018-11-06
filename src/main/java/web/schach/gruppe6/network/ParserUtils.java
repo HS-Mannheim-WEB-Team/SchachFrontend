@@ -37,6 +37,9 @@ public class ParserUtils {
 		}
 	}
 	
+	/**
+	 * Creates a new XML Parser
+	 */
 	public static DocumentBuilder createXmlDocumentBuilder() {
 		try {
 			return DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -46,22 +49,45 @@ public class ParserUtils {
 	}
 	
 	//entry key resolver
-	public static Node getEntryKeyFirstOrThrow(Node root, String message) throws ParseException {
+	
+	/**
+	 * Searches an Entry with the key equal to key. Throws {@link ParseException} if not found.
+	 *
+	 * @param root Node to search in
+	 * @param key  key to search
+	 * @return The found Node
+	 * @throws ParseException if not found
+	 */
+	public static Node getEntryKeyFirstOrThrow(Node root, String key) throws ParseException {
 		for (Node node : nodeListIterable(root.getChildNodes()))
-			if ("entry".equals(node.getNodeName()) && message.equals(node.getAttributes().getNamedItem("key").getNodeValue()))
+			if ("entry".equals(node.getNodeName()) && key.equals(node.getAttributes().getNamedItem("key").getNodeValue()))
 				return node;
-		throw new ParseException("No Entry " + message);
+		throw new ParseException("No Entry " + key);
 	}
 	
-	public static Node getEntryKeyFirstOrNull(Node root, String message) throws ParseException {
+	/**
+	 * Searches an Entry with the key equal to key. Returns null if not found.
+	 *
+	 * @param root Node to search in
+	 * @param key  key to search
+	 * @return The found Node or null
+	 */
+	public static Node getEntryKeyFirstOrNull(Node root, String key) throws ParseException {
 		for (Node node : nodeListIterable(root.getChildNodes())) {
-			if ("entry".equals(node.getNodeName()) && message.equals(node.getAttributes().getNamedItem("key").getNodeValue()))
+			if ("entry".equals(node.getNodeName()) && key.equals(node.getAttributes().getNamedItem("key").getNodeValue()))
 				return node;
 		}
 		return null;
 	}
 	
 	//NodeList
+	
+	/**
+	 * Creates an Iterable of Nodes from a NodeList. Can be used in foreach loops.
+	 *
+	 * @param list NodeList to use
+	 * @return Iterable of Nodes
+	 */
 	public static Iterable<Node> nodeListIterable(NodeList list) {
 		return () -> new Iterator<Node>() {
 			int i;
@@ -82,6 +108,12 @@ public class ParserUtils {
 		return StreamSupport.stream(nodeListIterable(list).spliterator(), false);
 	}
 	
+	/**
+	 * Collection of Nodes of Properties, independent of property encoding
+	 *
+	 * @param root XML Root Element
+	 * @return Iterable of Nodes
+	 */
 	public static Iterable<Node> propertiesArrayNodeList(Element root) {
 		if ("propertiesarray".equals(root.getTagName())) {
 			return ParserUtils.nodeListIterable(root.getElementsByTagName("properties"));
