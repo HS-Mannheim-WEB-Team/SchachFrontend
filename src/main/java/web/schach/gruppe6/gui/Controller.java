@@ -416,10 +416,12 @@ public class Controller {
 						CONNECTION.newGame(id);
 					} catch (IOException | ParseException e) {
 						logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
+						shake();
 						e.printStackTrace();
 						return;
 					} catch (ServerErrorException e) {
 						logMessage(AlertType.ERROR, "Server", "Server error: " + e.getMessage());
+						shake();
 					}
 				}
 				
@@ -488,10 +490,12 @@ public class Controller {
 					
 					} catch (IOException | ParseException e) {
 						logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
+						shake();
 						e.printStackTrace();
 						return;
 					} catch (ServerErrorException e) {
 						logMessage(AlertType.ERROR, "Server", "Server error: " + e.getMessage());
+						shake();
 					}
 				}
 			}, "GameUpdateThread" + id);
@@ -530,9 +534,11 @@ public class Controller {
 					chessField.mark(position, ColorEnum.RED);
 				} catch (IOException | ParseException e) {
 					logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
+					shake();
 					e.printStackTrace();
 				} catch (ServerErrorException e) {
 					logMessage(AlertType.ERROR, "Server", "Server error: " + e.getMessage());
+					shake();
 				}
 			} else if (lastClicked.equals(position)) {
 				
@@ -546,9 +552,11 @@ public class Controller {
 					CONNECTION.takeMove(game.id, lastClicked, position);
 				} catch (IOException | ParseException e) {
 					logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
+					shake();
 					e.printStackTrace();
 				} catch (ServerErrorException e) {
 					logMessage(AlertType.ERROR, "Server", "Server error: " + e.getMessage());
+					shake();
 				} finally {
 					unmarkFields();
 					lastClicked = null;
