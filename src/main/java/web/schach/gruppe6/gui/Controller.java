@@ -531,7 +531,6 @@ public class Controller {
 				try {
 					Grid<Boolean> permittedMoves = CONNECTION.getPermittedMoves(game.id, position);
 					markFields(pos -> permittedMoves.get(pos) == Boolean.TRUE ? ColorEnum.GREEN : null);
-					chessField.mark(position, ColorEnum.RED);
 				} catch (IOException | ParseException e) {
 					logMessage(AlertType.ERROR, "Network", "Network Error, please reconnect!");
 					shake();
@@ -539,6 +538,8 @@ public class Controller {
 				} catch (ServerErrorException e) {
 					logMessage(AlertType.ERROR, "Server", "Server error: " + e.getMessage());
 					shake();
+				} finally {
+					chessField.mark(position, ColorEnum.RED);
 				}
 			} else if (lastClicked.equals(position)) {
 				
