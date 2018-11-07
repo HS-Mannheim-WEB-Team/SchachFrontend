@@ -10,7 +10,7 @@ import javafx.scene.input.MouseEvent;
 
 public class MessageListView extends ListView<Alert> {
 	
-	ListType curListType = ListType.ALL;
+	MessageLists curMessageLists = MessageLists.ALL;
 	
 	public MessageListView() {
 		setCellFactory(param -> new ListCell<Alert>() {
@@ -44,29 +44,29 @@ public class MessageListView extends ListView<Alert> {
 					alert.showAndWait();
 			}
 		});
-		setItems(ListType.ALL.getData());
+		setItems(MessageLists.ALL.getData());
 	}
 	
 	public void addItem(Alert item) {
-		ListType.add(item);
+		MessageLists.add(item);
 		scrollTo(item);
 	}
 	
 	public void updateList() {
-		setItems(curListType.getData());
-		scrollTo(curListType.getData().size());
+		setItems(curMessageLists.getData());
+		scrollTo(curMessageLists.getData().size());
 	}
 	
 	public boolean removeItem(Alert key) {
-		return ListType.remove(key);
+		return MessageLists.remove(key);
 	}
 	
 	public void clear() {
-		ListType.clear();
+		MessageLists.clear();
 	}
 	
-	public void switchLists(ListType type) {
-		curListType = type;
+	public void switchLists(MessageLists type) {
+		curMessageLists = type;
 		updateList();
 	}
 }

@@ -6,11 +6,11 @@ import javafx.scene.control.Alert.AlertType;
 
 import static javafx.collections.FXCollections.observableArrayList;
 
-public enum ListType {
+public enum MessageLists {
 	ALL(observableArrayList()),
 	NO_ERROR(observableArrayList()),
 	NO_WARNING(observableArrayList()),
-	WARNINGS_ONLY(observableArrayList());
+	INFOS_ONLY(observableArrayList());
 	
 	private final ObservableList<Alert> data;
 	
@@ -18,7 +18,7 @@ public enum ListType {
 		return data;
 	}
 	
-	ListType(ObservableList<Alert> data) {
+	MessageLists(ObservableList<Alert> data) {
 		this.data = data;
 	}
 	
@@ -31,7 +31,7 @@ public enum ListType {
 			NO_ERROR.data.add(alert);
 		} else {
 			ALL.data.add(alert);
-			WARNINGS_ONLY.data.add(alert);
+			INFOS_ONLY.data.add(alert);
 			NO_ERROR.data.add(alert);
 			NO_WARNING.data.add(alert);
 		}
@@ -40,7 +40,7 @@ public enum ListType {
 	public static boolean remove(Alert key) {
 		NO_ERROR.data.remove(key);
 		NO_WARNING.data.remove(key);
-		WARNINGS_ONLY.data.remove(key);
+		INFOS_ONLY.data.remove(key);
 		return ALL.data.remove(key);
 	}
 	
@@ -48,6 +48,6 @@ public enum ListType {
 		ALL.data.clear();
 		NO_ERROR.data.clear();
 		NO_WARNING.data.clear();
-		WARNINGS_ONLY.data.clear();
+		INFOS_ONLY.data.clear();
 	}
 }

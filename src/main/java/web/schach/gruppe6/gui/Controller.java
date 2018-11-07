@@ -21,8 +21,8 @@ import web.schach.gruppe6.gui.customComponents.BeatenTileField;
 import web.schach.gruppe6.gui.customComponents.ChessTileField;
 import web.schach.gruppe6.gui.customComponents.ColorListView;
 import web.schach.gruppe6.gui.customComponents.LineCountField;
-import web.schach.gruppe6.gui.customComponents.ListType;
 import web.schach.gruppe6.gui.customComponents.MessageListView;
+import web.schach.gruppe6.gui.customComponents.MessageLists;
 import web.schach.gruppe6.gui.customComponents.OccupancyListView;
 import web.schach.gruppe6.gui.customComponents.Tile;
 import web.schach.gruppe6.gui.customComponents.TileField;
@@ -84,7 +84,7 @@ public class Controller {
 	
 	//visibility booleans
 	private boolean errorsVisible = true;
-	private boolean infosVisible = true;
+	private boolean warningsVisible = true;
 	private boolean messageListIsVisible = true;
 	private boolean menuIsVisible = true;
 	private boolean layoutListVisible = true;
@@ -110,7 +110,10 @@ public class Controller {
 	private Button optionButton;
 	
 	@FXML
-	private Button showInfosButton;
+	private Button rotateButton;
+	
+	@FXML
+	private Button showWarningsButton;
 	
 	@FXML
 	private Button showErrorsButton;
@@ -246,14 +249,15 @@ public class Controller {
 		iDTextField.setTooltip(createToolTip("Numbers only", "icon-info.png"));
 		colorSelectorListView.setTooltip(createToolTip("Shortcuts: \r\nWhite: W/w \r\nBlack: B/b\r\nBoth: M/m", "icon-info.png"));
 		layoutListView.setTooltip(createToolTip("Shortcuts: \r\nScroll to First: F/f\r\nScroll to Current: C/c\r\nScroll to Last: L/l", "icon-info.png"));
+		rotateButton.setTooltip(createToolTip("Shortcut: R/r", "icon-info.png"));
 	}
 	
 	private Tooltip createToolTip(String content, String iconName) {
 		Tooltip tip = new Tooltip();
 		tip.setText(content);
 		ImageView image = new ImageView("/web/schach/gruppe6/gui/iconsAndImages/" + iconName);
-		image.setFitHeight(30);
-		image.setFitWidth(30);
+		image.setFitHeight(25);
+		image.setFitWidth(25);
 		tip.setGraphic(image);
 		return tip;
 	}
@@ -274,7 +278,6 @@ public class Controller {
 			icon.setRotate(rotateValue);
 		for (LineCountField field : chessField.getBorderTiles())
 			field.setRotate(rotateValue);
-		chessField.setReverseLineCounters();
 		chessFieldPane.setRotate(rotateValue);
 		curPlayerLabelBottom.setRotate(rotateValue);
 		curPlayerLabelTop.setRotate(rotateValue);
@@ -293,63 +296,57 @@ public class Controller {
 	
 	//VISIBILITY
 	private void switchVisibility(Node node, Button button, boolean curVisible) {
-		if (curVisible) {
-			node.setVisible(false);
-			setBackgroundColor(button, ColorEnum.GREEN);
-		} else {
-			node.setVisible(true);
-			setBackgroundColor(button, ColorEnum.RED);
-		}
+		node.setVisible(curVisible);
+		switchButtonColor(button, curVisible);
 	}
 	
 	public void switchEventLogVisibility() {
-		switchVisibility(messageSocketPane, messageButton, messageListIsVisible);
 		messageListIsVisible = !messageListIsVisible;
+		switchVisibility(messageSocketPane, messageButton, messageListIsVisible);
 	}
 	
 	public void switchMenuVisibility() {
+		menuIsVisible = !menuIsVisible;
 		switchVisibility(menuSocketLeft, optionButton, menuIsVisible);
 		switchVisibility(menuSocketMid, optionButton, menuIsVisible);
-		menuIsVisible = !menuIsVisible;
 	}
 	
 	public void switchListVisibility() {
-		switchVisibility(layoutListView, logButton, layoutListVisible);
 		layoutListVisible = !layoutListVisible;
+		switchVisibility(layoutListView, logButton, layoutListVisible);
 	}
 	
-	public void switchShowInfos() {
-		if (infosVisible) {
-			setBackgroundColor(showInfosButton, ColorEnum.GREEN);
+	private void setShownMessages() {
+		if (warningsVisible) {
 			if (errorsVisible)
-				messageListView.switchLists(ListType.NO_WARNING);
+				messageListView.switchLists(MessageLists.ALL);
 			else
-				messageListView.switchLists(ListType.WARNINGS_ONLY);
+				messageListView.switchLists(MessageLists.NO_ERROR);
 		} else {
-			setBackgroundColor(showInfosButton, ColorEnum.RED);
 			if (errorsVisible)
-				messageListView.switchLists(ListType.ALL);
+				messageListView.switchLists(MessageLists.NO_WARNING);
 			else
-				messageListView.switchLists(ListType.NO_ERROR);
+				messageListView.switchLists(MessageLists.INFOS_ONLY);
 		}
-		infosVisible = !infosVisible;
+	}
+	
+	private void switchButtonColor(Button button, boolean isActive) {
+		if (isActive)
+			setBackgroundColor(button, ColorEnum.RED);
+		else
+			setBackgroundColor(button, ColorEnum.GREEN);
 	}
 	
 	public void switchShowWarnings() {
-		if (errorsVisible) {
-			setBackgroundColor(showErrorsButton, ColorEnum.GREEN);
-			if (infosVisible)
-				messageListView.switchLists(ListType.NO_ERROR);
-			else
-				messageListView.switchLists(ListType.WARNINGS_ONLY);
-		} else {
-			setBackgroundColor(showErrorsButton, ColorEnum.RED);
-			if (infosVisible)
-				messageListView.switchLists(ListType.ALL);
-			else
-				messageListView.switchLists(ListType.NO_WARNING);
-		}
+		warningsVisible = !warningsVisible;
+		setShownMessages();
+		switchButtonColor(showWarningsButton, warningsVisible);
+	}
+	
+	public void switchShowErrors() {
 		errorsVisible = !errorsVisible;
+		setShownMessages();
+		switchButtonColor(showErrorsButton, errorsVisible);
 	}
 	
 	//LOG
