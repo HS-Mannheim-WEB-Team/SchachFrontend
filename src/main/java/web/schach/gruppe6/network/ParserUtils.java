@@ -3,6 +3,7 @@ package web.schach.gruppe6.network;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import web.schach.gruppe6.network.exceptions.ParseException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -15,6 +16,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Iterator;
@@ -42,7 +44,15 @@ public class ParserUtils {
 	 */
 	public static DocumentBuilder createXmlDocumentBuilder() {
 		try {
-			return DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			builder.setEntityResolver((publicId, systemId) -> {
+				if (systemId.contains("properties.dtd") || systemId.contains("propertiesarray.dtd")) {
+					return new InputSource(new StringReader(""));
+				} else {
+					return null;
+				}
+			});
+			return builder;
 		} catch (ParserConfigurationException e) {
 			throw new RuntimeException(e);
 		}
